@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SwiftZone — Owner Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080f0a;
+    --surface: #0e1a10;
+    --card: #121f14;
+    --card2: #162019;
+    --border: rgba(255,255,255,0.06);
+    --border2: rgba(0,200,100,0.12);
+    --green: #00e676;
+    --green2: #00c853;
+    --green-dim: rgba(0,230,118,0.08);
+    --green-glow: rgba(0,230,118,0.15);
+    --yellow: #ffd740;
+    --red: #ff5252;
+    --blue: #40c4ff;
+    --text: #f0f7f1;
+    --muted: #5a7a5e;
+    --muted2: #3a5a3e;
+    --radius: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── TOP NAV ── */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,15,10,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 10px; }
+
+  .nav-logo {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo span { color: var(--green); }
+
+  .nav-badge {
+    background: var(--green-dim);
+    border: 1px solid var(--border2);
+    color: var(--green);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-badge::before {
+    content: '●';
+    margin-right: 4px;
+    animation: blink 1.5s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  .nav-date {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .nav-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green2), #007a30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: #000;
+    cursor: pointer;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main { padding: 20px 16px 100px; max-width: 480px; margin: 0 auto; }
+
+  /* ── GREETING ── */
+  .greeting {
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .greeting h1 {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    margin-bottom: 3px;
+  }
+
+  .greeting p { font-size: 0.82rem; color: var(--muted); }
+
+  /* ── REVENUE HERO CARD ── */
+  .revenue-card {
+    background: linear-gradient(145deg, #0d2218, #0a1a0e);
+    border: 1px solid var(--border2);
+    border-radius: 22px;
+    padding: 24px 22px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s 0.05s ease both;
+  }
+
+  .revenue-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,230,118,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .rev-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .rev-amount {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-size: clamp(2.4rem, 10vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 4px;
+    text-shadow: 0 0 40px rgba(0,230,118,0.3);
+  }
+
+  .rev-amount .currency {
+    font-size: 0.5em;
+    vertical-align: super;
+    letter-spacing: 0;
+    opacity: 0.7;
+  }
+
+  .rev-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-dim);
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .rev-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .rev-stat { text-align: center; }
+
+  .rev-stat .val {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+
+  .rev-stat .lbl {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── PERIOD FILTER ── */
+  .period-filter {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+
+  .period-btn {
+    flex: 1;
+    padding: 8px 6px;
+    border: none;
+    background: transparent;
+    border-radius: 9px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .period-btn.active {
+    background: var(--card2);
+    color: var(--green);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ── MINI CHART ── */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .chart-title {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+
+  .chart-peak {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .chart-peak span { color: var(--green); font-weight: 600; }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 80px;
+  }
+
+  .bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--green2), rgba(0,200,83,0.3));
+    transition: height 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    cursor: pointer;
+    position: relative;
+  }
+
+  .bar.today {
+    background: linear-gradient(180deg, var(--green), var(--green2));
+    box-shadow: 0 0 12px rgba(0,230,118,0.3);
+  }
+
+  .bar:hover::after {
+    content: attr(data-val);
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .bar-day {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    opacity: 0.06;
+  }
+
+  .stat-card.green::after { background: var(--green); }
+  .stat-card.yellow::after { background: var(--yellow); }
+  .stat-card.blue::after { background: var(--blue); }
+  .stat-card.red::after { background: var(--red); }
+
+  .stat-icon {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .stat-val {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    margin-bottom: 2px;
+  }
+
+  .stat-card.green .stat-val { color: var(--green); }
+  .stat-card.yellow .stat-val { color: var(--yellow); }
+  .stat-card.blue .stat-val { color: var(--blue); }
+  .stat-card.red .stat-val { color: var(--red); }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .stat-change {
+    font-size: 0.65rem;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+
+  /* ── BUNDLE BREAKDOWN ── */
+  .breakdown-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.25s ease both;
+  }
+
+  .section-title {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+  }
+
+  .bundle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .bundle-row:last-child { margin-bottom: 0; }
+
+  .bundle-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .bundle-name { font-size: 0.82rem; font-weight: 500; flex: 1; }
+
+  .bundle-bar-wrap {
+    flex: 2;
+    height: 6px;
+    background: var(--surface);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .bundle-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .bundle-count {
+    font-size: 0.75rem;
+    color: var(--muted);
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* ── RECENT SALES ── */
+  .sales-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.3s ease both;
+  }
+
+  .sales-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sales-header a {
+    font-size: 0.75rem;
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .sale-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .sale-item:last-child { border-bottom: none; }
+  .sale-item:hover { background: rgba(255,255,255,0.02); }
+
+  .sale-avatar {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+
+  .sale-info { flex: 1; min-width: 0; }
+
+  .sale-phone {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sale-meta {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .sale-right { text-align: right; flex-shrink: 0; }
+
+  .sale-amount {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--green);
+  }
+
+  .sale-time {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .sale-status {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  .sale-status.success { background: var(--green); }
+  .sale-status.pending { background: var(--yellow); }
+
+  /* ── ACTIVE USERS ── */
+  .active-card {
+    background: linear-gradient(135deg, rgba(0,196,83,0.06), rgba(0,230,118,0.02));
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.35s ease both;
+  }
+
+  .active-icon {
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    background: var(--green-glow);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .active-info { flex: 1; }
+  .active-info h3 {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+
+  .active-info p { font-size: 0.75rem; color: var(--muted); }
+
+  .active-count {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(0,230,118,0.3);
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(8,15,10,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 10px 0 20px;
+    z-index: 100;
+  }
+
+  .bnav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 4px;
+    border: none;
+    background: none;
+  }
+
+  .bnav-item:active { transform: scale(0.9); }
+
+  .bnav-icon {
+    font-size: 1.2rem;
+    transition: filter 0.2s;
+  }
+
+  .bnav-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+
+  .bnav-item.active .bnav-label { color: var(--green); }
+
+  .bnav-item.active .bnav-icon { filter: drop-shadow(0 0 6px rgba(0,230,118,0.6)); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Counter animation */
+  .count-up { transition: all 0.8s ease; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: var(--green);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 10px 20px;
+    border-radius: 50px;
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,230,118,0.4);
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Shimmer loading for skeleton states */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">💰 New sale: Ksh 50</div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-left">
+    <div class="nav-logo">Swift<span>Zone</span></div>
+    <span class="nav-badge">LIVE</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-date" id="navDate"></span>
+    <div class="nav-avatar">JO</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- GREETING -->
+  <div class="greeting">
+    <h1 id="greeting">Good morning, Boss 👋</h1>
+    <p id="greetingSub">Here's how your hotspot is doing today</p>
+  </div>
+
+  <!-- PERIOD FILTER -->
+  <div class="period-filter">
+    <button class="period-btn" onclick="setPeriod('today', this)">Today</button>
+    <button class="period-btn active" onclick="setPeriod('week', this)">This Week</button>
+    <button class="period-btn" onclick="setPeriod('month', this)">This Month</button>
+    <button class="period-btn" onclick="setPeriod('all', this)">All Time</button>
+  </div>
+
+  <!-- REVENUE HERO -->
+  <div class="revenue-card">
+    <div class="rev-label">Total Revenue</div>
+    <div class="rev-amount"><span class="currency">Ksh </span><span id="totalRevenue">0</span></div>
+    <div class="rev-change" id="revChange">↑ +12% vs last week</div>
+    <div class="rev-stats">
+      <div class="rev-stat">
+        <div class="val" id="totalSales">0</div>
+        <div class="lbl">Sales</div>
+      </div>
+      <div class="rev-stat">
+        <div class="val" id="avgSale">0</div>
+        <div class="lbl">Avg Sale</div>
+      </div>
+      <div class="rev-stat">
+        <div class="val" id="peakHour">—</div>
+        <div class="lbl">Peak Hour</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BAR CHART -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Daily Revenue</div>
+      <div class="chart-peak">Best day: <span id="bestDay">Fri</span></div>
+    </div>
+    <div class="bar-chart" id="barChart"></div>
+  </div>
+
+  <!-- STATS GRID -->
+  <div class="stats-grid">
+    <div class="stat-card green">
+      <span class="stat-icon">🎟</span>
+      <div class="stat-val" id="vouchersToday">0</div>
+      <div class="stat-label">Vouchers Today</div>
+      <div class="stat-change up" id="voucherChange">↑ +8 vs yesterday</div>
+    </div>
+    <div class="stat-card yellow">
+      <span class="stat-icon">⏱</span>
+      <div class="stat-val" id="activeNow">0</div>
+      <div class="stat-label">Active Sessions</div>
+      <div class="stat-change up">● Live now</div>
+    </div>
+    <div class="stat-card blue">
+      <span class="stat-icon">📱</span>
+      <div class="stat-val" id="uniqueUsers">0</div>
+      <div class="stat-label">Unique Buyers</div>
+      <div class="stat-change up" id="userChange">↑ +5 new</div>
+    </div>
+    <div class="stat-card red">
+      <span class="stat-icon">❌</span>
+      <div class="stat-val" id="failedPayments">0</div>
+      <div class="stat-label">Failed Payments</div>
+      <div class="stat-change down" id="failChange">↓ -2 vs yesterday</div>
+    </div>
+  </div>
+
+  <!-- BUNDLE BREAKDOWN -->
+  <div class="breakdown-card">
+    <div class="section-title">Bundle Breakdown</div>
+    <div class="bundle-row">
+      <div class="bundle-dot" style="background:#ffd740"></div>
+      <div class="bundle-name">1 Hour (Ksh 10)</div>
+      <div class="bundle-bar-wrap">
+        <div class="bundle-bar-fill" id="bar1hr" style="width:0%;background:#ffd740"></div>
+      </div>
+      <div class="bundle-count" id="count1hr">0 sales</div>
+    </div>
+    <div class="bundle-row">
+      <div class="bundle-dot" style="background:var(--green)"></div>
+      <div class="bundle-name">Daily (Ksh 50)</div>
+      <div class="bundle-bar-wrap">
+        <div class="bundle-bar-fill" id="barDaily" style="width:0%;background:var(--green)"></div>
+      </div>
+      <div class="bundle-count" id="countDaily">0 sales</div>
+    </div>
+    <div class="bundle-row">
+      <div class="bundle-dot" style="background:var(--blue)"></div>
+      <div class="bundle-name">Weekly (Ksh 250)</div>
+      <div class="bundle-bar-wrap">
+        <div class="bundle-bar-fill" id="barWeekly" style="width:0%;background:var(--blue)"></div>
+      </div>
+      <div class="bundle-count" id="countWeekly">0 sales</div>
+    </div>
+    <div class="bundle-row">
+      <div class="bundle-dot" style="background:#ff6d00"></div>
+      <div class="bundle-name">Monthly (Ksh 800)</div>
+      <div class="bundle-bar-wrap">
+        <div class="bundle-bar-fill" id="barMonthly" style="width:0%;background:#ff6d00"></div>
+      </div>
+      <div class="bundle-count" id="countMonthly">0 sales</div>
+    </div>
+  </div>
+
+  <!-- ACTIVE USERS -->
+  <div class="active-card">
+    <div class="active-icon">📡</div>
+    <div class="active-info">
+      <h3>Devices Online Now</h3>
+      <p>Currently connected to your hotspot</p>
+    </div>
+    <div class="active-count" id="devicesOnline">0</div>
+  </div>
+
+  <!-- RECENT SALES -->
+  <div class="sales-card">
+    <div class="sales-header">
+      <div class="section-title" style="margin:0">Recent Sales</div>
+      <a href="#">View all</a>
+    </div>
+    <div id="salesList"></div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav-item active">
+    <span class="bnav-icon">📊</span>
+    <span class="bnav-label">Dashboard</span>
+  </button>
+  <button class="bnav-item">
+    <span class="bnav-icon">🎟</span>
+    <span class="bnav-label">Vouchers</span>
+  </button>
+  <button class="bnav-item">
+    <span class="bnav-icon">👥</span>
+    <span class="bnav-label">Users</span>
+  </button>
+  <button class="bnav-item">
+    <span class="bnav-icon">⚙️</span>
+    <span class="bnav-label">Settings</span>
+  </button>
+</nav>
+
+<script>
+// ── DATA (replace with real API calls to your backend) ──
+const DATA = {
+  today: {
+    revenue: 1450, sales: 31, avg: 47, peak: '7PM',
+    vouchers: 31, active: 14, unique: 23, failed: 2,
+    devices: 14,
+    bars: [
+      { day:'6AM', val:50 }, { day:'8AM', val:120 }, { day:'10AM', val:80 },
+      { day:'12PM', val:200 }, { day:'2PM', val:160 }, { day:'4PM', val:180 },
+      { day:'6PM', val:350 }, { day:'8PM', val:310 },
+    ],
+    bundles: { '1hr':12, daily:15, weekly:3, monthly:1 },
+    bestDay: 'Now',
+    change: '↑ +18% vs yesterday',
+    sales_list: [
+      { phone:'0712***678', bundle:'Daily', amount:50, time:'2 mins ago', status:'success' },
+      { phone:'0798***234', bundle:'1 Hour', amount:10, time:'8 mins ago', status:'success' },
+      { phone:'0733***891', bundle:'Weekly', amount:250, time:'22 mins ago', status:'success' },
+      { phone:'0756***445', bundle:'Daily', amount:50, time:'45 mins ago', status:'success' },
+      { phone:'0711***302', bundle:'Daily', amount:50, time:'1 hr ago', status:'success' },
+      { phone:'0724***770', bundle:'Monthly', amount:800, time:'2 hrs ago', status:'success' },
+    ]
+  },
+  week: {
+    revenue: 8750, sales: 187, avg: 47, peak: 'Fri 7PM',
+    vouchers: 187, active: 14, unique: 98, failed: 9,
+    devices: 14,
+    bars: [
+      { day:'Mon', val:900 }, { day:'Tue', val:1100 }, { day:'Wed', val:1300 },
+      { day:'Thu', val:1050 }, { day:'Fri', val:1800 }, { day:'Sat', val:1600 },
+      { day:'Sun', val:1000, today:true },
+    ],
+    bundles: { '1hr':72, daily:88, weekly:21, monthly:6 },
+    bestDay: 'Fri',
+    change: '↑ +12% vs last week',
+    sales_list: [
+      { phone:'0712***678', bundle:'Daily', amount:50, time:'2 mins ago', status:'success' },
+      { phone:'0798***234', bundle:'1 Hour', amount:10, time:'8 mins ago', status:'success' },
+      { phone:'0733***891', bundle:'Weekly', amount:250, time:'22 mins ago', status:'success' },
+      { phone:'0756***445', bundle:'Monthly', amount:800, time:'45 mins ago', status:'success' },
+      { phone:'0711***302', bundle:'Daily', amount:50, time:'1 hr ago', status:'success' },
+      { phone:'0724***770', bundle:'Daily', amount:50, time:'3 hrs ago', status:'success' },
+    ]
+  },
+  month: {
+    revenue: 34200, sales: 731, avg: 47, peak: 'Fri 7PM',
+    vouchers: 731, active: 14, unique: 312, failed: 28,
+    devices: 14,
+    bars: [
+      { day:'W1', val:7200 }, { day:'W2', val:8100 }, { day:'W3', val:9400 },
+      { day:'W4', val:9500, today:true },
+    ],
+    bundles: { '1hr':290, daily:340, weekly:78, monthly:23 },
+    bestDay: 'Week 4',
+    change: '↑ +22% vs last month',
+    sales_list: [
+      { phone:'0712***678', bundle:'Monthly', amount:800, time:'2 mins ago', status:'success' },
+      { phone:'0798***234', bundle:'Weekly', amount:250, time:'8 mins ago', status:'success' },
+      { phone:'0733***891', bundle:'Daily', amount:50, time:'22 mins ago', status:'success' },
+      { phone:'0756***445', bundle:'Daily', amount:50, time:'45 mins ago', status:'success' },
+      { phone:'0711***302', bundle:'1 Hour', amount:10, time:'1 hr ago', status:'success' },
+      { phone:'0724***770', bundle:'Weekly', amount:250, time:'2 hrs ago', status:'success' },
+    ]
+  },
+  all: {
+    revenue: 128400, sales: 2741, avg: 47, peak: 'Fri 7PM',
+    vouchers: 2741, active: 14, unique: 890, failed: 87,
+    devices: 14,
+    bars: [
+      { day:'Jan', val:8200 }, { day:'Feb', val:11000 }, { day:'Mar', val:14500 },
+      { day:'Apr', val:18200 }, { day:'May', val:22100 }, { day:'Jun', val:28000, today:true },
+    ],
+    bundles: { '1hr':1100, daily:1300, weekly:270, monthly:71 },
+    bestDay: 'Jun',
+    change: '↑ Growing strong 🚀',
+    sales_list: [
+      { phone:'0712***678', bundle:'Monthly', amount:800, time:'Just now', status:'success' },
+      { phone:'0798***234', bundle:'Weekly', amount:250, time:'5 mins ago', status:'success' },
+      { phone:'0733***891', bundle:'Daily', amount:50, time:'10 mins ago', status:'success' },
+      { phone:'0756***445', bundle:'Monthly', amount:800, time:'20 mins ago', status:'success' },
+      { phone:'0711***302', bundle:'Daily', amount:50, time:'35 mins ago', status:'success' },
+      { phone:'0724***770', bundle:'Weekly', amount:250, time:'1 hr ago', status:'success' },
+    ]
+  }
+};
+
+let currentPeriod = 'week';
+
+// ── Greeting by time of day
+function setGreeting() {
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting').textContent = `${greet}, Boss 👋`;
+  const now = new Date();
+  document.getElementById('navDate').textContent =
+    now.toLocaleDateString('en-KE', { weekday:'short', month:'short', day:'numeric' });
+}
+
+// ── Animated counter
+function animateCount(el, target, prefix = '', suffix = '') {
+  const start = 0;
+  const duration = 800;
+  const step = target / (duration / 16);
+  let current = start;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+
+// ── Build bar chart
+function buildChart(bars) {
+  const chart = document.getElementById('barChart');
+  chart.innerHTML = '';
+  const max = Math.max(...bars.map(b => b.val));
+  bars.forEach(b => {
+    const pct = Math.round((b.val / max) * 100);
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    wrap.innerHTML = `
+      <div class="bar${b.today ? ' today' : ''}"
+           style="height:${pct}%"
+           data-val="Ksh ${b.val.toLocaleString()}"></div>
+      <div class="bar-day">${b.day}</div>
+    `;
+    chart.appendChild(wrap);
+  });
+}
+
+// ── Build sales list
+function buildSalesList(sales) {
+  const list = document.getElementById('salesList');
+  const bundleEmoji = { 'Daily':'📅', '1 Hour':'⏱', 'Weekly':'📆', 'Monthly':'🗓' };
+  list.innerHTML = sales.map(s => `
+    <div class="sale-item">
+      <div class="sale-avatar">${bundleEmoji[s.bundle] || '📶'}</div>
+      <div class="sale-info">
+        <div class="sale-phone">${s.phone}</div>
+        <div class="sale-meta">
+          <span class="sale-status ${s.status}"></span>
+          ${s.bundle} bundle
+        </div>
+      </div>
+      <div class="sale-right">
+        <div class="sale-amount">+${s.amount}</div>
+        <div class="sale-time">${s.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Bundle breakdown
+function buildBreakdown(bundles) {
+  const total = Object.values(bundles).reduce((a, b) => a + b, 0);
+  const map = { '1hr': ['bar1hr','count1hr'], daily: ['barDaily','countDaily'],
+                weekly: ['barWeekly','countWeekly'], monthly: ['barMonthly','countMonthly'] };
+  Object.entries(map).forEach(([key, [barId, countId]]) => {
+    const pct = total ? Math.round((bundles[key] / total) * 100) : 0;
+    setTimeout(() => {
+      document.getElementById(barId).style.width = pct + '%';
+      document.getElementById(countId).textContent = bundles[key] + ' sales';
+    }, 200);
+  });
+}
+
+// ── Load period data
+function loadData(period) {
+  const d = DATA[period];
+  animateCount(document.getElementById('totalRevenue'), d.revenue);
+  animateCount(document.getElementById('totalSales'), d.sales);
+  animateCount(document.getElementById('avgSale'), d.avg, 'Ksh ');
+  document.getElementById('peakHour').textContent = d.peak;
+  animateCount(document.getElementById('vouchersToday'), d.vouchers);
+  animateCount(document.getElementById('activeNow'), d.active);
+  animateCount(document.getElementById('uniqueUsers'), d.unique);
+  animateCount(document.getElementById('failedPayments'), d.failed);
+  animateCount(document.getElementById('devicesOnline'), d.devices);
+  document.getElementById('revChange').textContent = d.change;
+  document.getElementById('bestDay').textContent = d.bestDay;
+  buildChart(d.bars);
+  buildBreakdown(d.bundles);
+  buildSalesList(d.sales_list);
+}
+
+// ── Period switcher
+function setPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadData(period);
+}
+
+// ── Simulate live new sale toast
+function simulateSale() {
+  const bundles = ['Ksh 50 (Daily)', 'Ksh 10 (1 Hour)', 'Ksh 250 (Weekly)', 'Ksh 800 (Monthly)'];
+  const sale = bundles[Math.floor(Math.random() * bundles.length)];
+  const toast = document.getElementById('toast');
+  toast.textContent = `💰 New sale: ${sale}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+
+  // Update active count
+  const activeEl = document.getElementById('activeNow');
+  const current = parseInt(activeEl.textContent) || 0;
+  activeEl.textContent = current + 1;
+}
+
+// ── Bottom nav
+document.querySelectorAll('.bnav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// ── INIT
+setGreeting();
+loadData('week');
+
+// Simulate a new sale notification every 15–30 seconds (demo)
+setInterval(simulateSale, 15000 + Math.random() * 15000);
+
+// In production, replace with:
+// const socket = new WebSocket('wss://yourserver.com');
+// socket.onmessage = (e) => { const sale = JSON.parse(e.data); showToast(sale); updateStats(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AutomateKE — Pay & Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #1a56db;
+    --accent2: #059669;
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --radius: 16px;
+  }
+
+  /* Override per business type via JS */
+  body[data-type="wifi"]    { --accent:#0ea5e9; --bg:#f0f9ff; }
+  body[data-type="hotel"]   { --accent:#7c3aed; --bg:#f5f3ff; }
+  body[data-type="parking"] { --accent:#ea580c; --bg:#fff7ed; }
+  body[data-type="shop"]    { --accent:#059669; --bg:#f0fdf4; }
+  body[data-type="rental"]  { --accent:#db2777; --bg:#fdf2f8; }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { min-height:100%; font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); }
+
+  body {
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    min-height:100vh; padding:16px;
+  }
+
+  .portal-card {
+    background:var(--card); border-radius:24px;
+    width:100%; max-width:380px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
+    overflow:hidden;
+  }
+
+  /* HEADER */
+  .p-header {
+    background:var(--accent); padding:24px 20px 20px;
+    text-align:center; position:relative; overflow:hidden;
+  }
+
+  .p-header::before {
+    content:''; position:absolute; bottom:-30px; left:50%;
+    transform:translateX(-50%); width:200px; height:60px;
+    background:rgba(255,255,255,0.08); border-radius:50%;
+  }
+
+  .p-biz-icon {
+    width:56px; height:56px; border-radius:16px;
+    background:rgba(255,255,255,0.2); display:flex;
+    align-items:center; justify-content:center;
+    font-size:1.6rem; margin:0 auto 10px; position:relative; z-index:1;
+  }
+
+  .p-biz-name { font-size:1.2rem; font-weight:900; color:#fff; position:relative; z-index:1; }
+  .p-biz-sub  { font-size:0.72rem; color:rgba(255,255,255,0.7); margin-top:3px; position:relative; z-index:1; }
+
+  /* TABS */
+  .p-tabs {
+    display:flex; background:#f8fafc; margin:16px 16px 0;
+    border-radius:10px; padding:4px;
+  }
+
+  .p-tab {
+    flex:1; padding:9px 6px; border:none; background:transparent;
+    border-radius:7px; font-family:'Nunito',sans-serif; font-size:0.8rem;
+    font-weight:800; color:var(--muted); cursor:pointer; transition:all 0.2s;
+  }
+
+  .p-tab.active { background:#fff; color:var(--text); box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+
+  /* PANELS */
+  .p-panels { padding:16px; }
+  .p-panel { display:none; }
+  .p-panel.active { display:block; animation:fadeIn 0.25s ease; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* BUNDLE GRID */
+  .bundle-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+
+  .bundle-opt {
+    border:2px solid var(--border); border-radius:12px;
+    padding:12px 10px; cursor:pointer; text-align:center;
+    transition:all 0.2s; background:#fafafa; position:relative;
+  }
+
+  .bundle-opt:hover { border-color:var(--accent); }
+  .bundle-opt.sel {
+    border-color:var(--accent); background:rgba(26,86,219,0.04);
+    box-shadow:0 0 0 3px rgba(26,86,219,0.1);
+  }
+
+  .bundle-opt.sel::after {
+    content:'✓'; position:absolute; top:5px; right:8px;
+    font-size:0.65rem; font-weight:900; color:var(--accent);
+  }
+
+  .b-pop {
+    position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    background:var(--accent); color:#fff; font-size:0.58rem; font-weight:800;
+    padding:2px 8px; border-radius:20px; white-space:nowrap;
+  }
+
+  .b-dur { font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:3px; }
+  .b-price { font-size:1.2rem; font-weight:900; color:var(--text); }
+  .b-price span { font-size:0.65rem; font-weight:600; color:var(--muted); }
+  .b-detail { font-size:0.65rem; color:var(--accent); font-weight:700; margin-top:2px; }
+
+  /* INPUT */
+  .inp-label { font-size:0.72rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+
+  .inp-wrap { position:relative; margin-bottom:12px; }
+  .inp-wrap .ico { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:1rem; pointer-events:none; }
+
+  .p-input {
+    width:100%; background:#f8fafc; border:2px solid var(--border);
+    border-radius:10px; padding:12px 12px 12px 38px;
+    font-family:'Nunito',sans-serif; font-size:0.95rem; font-weight:700;
+    color:var(--text); outline:none; transition:border-color 0.2s;
+    -webkit-appearance:none;
+  }
+
+  .p-input:focus { border-color:var(--accent); background:#fff; }
+  .p-input::placeholder { color:#cbd5e1; font-weight:500; }
+
+  /* MPESA NOTE */
+  .mpesa-note {
+    background:#f0fdf4; border:1px solid #bbf7d0;
+    border-radius:8px; padding:9px 12px;
+    display:flex; align-items:center; gap:7px;
+    font-size:0.75rem; color:#166534; font-weight:700; margin-bottom:12px;
+  }
+
+  /* PAY BUTTON */
+  .pay-btn {
+    width:100%; padding:15px; background:var(--accent); color:#fff;
+    border:none; border-radius:12px; font-family:'Nunito',sans-serif;
+    font-weight:900; font-size:1rem; cursor:pointer;
+    transition:transform 0.2s, box-shadow 0.2s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+
+  .pay-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(26,86,219,0.3); }
+  .pay-btn:active { transform:scale(0.98); }
+  .pay-btn.loading { opacity:0.8; pointer-events:none; }
+
+  .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+  .pay-btn.loading .spinner { display:block; }
+  .pay-btn.loading .btn-txt { display:none; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* STATUS */
+  .status-msg { border-radius:8px; padding:9px 12px; font-size:0.8rem; font-weight:700; margin-bottom:10px; display:none; align-items:center; gap:6px; }
+  .status-msg.err { background:#fef2f2; border:1px solid #fecaca; color:#dc2626; display:flex; }
+
+  /* SUCCESS STATE */
+  .success-state { text-align:center; padding:8px 0; display:none; }
+
+  .tick-circle {
+    width:72px; height:72px; border-radius:50%;
+    background:linear-gradient(135deg, var(--accent2), #047857);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem; margin:0 auto 14px;
+    animation:popIn 0.4s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+
+  .success-state h3 { font-size:1.2rem; font-weight:900; margin-bottom:6px; }
+  .success-state p { font-size:0.82rem; color:var(--muted); line-height:1.6; margin-bottom:16px; }
+
+  .result-box {
+    background:#f8fafc; border-radius:12px; padding:14px;
+    margin-bottom:14px; text-align:center;
+  }
+
+  .result-label { font-size:0.68rem; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .result-code { font-size:2rem; font-weight:900; color:var(--accent); letter-spacing:4px; }
+  .result-sub { font-size:0.7rem; color:var(--muted); margin-top:4px; }
+
+  .action-big {
+    width:100%; padding:14px; background:var(--accent2); color:#fff;
+    border:none; border-radius:12px; font-family:'Nunito',sans-serif;
+    font-weight:900; font-size:1rem; cursor:pointer; margin-bottom:8px;
+    transition:opacity 0.2s;
+  }
+
+  .action-big:hover { opacity:0.9; }
+
+  /* FOOTER */
+  .p-footer {
+    border-top:1px solid var(--border); padding:12px 16px;
+    display:flex; justify-content:center; gap:20px;
+  }
+
+  .p-footer a { font-size:0.72rem; color:var(--muted); text-decoration:none; font-weight:700; }
+  .p-footer a:hover { color:var(--accent); }
+
+  /* VOUCHER PANEL */
+  .voucher-input {
+    text-transform:uppercase; letter-spacing:4px;
+    font-size:1.3rem !important; text-align:center;
+    padding-left:12px !important;
+  }
+</style>
+</head>
+<body data-type="wifi">
+
+<div class="portal-card">
+
+  <!-- HEADER — filled by JS based on business type -->
+  <div class="p-header">
+    <div class="p-biz-icon" id="bizIcon">📶</div>
+    <div class="p-biz-name" id="bizName">SwiftZone WiFi</div>
+    <div class="p-biz-sub" id="bizSub">Fast & Affordable Internet</div>
+  </div>
+
+  <!-- TABS — shown only for WiFi (voucher model) -->
+  <div class="p-tabs" id="portalTabs">
+    <button class="p-tab active" onclick="switchTab('buy',this)">💳 Buy Bundle</button>
+    <button class="p-tab" onclick="switchTab('voucher',this)">🎟 Enter Code</button>
+  </div>
+
+  <div class="p-panels">
+
+    <!-- BUY PANEL -->
+    <div class="p-panel active" id="panel-buy">
+      <div id="buyForm">
+        <div class="bundle-grid" id="bundleGrid"></div>
+        <div class="mpesa-note">📲 You'll get an M-Pesa prompt on your phone</div>
+        <div class="status-msg err" id="buyErr"></div>
+        <div class="inp-label">M-Pesa Phone Number</div>
+        <div class="inp-wrap">
+          <span class="ico">📱</span>
+          <input class="p-input" type="tel" id="buyPhone" placeholder="0712 345 678" maxlength="13">
+        </div>
+        <button class="pay-btn" id="payBtn" onclick="pay()">
+          <div class="spinner"></div>
+          <span class="btn-txt" id="payBtnTxt">💳 Pay with M-Pesa</span>
+        </button>
+      </div>
+      <div class="success-state" id="buySuccess">
+        <div class="tick-circle">📲</div>
+        <h3>Check Your Phone!</h3>
+        <p>An M-Pesa prompt has been sent.<br>Enter your PIN to complete payment.</p>
+        <div class="result-box" id="resultBox" style="display:none">
+          <div class="result-label" id="resultLabel">Your Code</div>
+          <div class="result-code" id="resultCode">—</div>
+          <div class="result-sub">Screenshot this!</div>
+        </div>
+        <button class="action-big" id="successActionBtn" onclick="handleSuccessAction()">✅ Done</button>
+      </div>
+    </div>
+
+    <!-- VOUCHER PANEL (WiFi only) -->
+    <div class="p-panel" id="panel-voucher">
+      <div id="voucherForm">
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:14px;line-height:1.5">
+          Already have a code? Enter it below to connect instantly.
+        </p>
+        <div class="status-msg err" id="vcErr"></div>
+        <div class="inp-label">Voucher Code</div>
+        <div class="inp-wrap">
+          <span class="ico">🎟</span>
+          <input class="p-input voucher-input" type="text" id="vcCode" placeholder="SW-0000" maxlength="10" oninput="fmtVoucher(this)">
+        </div>
+        <button class="pay-btn" id="vcBtn" onclick="redeemVoucher()" style="background:var(--accent)">
+          <div class="spinner"></div>
+          <span class="btn-txt">🔓 Connect Now</span>
+        </button>
+      </div>
+      <div class="success-state" id="vcSuccess">
+        <div class="tick-circle">✅</div>
+        <h3>You're Connected!</h3>
+        <p>Your session is active. Enjoy fast internet!</p>
+        <button class="action-big" onclick="window.location.href='https://www.google.com'">🌐 Start Browsing</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="p-footer">
+    <a href="#" onclick="wa()">💬 WhatsApp Help</a>
+    <a href="#" id="footerPhone">📞 Call Us</a>
+    <a href="#">📜 Terms</a>
+  </div>
+
+</div>
+
+<script>
+// ── BUSINESS CONFIG
+// In production: load from URL param ?client=API_KEY then fetch from server
+// e.g. fetch('/api/client-config?key=jak_abc123')
+const CONFIGS = {
+  wifi: {
+    type:'wifi', icon:'📶', name:'SwiftZone WiFi', sub:'Fast & Affordable Internet',
+    showVoucher:true, resultLabel:'Your WiFi Code', actionBtn:'🔓 Use Code Now',
+    phone:'+254700000000',
+    bundles:[
+      { id:'1hr',     label:'1 Hour',  price:10,  detail:'5 Mbps', popular:false },
+      { id:'daily',   label:'Daily',   price:50,  detail:'10 Mbps', popular:true },
+      { id:'weekly',  label:'Weekly',  price:250, detail:'15 Mbps', popular:false },
+      { id:'monthly', label:'Monthly', price:800, detail:'20 Mbps', popular:false },
+    ],
+  },
+  hotel: {
+    type:'hotel', icon:'🏨', name:'Riverside Hotel', sub:'Book Your Room Instantly',
+    showVoucher:false, resultLabel:'Booking Reference', actionBtn:'✅ Save Booking',
+    phone:'+254711000000',
+    bundles:[
+      { id:'single',  label:'Single',    price:2500, detail:'1 Guest', popular:false },
+      { id:'double',  label:'Double',    price:3500, detail:'2 Guests', popular:true },
+      { id:'suite',   label:'Suite',     price:6500, detail:'Luxury', popular:false },
+      { id:'conf',    label:'Conf Room', price:8000, detail:'20 pax', popular:false },
+    ],
+  },
+  parking: {
+    type:'parking', icon:'🚗', name:'CBD Parking', sub:'Pay & Park Instantly',
+    showVoucher:false, resultLabel:'Parking Ticket', actionBtn:'🚗 Show at Gate',
+    phone:'+254722000000',
+    bundles:[
+      { id:'1h',  label:'1 Hour',   price:50,  detail:'1 slot', popular:false },
+      { id:'4h',  label:'4 Hours',  price:100, detail:'1 slot', popular:true },
+      { id:'12h', label:'12 Hours', price:200, detail:'1 slot', popular:false },
+      { id:'24h', label:'Overnight',price:300, detail:'1 slot', popular:false },
+    ],
+  },
+  shop: {
+    type:'shop', icon:'🛒', name:'Mike Mattresses', sub:'Order & Pay with M-Pesa',
+    showVoucher:false, resultLabel:'Order Number', actionBtn:'📦 Track Order',
+    phone:'+254733000000',
+    bundles:[
+      { id:'single_m', label:'Single',  price:8500,  detail:'3×6 ft', popular:false },
+      { id:'double_m', label:'Double',  price:12500, detail:'4×6 ft', popular:true },
+      { id:'queen',    label:'Queen',   price:18000, detail:'5×6 ft', popular:false },
+      { id:'king',     label:'King',    price:24000, detail:'6×6 ft', popular:false },
+    ],
+  },
+};
+
+// ── DETECT BUSINESS TYPE
+// In production: ?type=wifi&key=API_KEY
+const params = new URLSearchParams(window.location.search);
+const type = params.get('type') || 'wifi';
+const cfg = CONFIGS[type] || CONFIGS.wifi;
+
+// ── INIT UI
+document.body.setAttribute('data-type', cfg.type);
+document.getElementById('bizIcon').textContent = cfg.icon;
+document.getElementById('bizName').textContent = cfg.name;
+document.getElementById('bizSub').textContent  = cfg.sub;
+document.getElementById('footerPhone').textContent = '📞 ' + cfg.phone;
+document.getElementById('successActionBtn').textContent = cfg.actionBtn;
+document.getElementById('resultLabel').textContent = cfg.resultLabel;
+
+// Show/hide voucher tab
+if (!cfg.showVoucher) {
+  document.getElementById('portalTabs').style.display = 'none';
+}
+
+// Build bundles
+document.getElementById('bundleGrid').innerHTML = cfg.bundles.map((b, i) => `
+  <div class="bundle-opt${i===1?' sel':''}" onclick="selBundle(this,'${b.id}',${b.price},'${b.label}')">
+    ${b.popular ? '<div class="b-pop">POPULAR</div>' : ''}
+    <div class="b-dur">${b.label}</div>
+    <div class="b-price">Ksh <b>${b.price.toLocaleString()}</b></div>
+    <div class="b-detail">${b.detail}</div>
+  </div>
+`).join('');
+
+// ── STATE
+let selected = { id: cfg.bundles[1]?.id, price: cfg.bundles[1]?.price, label: cfg.bundles[1]?.label };
+
+// ── BUNDLE SELECTION
+function selBundle(el, id, price, label) {
+  document.querySelectorAll('.bundle-opt').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  selected = { id, price, label };
+  document.getElementById('payBtnTxt').textContent = `💳 Pay Ksh ${price.toLocaleString()} with M-Pesa`;
+}
+
+// ── TABS
+function switchTab(name, btn) {
+  document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.p-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+// ── PAY
+function pay() {
+  const phone = document.getElementById('buyPhone').value.trim();
+  const errEl = document.getElementById('buyErr');
+  errEl.style.display = 'none';
+
+  if (!phone || phone.replace(/\s/g,'').length < 9) {
+    errEl.innerHTML = '⚠️ Enter a valid M-Pesa number'; errEl.style.display = 'flex'; return;
+  }
+
+  const btn = document.getElementById('payBtn');
+  btn.classList.add('loading');
+
+  // In production: POST /api/pay { apiKey, phone, bundleId: selected.id }
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    const code = generateCode();
+
+    document.getElementById('buyForm').style.display = 'none';
+    document.getElementById('buySuccess').style.display = 'block';
+
+    if (cfg.showVoucher) {
+      document.getElementById('resultCode').textContent = code;
+      document.getElementById('resultBox').style.display = 'block';
+    }
+
+    const refNo = 'QJH' + Math.random().toString(36).substr(2,5).toUpperCase();
+    if (!cfg.showVoucher) {
+      document.getElementById('resultCode').textContent = refNo;
+      document.getElementById('resultBox').style.display = 'block';
+    }
+  }, 2200);
+}
+
+// ── VOUCHER REDEEM
+function fmtVoucher(el) {
+  let v = el.value.replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  if (v.length > 2) v = v.slice(0,2)+'-'+v.slice(2,6);
+  el.value = v;
+}
+
+const DEMO_CODES = ['SW-K9P2','SW-3456','SW-DEMO','SW-TEST'];
+
+function redeemVoucher() {
+  const code = document.getElementById('vcCode').value.trim().toUpperCase();
+  const errEl = document.getElementById('vcErr');
+  errEl.style.display = 'none';
+
+  if (code.length < 6) {
+    errEl.innerHTML = '⚠️ Enter a valid voucher code'; errEl.style.display = 'flex'; return;
+  }
+
+  const btn = document.getElementById('vcBtn');
+  btn.classList.add('loading');
+
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    if (DEMO_CODES.includes(code) || code.startsWith('SW-')) {
+      document.getElementById('voucherForm').style.display = 'none';
+      document.getElementById('vcSuccess').style.display = 'block';
+    } else {
+      errEl.innerHTML = '❌ Invalid or expired code. Check and try again.';
+      errEl.style.display = 'flex';
+    }
+  }, 1600);
+}
+
+function handleSuccessAction() {
+  if (cfg.showVoucher) {
+    switchTab('voucher', document.querySelectorAll('.p-tab')[1]);
+    document.getElementById('vcCode').value = document.getElementById('resultCode').textContent;
+    setTimeout(redeemVoucher, 300);
+  } else {
+    alert('✅ ' + cfg.resultLabel + ': ' + document.getElementById('resultCode').textContent + '\n\nSaved! We will contact you shortly.\n📞 ' + cfg.phone);
+  }
+}
+
+function wa() { window.open('https://wa.me/' + cfg.phone.replace(/\+/,''), '_blank'); }
+
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const prefix = cfg.name.slice(0,2).toUpperCase();
+  let c = prefix + '-';
+  for (let i=0;i<4;i++) c += chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+</script>
+</body>
+</html>

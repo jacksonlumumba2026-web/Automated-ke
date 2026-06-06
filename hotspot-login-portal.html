@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SwiftZone WiFi — Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-from: #0a1628;
+    --bg-to: #0d2444;
+    --card: #ffffff;
+    --accent: #00b4d8;
+    --accent-dark: #0090b0;
+    --accent2: #00c896;
+    --danger: #ff4757;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --input-bg: #f9fafb;
+    --radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(145deg, var(--bg-from) 0%, var(--bg-to) 50%, #091e3a 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Animated background bubbles */
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(60px);
+    opacity: 0.15;
+  }
+
+  .bg-orb-1 {
+    width: 300px; height: 300px;
+    background: var(--accent);
+    top: -80px; left: -80px;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .bg-orb-2 {
+    width: 250px; height: 250px;
+    background: var(--accent2);
+    bottom: -60px; right: -60px;
+    animation: float 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+  }
+
+  /* Grid pattern overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.4),
+      0 1px 0 rgba(255,255,255,0.1) inset;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── HEADER ── */
+  .card-header {
+    background: linear-gradient(135deg, #0a1628, #0d2a4a);
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: 50%;
+    transform: translateX(-50%);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,180,216,0.15), transparent 70%);
+  }
+
+  .wifi-icon-wrap {
+    width: 60px; height: 60px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(0,180,216,0.2), rgba(0,180,216,0.05));
+    border: 1px solid rgba(0,180,216,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 1.6rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-name span { color: var(--accent); }
+
+  .network-name {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.5px;
+  }
+
+  /* Signal strength indicator */
+  .signal-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    justify-content: center;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .signal-bar div {
+    width: 5px;
+    background: var(--accent);
+    border-radius: 2px;
+    opacity: 0.3;
+  }
+
+  .signal-bar div:nth-child(1) { height: 6px; opacity: 1; }
+  .signal-bar div:nth-child(2) { height: 10px; opacity: 1; }
+  .signal-bar div:nth-child(3) { height: 14px; opacity: 1; }
+  .signal-bar div:nth-child(4) { height: 18px; opacity: 0.4; }
+  .signal-bar div:nth-child(5) { height: 22px; opacity: 0.2; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    background: #f3f4f6;
+    margin: 20px 20px 0;
+    border-radius: 10px;
+    padding: 4px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: #fff;
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* ── PANELS ── */
+  .panels { padding: 20px; }
+
+  .panel { display: none; }
+  .panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .input-wrap {
+    position: relative;
+    margin-bottom: 14px;
+  }
+
+  .input-wrap .icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  input[type="text"],
+  input[type="tel"] {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 13px 13px 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="tel"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.12);
+    background: #fff;
+  }
+
+  input::placeholder { color: #9ca3af; font-weight: 400; }
+
+  /* Voucher code input — big and clear */
+  .voucher-input {
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    text-align: center;
+    padding-left: 13px !important;
+  }
+
+  /* ── CONNECT BUTTON ── */
+  .btn-connect {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .btn-connect:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,180,216,0.35);
+  }
+
+  .btn-connect:active { transform: scale(0.98); }
+
+  .btn-connect.loading {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .btn-connect.loading .spinner { display: block; }
+  .btn-connect.loading .btn-text { display: none; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── BUY PANEL ── */
+  .bundle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .bundle-option {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+    background: var(--input-bg);
+  }
+
+  .bundle-option:hover {
+    border-color: var(--accent);
+    background: rgba(0,180,216,0.04);
+  }
+
+  .bundle-option.selected {
+    border-color: var(--accent);
+    background: rgba(0,180,216,0.06);
+    box-shadow: 0 0 0 3px rgba(0,180,216,0.1);
+  }
+
+  .bundle-option.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 0.65rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .bundle-popular {
+    position: absolute;
+    top: -8px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .bundle-duration {
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+
+  .bundle-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .bundle-price span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--muted);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .bundle-speed {
+    font-size: 0.68rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* ── MPESA NOTE ── */
+  .mpesa-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    font-size: 0.78rem;
+    color: #166534;
+  }
+
+  /* ── STATUS MESSAGES ── */
+  .status-msg {
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-msg.error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: var(--danger);
+    display: flex;
+  }
+
+  .status-msg.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    display: flex;
+  }
+
+  /* ── CONNECTED STATE ── */
+  .connected-state {
+    text-align: center;
+    padding: 12px 0 8px;
+    display: none;
+  }
+
+  .connected-state .check-circle {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), #00a076);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 2rem;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .connected-state h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .connected-state p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .session-info {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .session-info .info-item .val {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .session-info .info-item .lbl {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .btn-browse {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent2), #00a076);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-browse:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,200,150,0.3);
+  }
+
+  /* ── FOOTER ── */
+  .card-footer {
+    padding: 12px 20px 20px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 8px;
+  }
+
+  .footer-links a {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-brand {
+    font-size: 0.72rem;
+    color: #d1d5db;
+  }
+
+  /* ── HELP BUBBLE ── */
+  .help-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.4);
+    z-index: 100;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .help-btn:hover { transform: scale(1.1); }
+
+  /* ── MOBILE FINE-TUNING ── */
+  @media (max-width: 360px) {
+    .bundle-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .bundle-price { font-size: 1rem; }
+    .card-header { padding: 22px 20px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="wifi-icon-wrap">📶</div>
+    <div class="brand-name">Swift<span>Zone</span></div>
+    <div class="network-name">SWIFTZONE_FREE · Secure Network</div>
+    <div class="signal-bar">
+      <div></div><div></div><div></div><div></div><div></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('voucher', this)">🎟 Enter Voucher</button>
+    <button class="tab" onclick="switchTab('buy', this)">💳 Buy Bundle</button>
+  </div>
+
+  <!-- PANELS -->
+  <div class="panels">
+
+    <!-- VOUCHER PANEL -->
+    <div class="panel active" id="panel-voucher">
+
+      <div id="voucherForm">
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;line-height:1.5;">
+          Already have a voucher code? Enter it below to connect instantly.
+        </p>
+
+        <div id="voucherStatus" class="status-msg"></div>
+
+        <div class="field-label">Voucher Code</div>
+        <div class="input-wrap">
+          <span class="icon">🎟</span>
+          <input
+            type="text"
+            class="voucher-input"
+            id="voucherCode"
+            placeholder="SW-0000"
+            maxlength="10"
+            autocomplete="off"
+            oninput="formatVoucher(this)"
+          >
+        </div>
+
+        <div class="field-label">Your Phone (optional)</div>
+        <div class="input-wrap">
+          <span class="icon">📱</span>
+          <input type="tel" id="voucherPhone" placeholder="0712 345 678" maxlength="13">
+        </div>
+
+        <button class="btn-connect" id="voucherBtn" onclick="connectVoucher()">
+          <div class="spinner"></div>
+          <span class="btn-text">🔓 Connect Now</span>
+        </button>
+
+        <p style="font-size:0.73rem;color:var(--muted);text-align:center;margin-top:12px;">
+          Don't have a voucher? <a href="#" onclick="switchTabByName('buy')" style="color:var(--accent);font-weight:600;">Buy one here →</a>
+        </p>
+      </div>
+
+      <!-- Connected state -->
+      <div class="connected-state" id="voucherConnected">
+        <div class="check-circle">✅</div>
+        <h3>You're Connected!</h3>
+        <p>Your session is active. Enjoy fast, reliable internet.</p>
+        <div class="session-info">
+          <div class="info-item">
+            <div class="val" id="sessionTime">—</div>
+            <div class="lbl">Time Left</div>
+          </div>
+          <div class="info-item">
+            <div class="val">10 Mbps</div>
+            <div class="lbl">Speed</div>
+          </div>
+          <div class="info-item">
+            <div class="val">Active</div>
+            <div class="lbl">Status</div>
+          </div>
+          <div class="info-item">
+            <div class="val" id="sessionPlan">—</div>
+            <div class="lbl">Plan</div>
+          </div>
+        </div>
+        <button class="btn-browse" onclick="window.location.href='https://www.google.com'">
+          🌐 Start Browsing
+        </button>
+      </div>
+
+    </div>
+
+    <!-- BUY PANEL -->
+    <div class="panel" id="panel-buy">
+
+      <div id="buyForm">
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
+          Choose your bundle and pay with M-Pesa. You'll get a voucher code instantly.
+        </p>
+
+        <!-- Bundle options -->
+        <div class="bundle-grid">
+          <div class="bundle-option" onclick="selectBundle(this, '1hr', 10, '1 Hour')" id="b1">
+            <div class="bundle-duration">⏱ 1 Hour</div>
+            <div class="bundle-price">Ksh <span></span>10</div>
+            <div class="bundle-speed">5 Mbps</div>
+          </div>
+          <div class="bundle-option selected" onclick="selectBundle(this, 'daily', 50, 'Daily')" id="b2">
+            <div class="bundle-popular">POPULAR</div>
+            <div class="bundle-duration">📅 24 Hours</div>
+            <div class="bundle-price">Ksh <span></span>50</div>
+            <div class="bundle-speed">10 Mbps</div>
+          </div>
+          <div class="bundle-option" onclick="selectBundle(this, 'weekly', 250, 'Weekly')" id="b3">
+            <div class="bundle-duration">📆 7 Days</div>
+            <div class="bundle-price">Ksh <span></span>250</div>
+            <div class="bundle-speed">15 Mbps</div>
+          </div>
+          <div class="bundle-option" onclick="selectBundle(this, 'monthly', 800, 'Monthly')" id="b4">
+            <div class="bundle-duration">🗓 30 Days</div>
+            <div class="bundle-price">Ksh <span></span>800</div>
+            <div class="bundle-speed">20 Mbps</div>
+          </div>
+        </div>
+
+        <div class="mpesa-note">
+          <span>📲</span>
+          <span>You'll receive an M-Pesa STK push on your phone</span>
+        </div>
+
+        <div id="buyStatus" class="status-msg"></div>
+
+        <div class="field-label">M-Pesa Phone Number</div>
+        <div class="input-wrap">
+          <span class="icon">📱</span>
+          <input type="tel" id="buyPhone" placeholder="0712 345 678" maxlength="13">
+        </div>
+
+        <button class="btn-connect" id="buyBtn" onclick="buyBundle()">
+          <div class="spinner"></div>
+          <span class="btn-text">💳 Pay with M-Pesa</span>
+        </button>
+      </div>
+
+      <!-- Buy success state -->
+      <div class="connected-state" id="buySuccess">
+        <div class="check-circle">📲</div>
+        <h3>Check Your Phone!</h3>
+        <p>An M-Pesa prompt has been sent to your phone. Enter your PIN to complete payment. Your voucher will appear here automatically.</p>
+
+        <div style="background:#f9fafb;border-radius:12px;padding:16px;margin-bottom:16px;">
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:6px;">YOUR VOUCHER CODE</div>
+          <div id="generatedVoucher" style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);letter-spacing:6px;">—</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Screenshot this code!</div>
+        </div>
+
+        <button class="btn-browse" onclick="useVoucher()">
+          🔓 Use This Code Now
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="card-footer">
+    <div class="footer-links">
+      <a href="tel:+254700000000">📞 Call Support</a>
+      <a href="https://wa.me/254700000000">💬 WhatsApp</a>
+      <a href="#" onclick="alert('Terms: Pay only for what you use. No refunds on active sessions.')">Terms</a>
+    </div>
+    <div class="footer-brand">SwiftZone WiFi · Powered by Jackson Dev</div>
+  </div>
+
+</div>
+
+<!-- HELP BUTTON -->
+<button class="help-btn" onclick="window.open('https://wa.me/254700000000','_blank')" title="WhatsApp Support">
+  💬
+</button>
+
+<script>
+  // ── Tab switching
+  function switchTab(name, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  function switchTabByName(name) {
+    const tabs = document.querySelectorAll('.tab');
+    const idx = name === 'buy' ? 1 : 0;
+    switchTab(name, tabs[idx]);
+  }
+
+  // ── Voucher formatting: auto-add dash
+  function formatVoucher(input) {
+    let val = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    if (val.length > 2) val = val.slice(0, 2) + '-' + val.slice(2, 6);
+    input.value = val;
+  }
+
+  // ── Bundle selection
+  let selectedBundle = { id: 'daily', price: 50, label: 'Daily' };
+
+  function selectBundle(el, id, price, label) {
+    document.querySelectorAll('.bundle-option').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedBundle = { id, price, label };
+  }
+
+  // ── Demo voucher codes (replace with real MikroTik API in production)
+  const demoCodes = {
+    'SW-1234': { plan: 'Daily', time: '24 Hours' },
+    'SW-5678': { plan: '1 Hour', time: '1 Hour' },
+    'SW-9012': { plan: 'Weekly', time: '7 Days' },
+    'SW-3456': { plan: 'Monthly', time: '30 Days' },
+  };
+
+  // ── Connect with voucher
+  function connectVoucher() {
+    const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+    const btn = document.getElementById('voucherBtn');
+    const status = document.getElementById('voucherStatus');
+
+    status.className = 'status-msg';
+    status.style.display = 'none';
+
+    if (!code || code.length < 6) {
+      showStatus('voucherStatus', 'error', '⚠️ Please enter a valid voucher code.');
+      return;
+    }
+
+    // Loading state
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+      btn.classList.remove('loading');
+
+      // Check code (demo logic — replace with MikroTik API call)
+      const match = demoCodes[code];
+
+      if (match) {
+        document.getElementById('voucherForm').style.display = 'none';
+        document.getElementById('sessionTime').textContent = match.time;
+        document.getElementById('sessionPlan').textContent = match.plan;
+        document.getElementById('voucherConnected').style.display = 'block';
+      } else {
+        showStatus('voucherStatus', 'error', '❌ Invalid or expired voucher code. Please check and try again.');
+      }
+    }, 1800);
+  }
+
+  // ── Buy bundle
+  function buyBundle() {
+    const phone = document.getElementById('buyPhone').value.trim();
+    const btn = document.getElementById('buyBtn');
+
+    if (!phone || phone.replace(/\s/g,'').length < 9) {
+      showStatus('buyStatus', 'error', '⚠️ Please enter your M-Pesa phone number.');
+      return;
+    }
+
+    btn.classList.add('loading');
+
+    // Simulate M-Pesa STK push (replace with real Daraja API call)
+    setTimeout(() => {
+      btn.classList.remove('loading');
+
+      // Generate a demo voucher code
+      const code = 'SW-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+      document.getElementById('generatedVoucher').textContent = code;
+      document.getElementById('buyForm').style.display = 'none';
+      document.getElementById('buySuccess').style.display = 'block';
+
+      // Store in demoCodes so it can be used immediately
+      demoCodes[code] = { plan: selectedBundle.label, time: selectedBundle.label === '1hr' ? '1 Hour' : selectedBundle.label === 'Daily' ? '24 Hours' : selectedBundle.label === 'Weekly' ? '7 Days' : '30 Days' };
+
+    }, 2500);
+  }
+
+  // ── Use generated voucher immediately
+  function useVoucher() {
+    const code = document.getElementById('generatedVoucher').textContent;
+    switchTabByName('voucher');
+    document.getElementById('voucherCode').value = code;
+    setTimeout(() => connectVoucher(), 300);
+  }
+
+  // ── Helper: show status
+  function showStatus(id, type, msg) {
+    const el = document.getElementById(id);
+    el.className = 'status-msg ' + type;
+    el.innerHTML = msg;
+    el.style.display = 'flex';
+  }
+
+  // ── Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const activePanel = document.querySelector('.panel.active').id;
+      if (activePanel === 'panel-voucher') connectVoucher();
+      else buyBundle();
+    }
+  });
+</script>
+</body>
+</html>

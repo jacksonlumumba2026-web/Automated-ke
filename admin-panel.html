@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutomateKE — Super Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05070a;
+    --surface: #0a0f14;
+    --card: #0d1520;
+    --border: rgba(255,255,255,0.06);
+    --accent: #3b82f6;
+    --accent2: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #4a5568;
+    --muted2: #718096;
+    --radius: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Bricolage Grotesque', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* LOGIN */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.08), transparent 60%);
+  }
+
+  .login-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+
+  .login-logo {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .login-box h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .login-box p { font-size: 0.82rem; color: var(--muted2); margin-bottom: 28px; }
+
+  .login-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .login-input:focus { border-color: var(--accent); }
+
+  .login-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .login-btn:hover { opacity: 0.9; }
+
+  .login-error { color: var(--red); font-size: 0.8rem; margin-top: 8px; }
+
+  /* DASHBOARD */
+  .dashboard { display: none; }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+  }
+
+  .sidebar-logo {
+    padding: 20px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  .sidebar-logo h1 span { color: var(--accent); }
+
+  .sidebar-logo p { font-size: 0.68rem; color: var(--muted2); margin-top: 2px; }
+
+  .sidebar-nav { padding: 12px 10px; flex: 1; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted2);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.12); color: var(--accent); }
+  .nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .admin-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .admin-avatar {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .admin-info .name { font-size: 0.8rem; font-weight: 700; }
+  .admin-info .role { font-size: 0.65rem; color: var(--muted2); }
+
+  /* MAIN CONTENT */
+  .main-content {
+    margin-left: 220px;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .topbar h2 { font-size: 1.3rem; font-weight: 800; }
+  .topbar p { font-size: 0.78rem; color: var(--muted2); margin-top: 2px; }
+
+  .topbar-actions { display: flex; gap: 10px; }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+  .btn-danger { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  .btn-success { background: rgba(16,185,129,0.1); color: var(--accent2); border: 1px solid rgba(16,185,129,0.2); }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+
+  .kpi-label { font-size: 0.7rem; color: var(--muted2); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+  .kpi-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+
+  .kpi-val.blue { color: var(--accent); }
+  .kpi-val.green { color: var(--accent2); }
+  .kpi-val.yellow { color: var(--yellow); }
+  .kpi-val.red { color: var(--red); }
+
+  .kpi-change { font-size: 0.72rem; color: var(--muted2); }
+  .kpi-change .up { color: var(--accent2); }
+  .kpi-change .down { color: var(--red); }
+
+  /* GRID LAYOUT */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+  /* CHART CARD */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .chart-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 16px; }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 100px;
+  }
+
+  .b-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+
+  .b-bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--accent), rgba(59,130,246,0.3));
+    transition: height 0.6s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .b-label { font-size: 0.58rem; color: var(--muted2); }
+
+  /* TABLE */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-header h3 { font-weight: 700; font-size: 0.9rem; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    padding: 10px 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.01);
+  }
+
+  td {
+    padding: 12px 20px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .badge-green { background: rgba(16,185,129,0.1); color: var(--accent2); }
+  .badge-red { background: rgba(239,68,68,0.1); color: var(--red); }
+  .badge-yellow { background: rgba(245,158,11,0.1); color: var(--yellow); }
+  .badge-blue { background: rgba(59,130,246,0.1); color: var(--accent); }
+
+  /* BUSINESS TYPE ICONS */
+  .btype { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; }
+
+  /* MRR BREAKDOWN */
+  .mrr-list { padding: 4px 0; }
+
+  .mrr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+
+  .mrr-row:last-child { border-bottom: none; }
+  .mrr-row .name { font-weight: 600; }
+  .mrr-row .plan { font-size: 0.68rem; color: var(--muted2); margin-top: 1px; }
+  .mrr-row .amount { font-weight: 700; color: var(--accent2); font-family: 'Geist Mono', monospace; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.97);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: scale(1); }
+
+  .modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+  .modal p { font-size: 0.78rem; color: var(--muted2); margin-bottom: 20px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { font-size: 0.72rem; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px; }
+
+  .field input, .field select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+  .field select option { background: var(--card); }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+  /* LOG OUT */
+  .logout-btn {
+    background: none; border: none;
+    color: var(--muted2); font-size: 0.75rem;
+    cursor: pointer; padding: 4px 0;
+    font-family: inherit;
+    transition: color 0.2s;
+  }
+
+  .logout-btn:hover { color: var(--red); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .page.active { animation: fadeIn 0.3s ease; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .sidebar { width: 180px; }
+    .main-content { margin-left: 180px; }
+  }
+
+  @media (max-width: 600px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; padding: 16px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">⚡</div>
+    <h2>AutomateKE Admin</h2>
+    <p>Jackson's control centre — all clients, all revenue</p>
+    <input type="password" class="login-input" id="adminPassword" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()">Sign In →</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dashboard" id="dashboard">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Automate<span>KE</span></h1>
+      <p>Super Admin Panel</p>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showPage('overview', this)"><span class="icon">📊</span> Overview</button>
+      <button class="nav-item" onclick="showPage('clients', this)"><span class="icon">🏢</span> Clients</button>
+      <button class="nav-item" onclick="showPage('transactions', this)"><span class="icon">💳</span> Transactions</button>
+      <button class="nav-item" onclick="showPage('revenue', this)"><span class="icon">💰</span> My Revenue</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-tag">
+        <div class="admin-avatar">JL</div>
+        <div class="admin-info">
+          <div class="name">Jackson</div>
+          <div class="role">Super Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()" style="margin-top:10px">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- ── OVERVIEW PAGE ── -->
+    <div class="page active" id="page-overview">
+      <div class="topbar">
+        <div>
+          <h2>Platform Overview</h2>
+          <p id="overviewDate"></p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="showPage('clients', document.querySelectorAll('.nav-item')[1]); openAddClient()">+ Add Client</button>
+        </div>
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">My Monthly Income</div>
+          <div class="kpi-val green" id="kpiMRR">Ksh 0</div>
+          <div class="kpi-change"><span class="up">↑ Growing</span> with every client</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Clients</div>
+          <div class="kpi-val blue" id="kpiClients">0</div>
+          <div class="kpi-change">Paying monthly</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Platform Transactions</div>
+          <div class="kpi-val yellow" id="kpiTxns">0</div>
+          <div class="kpi-change">All clients combined</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Processed</div>
+          <div class="kpi-val" id="kpiVolume">Ksh 0</div>
+          <div class="kpi-change">Through your platform</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- Revenue Chart -->
+        <div class="chart-card">
+          <div class="chart-title">Client Revenue (Last 7 days)</div>
+          <div class="bar-chart" id="overviewChart"></div>
+        </div>
+
+        <!-- MRR Breakdown -->
+        <div class="chart-card">
+          <div class="chart-title">Your Monthly Income</div>
+          <div class="mrr-list" id="mrrList"></div>
+        </div>
+      </div>
+
+      <!-- Recent transactions across all clients -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Live Transactions (All Clients)</h3>
+          <span style="font-size:0.72rem;color:var(--muted2)" id="liveTag">● Simulated</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Customer</th>
+              <th>Bundle</th>
+              <th>Amount</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentTxnTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CLIENTS PAGE ── -->
+    <div class="page" id="page-clients">
+      <div class="topbar">
+        <div><h2>Clients</h2><p>All businesses on your platform</p></div>
+        <button class="btn btn-primary" onclick="openAddClient()">+ Add New Client</button>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Business</th>
+              <th>Type</th>
+              <th>Plan</th>
+              <th>Monthly Fee</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── TRANSACTIONS PAGE ── -->
+    <div class="page" id="page-transactions">
+      <div class="topbar">
+        <div><h2>All Transactions</h2><p>Every M-Pesa payment across all clients</p></div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Customer</th>
+              <th>Bundle</th>
+              <th>Amount</th>
+              <th>M-Pesa Ref</th>
+              <th>Voucher</th>
+              <th>Status</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="txnTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── MY REVENUE PAGE ── -->
+    <div class="page" id="page-revenue">
+      <div class="topbar">
+        <div><h2>My Revenue</h2><p>Your setup fees + monthly income</p></div>
+      </div>
+      <div class="kpi-grid" style="grid-template-columns: repeat(3,1fr)">
+        <div class="kpi-card">
+          <div class="kpi-label">Monthly Recurring (MRR)</div>
+          <div class="kpi-val green" id="revMRR">Ksh 0</div>
+          <div class="kpi-change">Every month, guaranteed</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Setup Fees Earned</div>
+          <div class="kpi-val yellow" id="revSetup">Ksh 0</div>
+          <div class="kpi-change">One-time per client</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Projected Annual</div>
+          <div class="kpi-val blue" id="revAnnual">Ksh 0</div>
+          <div class="kpi-change">MRR × 12</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><h3>Revenue Breakdown by Client</h3></div>
+        <table>
+          <thead>
+            <tr><th>Client</th><th>Type</th><th>Plan</th><th>Monthly Fee</th><th>Annual Value</th><th>Status</th></tr>
+          </thead>
+          <tbody id="revenueTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD CLIENT MODAL -->
+<div class="modal-overlay" id="addClientModal">
+  <div class="modal">
+    <h3>Add New Client</h3>
+    <p>Set up a new business on the AutomateKE platform</p>
+
+    <div class="field-row">
+      <div class="field"><label>Business Name</label><input type="text" id="f_name" placeholder="SwiftZone WiFi"></div>
+      <div class="field"><label>Business Type</label>
+        <select id="f_type">
+          <option value="wifi">📶 WiFi Hotspot</option>
+          <option value="hotel">🏨 Hotel / Guesthouse</option>
+          <option value="parking">🚗 Parking</option>
+          <option value="shop">🛒 Shop / E-commerce</option>
+          <option value="rental">🏠 Rental / Airbnb</option>
+          <option value="custom">⚙️ Custom</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Owner Name</label><input type="text" id="f_owner" placeholder="John Kamau"></div>
+      <div class="field"><label>Owner Phone</label><input type="tel" id="f_phone" placeholder="0712345678"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Email (login)</label><input type="email" id="f_email" placeholder="john@swiftzone.co.ke"></div>
+      <div class="field"><label>Password</label><input type="password" id="f_password" placeholder="Set login password"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Plan</label>
+        <select id="f_plan" onchange="updatePlanPrice()">
+          <option value="starter">Starter</option>
+          <option value="growth">Growth</option>
+          <option value="pro">Pro</option>
+        </select>
+      </div>
+      <div class="field"><label>Monthly Fee (Ksh)</label><input type="number" id="f_planprice" value="2000"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Setup Fee (Ksh)</label><input type="number" id="f_setup" value="15000"></div>
+      <div class="field"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addClient()">Create Client →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DEMO DATA (replace all fetch() calls with real API calls to your backend)
+const DEMO = {
+  overview: {
+    mrr: 22000, clients: 8, txns: 1847, volume: 284600,
+  },
+  clients: [
+    { id:1, name:'SwiftZone WiFi', type:'wifi', plan:'growth', fee:3000, active:true, txns:631, revenue:28400 },
+    { id:2, name:'Riverside Hotel', type:'hotel', plan:'pro', fee:5000, active:true, txns:284, revenue:142000 },
+    { id:3, name:'Nairobi Parking CBD', type:'parking', plan:'starter', fee:2000, active:true, txns:412, revenue:20600 },
+    { id:4, name:'Mike Mattresses', type:'shop', plan:'starter', fee:2000, active:true, txns:89, revenue:44500 },
+    { id:5, name:'Westlands Hotspot', type:'wifi', plan:'starter', fee:2000, active:false, txns:231, revenue:10350 },
+    { id:6, name:'Safari Guesthouse', type:'hotel', plan:'growth', fee:3000, active:true, txns:184, revenue:92000 },
+    { id:7, name:'Karen Parking', type:'parking', plan:'starter', fee:2000, active:true, txns:98, revenue:4900 },
+    { id:8, name:'Eastleigh Shop', type:'shop', plan:'growth', fee:3000, active:true, txns:118, revenue:59000 },
+  ],
+  transactions: [
+    { client:'SwiftZone WiFi', phone:'0712***678', bundle:'Daily WiFi', amount:50, ref:'QJH7R2K', voucher:'SW-K9P2', status:'success', time:'2m ago' },
+    { client:'Riverside Hotel', phone:'0798***234', bundle:'Room Booking', amount:3500, ref:'PKL8S4T', voucher:'—', status:'success', time:'8m ago' },
+    { client:'Nairobi Parking', phone:'0733***891', bundle:'12 Hours', amount:200, ref:'MNQ9U5V', voucher:'PKT-XR72', status:'success', time:'15m ago' },
+    { client:'SwiftZone WiFi', phone:'0756***445', bundle:'Weekly WiFi', amount:250, ref:'ABD3W6X', voucher:'SW-P3MK', status:'success', time:'22m ago' },
+    { client:'Mike Mattresses', phone:'0711***302', bundle:'King Size', amount:8500, ref:'CDE4Y7Z', voucher:'—', status:'success', time:'45m ago' },
+    { client:'Safari Guesthouse', phone:'0724***770', bundle:'2 Nights', amount:4000, ref:'FGH5Z8A', voucher:'—', status:'success', time:'1h ago' },
+    { client:'Westlands Hotspot', phone:'0700***123', bundle:'1 Hour WiFi', amount:10, ref:'—', voucher:'—', status:'failed', time:'2h ago' },
+    { client:'Karen Parking', phone:'0745***987', bundle:'4 Hours', amount:100, ref:'IJK6B9C', voucher:'PKT-MN41', status:'success', time:'3h ago' },
+  ],
+  chart: [120,180,95,240,310,280,190],
+  chartLabels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+};
+
+const PLAN_PRICES = { starter: 2000, growth: 3000, pro: 5000 };
+const TYPE_EMOJI = { wifi:'📶', hotel:'🏨', parking:'🚗', shop:'🛒', rental:'🏠', custom:'⚙️' };
+
+let token = localStorage.getItem('adminToken');
+
+// ── AUTH
+function login() {
+  const pw = document.getElementById('adminPassword').value;
+  // In production: POST /admin/login
+  if (pw === 'admin123') {   // Demo password — change in production
+    token = 'demo_token';
+    localStorage.setItem('adminToken', token);
+    showDashboard();
+  } else {
+    document.getElementById('loginError').textContent = 'Wrong password. Try again.';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('adminToken');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showDashboard() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadOverview();
+  loadClients();
+  loadTransactions();
+  loadRevenue();
+  document.getElementById('overviewDate').textContent =
+    new Date().toLocaleDateString('en-KE', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+// Auto-login if token exists
+if (token) showDashboard();
+
+// ── PAGE NAVIGATION
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── LOAD OVERVIEW
+function loadOverview() {
+  const d = DEMO.overview;
+  animCount(document.getElementById('kpiMRR'), d.mrr, 'Ksh ');
+  animCount(document.getElementById('kpiClients'), d.clients);
+  animCount(document.getElementById('kpiTxns'), d.txns);
+  animCount(document.getElementById('kpiVolume'), d.volume, 'Ksh ');
+
+  // Chart
+  const chart = document.getElementById('overviewChart');
+  const max = Math.max(...DEMO.chart);
+  chart.innerHTML = DEMO.chart.map((v, i) => `
+    <div class="b-wrap">
+      <div class="b-bar" style="height:${Math.round(v/max*100)}%;opacity:${i===6?1:0.6}"></div>
+      <div class="b-label">${DEMO.chartLabels[i]}</div>
+    </div>
+  `).join('');
+
+  // MRR list
+  const active = DEMO.clients.filter(c => c.active);
+  document.getElementById('mrrList').innerHTML = active.map(c => `
+    <div class="mrr-row">
+      <div>
+        <div class="name">${TYPE_EMOJI[c.type]} ${c.name}</div>
+        <div class="plan">${c.plan} plan</div>
+      </div>
+      <div class="amount">Ksh ${c.fee.toLocaleString()}/mo</div>
+    </div>
+  `).join('');
+
+  // Recent txns
+  document.getElementById('recentTxnTable').innerHTML = DEMO.transactions.slice(0,6).map(t => `
+    <tr>
+      <td><strong>${t.client}</strong></td>
+      <td style="font-family:'Geist Mono',monospace;font-size:0.78rem">${t.phone}</td>
+      <td>${t.bundle}</td>
+      <td style="font-weight:700;color:var(--accent2)">Ksh ${t.amount.toLocaleString()}</td>
+      <td>${t.time}</td>
+      <td><span class="badge badge-${t.status==='success'?'green':'red'}">${t.status==='success'?'✓ Paid':'✗ Failed'}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ── LOAD CLIENTS
+function loadClients() {
+  document.getElementById('clientTable').innerHTML = DEMO.clients.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong><br><span style="font-size:0.7rem;color:var(--muted2)">${c.txns} transactions · Ksh ${c.revenue.toLocaleString()} volume</span></td>
+      <td><span class="btype">${TYPE_EMOJI[c.type]} ${c.type.charAt(0).toUpperCase()+c.type.slice(1)}</span></td>
+      <td><span class="badge badge-blue">${c.plan}</span></td>
+      <td style="font-weight:700;color:var(--accent2)">Ksh ${c.fee.toLocaleString()}/mo</td>
+      <td><span class="badge ${c.active?'badge-green':'badge-red'}">${c.active?'● Active':'● Suspended'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:0.72rem" onclick="alert('Configure: ${c.name}')">Configure</button>
+          <button class="btn ${c.active?'btn-danger':'btn-success'}" style="padding:5px 10px;font-size:0.72rem"
+            onclick="toggleClient(${c.id})">${c.active?'Suspend':'Activate'}</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── LOAD TRANSACTIONS
+function loadTransactions() {
+  document.getElementById('txnTable').innerHTML = DEMO.transactions.map(t => `
+    <tr>
+      <td><strong>${t.client}</strong></td>
+      <td style="font-family:'Geist Mono',monospace;font-size:0.78rem">${t.phone}</td>
+      <td>${t.bundle}</td>
+      <td style="font-weight:700;color:var(--accent2)">Ksh ${t.amount.toLocaleString()}</td>
+      <td style="font-family:'Geist Mono',monospace;font-size:0.75rem;color:var(--muted2)">${t.ref}</td>
+      <td style="font-family:'Geist Mono',monospace;font-size:0.75rem;color:var(--accent)">${t.voucher}</td>
+      <td><span class="badge badge-${t.status==='success'?'green':'red'}">${t.status==='success'?'✓ Success':'✗ Failed'}</span></td>
+      <td style="color:var(--muted2);font-size:0.75rem">${t.time}</td>
+    </tr>
+  `).join('');
+}
+
+// ── LOAD REVENUE
+function loadRevenue() {
+  const active = DEMO.clients.filter(c => c.active);
+  const mrr = active.reduce((a, c) => a + c.fee, 0);
+  const setup = DEMO.clients.length * 15000;
+  animCount(document.getElementById('revMRR'), mrr, 'Ksh ');
+  animCount(document.getElementById('revSetup'), setup, 'Ksh ');
+  animCount(document.getElementById('revAnnual'), mrr * 12, 'Ksh ');
+
+  document.getElementById('revenueTable').innerHTML = DEMO.clients.map(c => `
+    <tr>
+      <td><strong>${TYPE_EMOJI[c.type]} ${c.name}</strong></td>
+      <td>${c.type}</td>
+      <td><span class="badge badge-blue">${c.plan}</span></td>
+      <td style="font-weight:700;color:var(--accent2)">Ksh ${c.fee.toLocaleString()}/mo</td>
+      <td style="font-weight:600">Ksh ${(c.fee*12).toLocaleString()}/yr</td>
+      <td><span class="badge ${c.active?'badge-green':'badge-red'}">${c.active?'● Active':'● Suspended'}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ── ADD CLIENT MODAL
+function openAddClient() {
+  document.getElementById('addClientModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('addClientModal').classList.remove('open');
+}
+
+function updatePlanPrice() {
+  const plan = document.getElementById('f_plan').value;
+  document.getElementById('f_planprice').value = PLAN_PRICES[plan];
+}
+
+function addClient() {
+  const name = document.getElementById('f_name').value.trim();
+  if (!name) { alert('Enter business name'); return; }
+  // In production: POST /admin/clients with form data
+  alert(`✅ Client "${name}" created!\n\nIn production this calls:\nPOST ${window.location.origin}/admin/clients\n\nThey'll receive login credentials and you start earning Ksh ${document.getElementById('f_planprice').value}/month.`);
+  closeModal();
+}
+
+function toggleClient(id) {
+  const c = DEMO.clients.find(c => c.id === id);
+  if (!c) return;
+  c.active = !c.active;
+  loadClients();
+  // In production: PATCH /admin/clients/:id/toggle
+}
+
+// ── ANIMATED COUNTER
+function animCount(el, target, prefix='') {
+  let curr = 0;
+  const step = target / 40;
+  const t = setInterval(() => {
+    curr = Math.min(curr + step, target);
+    el.textContent = prefix + Math.floor(curr).toLocaleString();
+    if (curr >= target) clearInterval(t);
+  }, 16);
+}
+</script>
+</body>
+</html>
