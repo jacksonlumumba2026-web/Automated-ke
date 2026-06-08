@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AutomateKE — My Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5f9;--w:#fff;--s1:#f8fafc;--s2:#f1f5f9;--border:#e2e8f0;--ink:#0f172a;--muted:#64748b;--muted2:#94a3b8;--r:14px;--sh:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04)}
+[data-type="wifi"]{--a:#0ea5e9;--al:rgba(14,165,233,0.08)}
+[data-type="hotel"]{--a:#7c3aed;--al:rgba(124,58,237,0.08)}
+[data-type="parking"]{--a:#ea580c;--al:rgba(234,88,12,0.08)}
+[data-type="shop"]{--a:#059669;--al:rgba(5,150,105,0.08)}
+[data-type="rental"]{--a:#db2777;--al:rgba(219,39,119,0.08)}
+[data-type="salon"]{--a:#d97706;--al:rgba(217,119,6,0.08)}
+[data-type="gym"]{--a:#dc2626;--al:rgba(220,38,38,0.08)}
+[data-type="custom"]{--a:#4f46e5;--al:rgba(79,70,229,0.08)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+/* LOGIN */
+#loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#0f172a,#1e3a5f)}
+.lc{background:#fff;border-radius:24px;padding:40px 32px;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.3);text-align:center}
+.lc-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;margin-bottom:4px}
+.lc-logo em{color:var(--a,#059669);font-style:normal}
+.lc-sub{font-size:0.78rem;color:var(--muted);margin-bottom:28px;font-weight:300}
+.lc-inp{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'Outfit',sans-serif;font-size:0.9rem;color:var(--ink);outline:none;margin-bottom:10px;transition:border-color 0.2s}
+.lc-inp:focus{border-color:var(--a,#059669)}
+.lc-btn{width:100%;padding:13px;background:var(--a,#059669);color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;transition:opacity 0.2s;margin-top:4px}
+.lc-btn:hover{opacity:0.9}
+.lc-err{color:#dc2626;font-size:0.78rem;margin-top:8px}
+
+/* APP */
+#app{display:none}
+
+/* TOP NAV */
+.tnav{background:var(--w);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--sh)}
+.tn-left{display:flex;align-items:center;gap:10px}
+.tn-ico{width:36px;height:36px;border-radius:10px;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:1rem}
+.tn-name{font-weight:800;font-size:0.95rem}
+.tn-type{font-size:0.65rem;color:var(--muted);margin-top:1px}
+.tn-live{display:flex;align-items:center;gap:5px;font-size:0.7rem;color:#059669;font-weight:700;background:rgba(5,150,105,0.08);padding:5px 10px;border-radius:20px}
+.tn-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#059669;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* MAIN */
+.main{padding:20px 16px 90px;max-width:520px;margin:0 auto}
+
+/* PERIOD TABS */
+.ptabs{display:flex;background:var(--w);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:16px;box-shadow:var(--sh)}
+.pt{flex:1;padding:8px 4px;border:none;background:transparent;border-radius:7px;font-family:'Outfit',sans-serif;font-size:0.75rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all 0.2s}
+.pt.active{background:var(--a);color:#fff}
+
+/* REVENUE CARD */
+.rev-card{background:linear-gradient(135deg,var(--a),color-mix(in srgb,var(--a) 70%,#000));border-radius:20px;padding:24px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 8px 32px color-mix(in srgb,var(--a) 30%,transparent)}
+.rev-card::after{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.08);pointer-events:none}
+.rc-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.8;margin-bottom:6px}
+.rc-amount{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:1px;line-height:1;margin-bottom:4px}
+.rc-change{font-size:0.75rem;opacity:0.8;margin-bottom:20px}
+.rc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;padding-top:16px;border-top:1px solid rgba(255,255,255,0.2)}
+.rc-stat{text-align:center;padding:0 8px}
+.rc-stat:not(:last-child){border-right:1px solid rgba(255,255,255,0.2)}
+.rcs-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.5px}
+.rcs-lbl{font-size:0.6rem;opacity:0.7;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.kpi{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.ki{font-size:1.1rem;margin-bottom:8px}
+.kv{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.5px;line-height:1;color:var(--a)}
+.kl{font-size:0.68rem;color:var(--muted);margin-top:3px;font-weight:400}
+.kc{font-size:0.65rem;margin-top:5px;font-weight:600;color:#059669}
+
+/* CHART */
+.chart-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;box-shadow:var(--sh)}
+.cc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cc-title{font-weight:700;font-size:0.85rem}
+.cc-total{font-size:0.72rem;color:var(--muted)}
+.cc-total span{color:var(--a);font-weight:700}
+.bars{display:flex;align-items:flex-end;gap:5px;height:80px}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.bb{width:100%;border-radius:3px 3px 0 0;background:var(--al);transition:height 0.7s cubic-bezier(.34,1.56,.64,1)}
+.bb.now{background:linear-gradient(180deg,var(--a),color-mix(in srgb,var(--a) 50%,transparent))}
+.bl{font-size:0.55rem;color:var(--muted2)}
+
+/* BREAKDOWN */
+.bkd{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;box-shadow:var(--sh)}
+.bkd-title{font-weight:700;font-size:0.85rem;margin-bottom:14px}
+.bk-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bk-row:last-child{margin-bottom:0}
+.bk-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.bk-name{font-size:0.78rem;font-weight:500;flex:1}
+.bk-track{flex:2;height:4px;background:var(--s2);border-radius:10px;overflow:hidden}
+.bk-fill{height:100%;border-radius:10px;transition:width 1s ease}
+.bk-count{font-size:0.68rem;color:var(--muted);min-width:45px;text-align:right}
+
+/* TRANSACTIONS */
+.txn-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:var(--sh)}
+.txh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
+.txh h3{font-weight:700;font-size:0.85rem}
+.tx-item{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(0,0,0,0.04);transition:background 0.1s}
+.tx-item:last-child{border-bottom:none}
+.tx-item:hover{background:rgba(0,0,0,0.01)}
+.tx-av{width:34px;height:34px;border-radius:9px;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-phone{font-size:0.8rem;font-weight:600;font-family:'JetBrains Mono',monospace}
+.tx-meta{font-size:0.68rem;color:var(--muted);margin-top:1px}
+.tx-right{text-align:right;flex-shrink:0}
+.tx-amt{font-weight:800;font-size:0.88rem;color:var(--a)}
+.tx-time{font-size:0.62rem;color:var(--muted2);margin-top:1px}
+.sdot{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:3px;vertical-align:middle}
+.s-ok{background:#059669}.s-fail{background:#dc2626}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty .ei{font-size:2.5rem;margin-bottom:12px;opacity:0.4}
+.empty h4{font-weight:700;margin-bottom:6px;font-size:0.9rem}
+.empty p{font-size:0.78rem;font-weight:300;line-height:1.6;max-width:280px;margin:0 auto}
+
+/* QUICK ACTIONS */
+.qa{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;box-shadow:var(--sh)}
+.qa-title{font-weight:700;font-size:0.85rem;margin-bottom:12px}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qa-btn{border:1.5px solid var(--border);border-radius:10px;padding:13px 10px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--s1);font-family:'Outfit',sans-serif}
+.qa-btn:hover{border-color:var(--a);background:var(--al)}
+.qa-btn .qa-i{font-size:1.2rem;margin-bottom:5px}
+.qa-btn .qa-l{font-size:0.72rem;font-weight:600;color:var(--ink)}
+
+/* TOAST */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-10px);background:var(--a);color:#fff;font-weight:700;font-size:0.8rem;padding:10px 20px;border-radius:50px;z-index:999;opacity:0;transition:all 0.3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,0.06)}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px;border:none;background:none;transition:transform 0.2s}
+.bni:active{transform:scale(0.9)}
+.bni .bni-i{font-size:1.1rem}
+.bni .bni-l{font-size:0.6rem;font-weight:600;color:var(--muted2)}
+.bni.active .bni-l{color:var(--a)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="lc">
+    <div class="lc-logo">Automate<em>KE</em></div>
+    <div class="lc-sub">Sign in to your business dashboard</div>
+    <input class="lc-inp" type="email" id="lEmail" placeholder="your@email.com">
+    <input class="lc-inp" type="password" id="lPw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lc-btn" onclick="doLogin()">Sign In →</button>
+    <div class="lc-err" id="lErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="tnav">
+    <div class="tn-left">
+      <div class="tn-ico" id="tnIco">📶</div>
+      <div><div class="tn-name" id="tnName">Business</div><div class="tn-type" id="tnType">AutomateKE</div></div>
+    </div>
+    <div class="tn-live">System Online</div>
+  </nav>
+
+  <div class="main">
+    <div class="ptabs">
+      <button class="pt" onclick="setPeriod('today',this)">Today</button>
+      <button class="pt active" onclick="setPeriod('week',this)">This Week</button>
+      <button class="pt" onclick="setPeriod('month',this)">This Month</button>
+      <button class="pt" onclick="setPeriod('all',this)">All Time</button>
+    </div>
+
+    <div class="rev-card">
+      <div class="rc-label">Total Revenue</div>
+      <div class="rc-amount" id="rcAmt">Ksh 0</div>
+      <div class="rc-change" id="rcChange">No transactions yet</div>
+      <div class="rc-stats">
+        <div class="rc-stat"><div class="rcs-val" id="rcSales">0</div><div class="rcs-lbl">Sales</div></div>
+        <div class="rc-stat"><div class="rcs-val" id="rcAvg">Ksh 0</div><div class="rcs-lbl">Avg Sale</div></div>
+        <div class="rc-stat"><div class="rcs-val" id="rcActive">0</div><div class="rcs-lbl" id="rcActiveL">Active</div></div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="ki">👥</div><div class="kv" id="kCustomers">0</div><div class="kl">Unique Customers</div><div class="kc">All time</div></div>
+      <div class="kpi"><div class="ki">❌</div><div class="kv" id="kFailed" style="color:#dc2626">0</div><div class="kl">Failed Payments</div><div class="kc" style="color:#dc2626">Needs M-Pesa setup</div></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="cc-head"><div class="cc-title">Revenue Trend</div><div class="cc-total">Total: <span id="chartTotal">Ksh 0</span></div></div>
+      <div class="bars" id="chart"></div>
+    </div>
+
+    <div class="bkd">
+      <div class="bkd-title" id="bkdTitle">Sales Breakdown</div>
+      <div id="bkdList"></div>
+    </div>
+
+    <div class="qa">
+      <div class="qa-title">Quick Actions</div>
+      <div class="qa-grid" id="qaGrid"></div>
+    </div>
+
+    <div class="txn-card">
+      <div class="txh"><h3>Recent Transactions</h3><span id="txCount" style="font-size:0.72rem;color:var(--muted)">0 total</span></div>
+      <div id="txList"></div>
+    </div>
+  </div>
+
+  <nav class="bnav">
+    <button class="bni active"><span class="bni-i">📊</span><span class="bni-l">Dashboard</span></button>
+    <button class="bni" onclick="copyPortalLink()"><span class="bni-i">🔗</span><span class="bni-l">Portal Link</span></button>
+    <button class="bni" onclick="showToast('📲 Coming soon!')"><span class="bni-i">📲</span><span class="bni-l">Send SMS</span></button>
+    <button class="bni" onclick="doLogout()"><span class="bni-i">🚪</span><span class="bni-l">Sign Out</span></button>
+  </nav>
+</div>
+
+<script>
+const DB={get(k,d=null){try{const v=localStorage.getItem('ake_'+k);return v?JSON.parse(v):d}catch{return d}},set(k,v){localStorage.setItem('ake_'+k,JSON.stringify(v))}};
+
+const TYPE_MAP={wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
+const TYPE_ACTIONS={
+  wifi:[{i:'🎟',l:'Generate Voucher'},{i:'📡',l:'Router Status'},{i:'📲',l:'Send SMS'},{i:'💬',l:'WhatsApp'}],
+  hotel:[{i:'🛏',l:'Room Status'},{i:'📋',l:'Bookings'},{i:'🔑',l:'Check-in Code'},{i:'📲',l:'Guest SMS'}],
+  parking:[{i:'🚗',l:'Slots Status'},{i:'🎫',l:'Issue Ticket'},{i:'⏱',l:'Active Sessions'},{i:'📲',l:'Send Alert'}],
+  shop:[{i:'📦',l:'New Order'},{i:'🚚',l:'Mark Delivered'},{i:'📲',l:'Customer SMS'},{i:'🧾',l:'Send Receipt'}],
+  rental:[{i:'🔑',l:'Access Code'},{i:'📋',l:'Bookings'},{i:'💰',l:'Reminders'},{i:'📲',l:'Tenant SMS'}],
+  salon:[{i:'📅',l:'Appointments'},{i:'💈',l:'Services'},{i:'📲',l:'Reminder SMS'},{i:'⭐',l:'Reviews'}],
+  gym:[{i:'🏋',l:'Members'},{i:'📅',l:'Sessions'},{i:'📲',l:'Renewal SMS'},{i:'⭐',l:'Reviews'}],
+  custom:[{i:'📋',l:'Orders'},{i:'📲',l:'Send SMS'},{i:'💰',l:'Revenue'},{i:'⚙️',l:'Settings'}],
+};
+
+let CLIENT = null;
+let TRANSACTIONS = [];
+let period = 'week';
+
+// ── Load client from URL param or stored session
+function getClientId(){
+  const p = new URLSearchParams(window.location.search);
+  return p.get('id') || DB.get('dashClientId');
+}
+
+function doLogin(){
+  const email = document.getElementById('lEmail').value.trim();
+  const pw = document.getElementById('lPw').value;
+  const clients = DB.get('clients',[]);
+  const match = clients.find(c=>c.email===email && atob(c.passwordHash)===pw);
+  if(!match){document.getElementById('lErr').textContent='Wrong email or password.';return}
+  if(!match.active){document.getElementById('lErr').textContent='Account suspended. Contact support.';return}
+  DB.set('dashClientId',match.id);
+  CLIENT = match;
+  initApp();
+}
+
+function initApp(){
+  if(!CLIENT){
+    const id = getClientId();
+    if(!id){return}
+    const clients = DB.get('clients',[]);
+    CLIENT = clients.find(c=>c.id===id);
+    if(!CLIENT){return}
+  }
+  TRANSACTIONS = DB.get('transactions',[]).filter(t=>t.clientId===CLIENT.id);
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.body.setAttribute('data-type',CLIENT.type);
+
+  document.getElementById('tnIco').textContent = TYPE_MAP[CLIENT.type]||'⚙️';
+  document.getElementById('tnName').textContent = CLIENT.name;
+  document.getElementById('tnType').textContent = CLIENT.type+' · '+CLIENT.plan+' plan';
+  document.getElementById('rcActiveL').textContent = CLIENT.type==='wifi'?'Connected':'Active';
+
+  // Actions
+  const actions = TYPE_ACTIONS[CLIENT.type]||TYPE_ACTIONS.custom;
+  document.getElementById('qaGrid').innerHTML = actions.map(a=>`
+    <div class="qa-btn" onclick="showToast('${a.l}')">
+      <div class="qa-i">${a.i}</div>
+      <div class="qa-l">${a.l}</div>
+    </div>`).join('');
+
+  loadData();
+}
+
+// Auto-init if URL has id param
+const urlId = new URLSearchParams(window.location.search).get('id');
+if(urlId){
+  const clients = DB.get('clients',[]);
+  CLIENT = clients.find(c=>c.id===urlId);
+  if(CLIENT){ TRANSACTIONS = DB.get('transactions',[]).filter(t=>t.clientId===CLIENT.id); document.getElementById('loginWrap').style.display='none'; document.getElementById('app').style.display='block'; document.body.setAttribute('data-type',CLIENT.type); document.getElementById('tnIco').textContent=TYPE_MAP[CLIENT.type]||'⚙️'; document.getElementById('tnName').textContent=CLIENT.name; document.getElementById('tnType').textContent=CLIENT.type+' · '+CLIENT.plan+' plan'; document.getElementById('rcActiveL').textContent=CLIENT.type==='wifi'?'Connected':'Active'; const actions=TYPE_ACTIONS[CLIENT.type]||TYPE_ACTIONS.custom; document.getElementById('qaGrid').innerHTML=actions.map(a=>`<div class="qa-btn" onclick="showToast('${a.l}')"><div class="qa-i">${a.i}</div><div class="qa-l">${a.l}</div></div>`).join(''); loadData(); }
+}
+
+function setPeriod(p,btn){
+  period=p;
+  document.querySelectorAll('.pt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadData();
+}
+
+function filterTxns(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const weekAgo=new Date(Date.now()-7*86400000);
+  const monthAgo=new Date(Date.now()-30*86400000);
+  const success=TRANSACTIONS.filter(t=>t.status==='success');
+  if(period==='today') return success.filter(t=>new Date(t.time)>=today);
+  if(period==='week')  return success.filter(t=>new Date(t.time)>=weekAgo);
+  if(period==='month') return success.filter(t=>new Date(t.time)>=monthAgo);
+  return success;
+}
+
+function loadData(){
+  const txns=filterTxns();
+  const rev=txns.reduce((a,t)=>a+t.amount,0);
+  const failed=TRANSACTIONS.filter(t=>t.status==='failed').length;
+  const uniq=new Set(txns.map(t=>t.phone)).size;
+
+  animCount(document.getElementById('rcAmt'),rev,'Ksh ');
+  document.getElementById('rcSales').textContent=txns.length;
+  document.getElementById('rcAvg').textContent=txns.length?'Ksh '+(Math.round(rev/txns.length)).toLocaleString():'Ksh 0';
+  document.getElementById('rcActive').textContent=txns.length;
+  document.getElementById('rcChange').textContent=txns.length?`${txns.length} transactions in this period`:'No transactions yet — share your portal link!';
+  animCount(document.getElementById('kCustomers'),uniq);
+  document.getElementById('kFailed').textContent=failed;
+  document.getElementById('chartTotal').textContent='Ksh '+rev.toLocaleString();
+
+  // Chart
+  const labels=period==='today'?['6A','8A','10A','12P','2P','4P','6P','8P']:period==='week'?['M','T','W','T','F','S','S']:period==='month'?['W1','W2','W3','W4']:['Jan','Feb','Mar','Apr','May','Jun'];
+  const buckets=labels.map((_,i)=>{
+    const d=new Date();
+    if(period==='week'){d.setDate(d.getDate()-(6-i));const ds=d.toDateString();return txns.filter(t=>new Date(t.time).toDateString()===ds).reduce((a,t)=>a+t.amount,0)}
+    return 0;
+  });
+  const max=Math.max(...buckets,1);
+  document.getElementById('chart').innerHTML=buckets.map((v,i)=>`<div class="bw"><div class="bb${i===buckets.length-1?' now':''}" style="height:${Math.max(4,Math.round(v/max*100))}%"></div><div class="bl">${labels[i]}</div></div>`).join('');
+
+  // Breakdown by bundle
+  const bundles=CLIENT?.bundles||[];
+  const bColors=['#f59e0b','#059669','#3b82f6','#f97316','#8b5cf6','#ec4899'];
+  const bCounts=bundles.map(b=>txns.filter(t=>t.bundleId===b.id).length);
+  const total=bCounts.reduce((a,b)=>a+b,0)||1;
+  document.getElementById('bkdTitle').textContent=CLIENT.name+' — Sales Breakdown';
+  document.getElementById('bkdList').innerHTML=bundles.map((b,i)=>`
+    <div class="bk-row">
+      <div class="bk-dot" style="background:${bColors[i%bColors.length]}"></div>
+      <div class="bk-name">${b.label}</div>
+      <div class="bk-track"><div class="bk-fill" style="width:${Math.round(bCounts[i]/total*100)}%;background:${bColors[i%bColors.length]}"></div></div>
+      <div class="bk-count">${bCounts[i]} sales</div>
+    </div>`).join('');
+
+  // Transactions list
+  const recent=[...TRANSACTIONS].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,15);
+  document.getElementById('txCount').textContent=TRANSACTIONS.length+' total';
+  document.getElementById('txList').innerHTML=recent.length?recent.map(t=>`
+    <div class="tx-item">
+      <div class="tx-av">${TYPE_MAP[CLIENT.type]||'💳'}</div>
+      <div class="tx-info">
+        <div class="tx-phone">${t.phone}</div>
+        <div class="tx-meta"><span class="sdot ${t.status==='success'?'s-ok':'s-fail'}"></span>${t.bundle}${t.code?' · Code: '+t.code:''}</div>
+      </div>
+      <div class="tx-right">
+        <div class="tx-amt">${t.status==='success'?'+':'-'}${t.amount.toLocaleString()}</div>
+        <div class="tx-time">${timeAgo(t.time)}</div>
+      </div>
+    </div>`).join('')
+  :`<div class="empty"><div class="ei">💳</div><h4>No transactions yet</h4><p>Share your payment portal link with customers to start receiving payments.</p></div>`;
+}
+
+function copyPortalLink(){
+  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
+  navigator.clipboard.writeText(url).catch(()=>{});
+  showToast('📋 Portal link copied! Share with customers.');
+}
+
+function doLogout(){DB.set('dashClientId',null);location.reload()}
+
+function animCount(el,target,prefix=''){if(!el)return;const steps=30;const step=target/steps;let curr=0;const t=setInterval(()=>{curr=Math.min(curr+step,target);el.textContent=prefix+Math.round(curr).toLocaleString();if(curr>=target)clearInterval(t)},16)}
+
+function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return 'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+// Listen for new transactions from portal
+window.addEventListener('storage',e=>{
+  if(e.key==='ake_transactions'&&CLIENT){
+    TRANSACTIONS=JSON.parse(e.newValue||'[]').filter(t=>t.clientId===CLIENT.id);
+    loadData();
+    showToast('💰 New payment received!');
+  }
+});
+</script>
+</body>
+</html>
