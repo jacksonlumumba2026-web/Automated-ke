@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutomateKE — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060a0f;--s1:#0b1018;--s2:#101720;--s3:#161f2e;
+  --g:#00e676;--g2:#00c853;--g3:rgba(0,230,118,0.08);--g4:rgba(0,230,118,0.15);
+  --b:#2979ff;--r:#ff1744;--y:#ffd740;
+  --t:#e8f4ff;--m:#4a6080;--m2:#7a90a8;
+  --br:rgba(255,255,255,0.06);--r2:14px;
+  --sh:0 8px 32px rgba(0,0,0,0.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;overflow-x:hidden}
+
+/* ── LOGIN ── */
+#loginWrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,0.06),transparent 60%),var(--bg);
+  padding:20px;
+}
+.login-box{
+  background:var(--s2);border:1px solid var(--br);
+  border-radius:24px;padding:48px 36px;width:100%;max-width:400px;
+  box-shadow:0 40px 80px rgba(0,0,0,0.5);
+}
+.lb-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;text-align:center;margin-bottom:4px}
+.lb-logo em{color:var(--g);font-style:normal}
+.lb-sub{text-align:center;font-size:0.78rem;color:var(--m2);margin-bottom:32px;font-weight:300}
+.lb-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--m2);margin-bottom:6px;display:block}
+.lb-input{
+  width:100%;background:var(--s1);border:1px solid var(--br);
+  border-radius:10px;padding:13px 16px;color:var(--t);
+  font-family:'Outfit',sans-serif;font-size:0.95rem;
+  outline:none;transition:border-color 0.2s;margin-bottom:14px;
+}
+.lb-input:focus{border-color:var(--g)}
+.lb-btn{
+  width:100%;padding:14px;background:var(--g);color:#000;
+  border:none;border-radius:50px;font-family:'Outfit',sans-serif;
+  font-weight:800;font-size:1rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;
+  margin-top:4px;
+}
+.lb-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,230,118,0.35)}
+.lb-err{color:var(--r);font-size:0.78rem;text-align:center;margin-top:10px;min-height:20px}
+
+/* ── APP SHELL ── */
+#app{display:none;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--s1);border-right:1px solid var(--br);
+  display:flex;flex-direction:column;z-index:100;
+  transition:transform 0.3s;
+}
+.sb-logo{padding:24px 20px;border-bottom:1px solid var(--br)}
+.sb-logo h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px}
+.sb-logo h1 em{color:var(--g);font-style:normal}
+.sb-logo p{font-size:0.65rem;color:var(--m);margin-top:2px;font-weight:300}
+.sb-nav{padding:16px 12px;flex:1;overflow-y:auto}
+.sb-section{font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--m);padding:8px 10px 4px;margin-top:8px}
+.ni{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  font-size:0.82rem;font-weight:600;color:var(--m2);
+  cursor:pointer;transition:all 0.15s;border:none;background:none;
+  width:100%;text-align:left;margin-bottom:2px;
+}
+.ni:hover{background:rgba(255,255,255,0.04);color:var(--t)}
+.ni.active{background:var(--g3);color:var(--g);border:1px solid rgba(0,230,118,0.15)}
+.ni .ico{width:18px;text-align:center;font-size:0.9rem;flex-shrink:0}
+.ni .badge{margin-left:auto;background:var(--g);color:#000;font-size:0.6rem;font-weight:800;padding:1px 7px;border-radius:20px}
+.sb-footer{padding:16px 20px;border-top:1px solid var(--br)}
+.sb-user{display:flex;align-items:center;gap:10px}
+.sb-av{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--g2),#005c26);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.8rem;color:#000;flex-shrink:0}
+.sb-uname{font-size:0.82rem;font-weight:700}
+.sb-urole{font-size:0.62rem;color:var(--m);margin-top:1px}
+.sb-logout{background:none;border:none;color:var(--m);font-size:0.7rem;cursor:pointer;margin-top:8px;font-family:'Outfit',sans-serif;transition:color 0.2s}
+.sb-logout:hover{color:var(--r)}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;padding:28px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.topbar-left h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;line-height:1}
+.topbar-left p{font-size:0.78rem;color:var(--m2);margin-top:3px;font-weight:300}
+.topbar-right{display:flex;gap:10px;align-items:center}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:50px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{transform:translateY(-1px)}
+.btn-g{background:var(--g);color:#000}
+.btn-g:hover{box-shadow:0 6px 20px rgba(0,230,118,0.3)}
+.btn-ghost{background:var(--s2);color:var(--t);border:1px solid var(--br)}
+.btn-r{background:rgba(255,23,68,0.1);color:var(--r);border:1px solid rgba(255,23,68,0.2)}
+.btn-b{background:rgba(41,121,255,0.1);color:var(--b);border:1px solid rgba(41,121,255,0.2)}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:fadeUp 0.35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:var(--s2);border:1px solid var(--br);border-radius:var(--r2);padding:20px;position:relative;overflow:hidden;transition:border-color 0.2s}
+.kpi:hover{border-color:rgba(255,255,255,0.12)}
+.kpi::after{content:'';position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:0.06}
+.kpi.green::after{background:var(--g)}
+.kpi.blue::after{background:var(--b)}
+.kpi.yellow::after{background:var(--y)}
+.kpi.red::after{background:var(--r)}
+.kpi-icon{font-size:1.1rem;margin-bottom:10px}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.5px;line-height:1;margin-bottom:3px}
+.kpi.green .kpi-val{color:var(--g)}
+.kpi.blue .kpi-val{color:var(--b)}
+.kpi.yellow .kpi-val{color:var(--y)}
+.kpi.red .kpi-val{color:var(--r)}
+.kpi-label{font-size:0.7rem;color:var(--m2);font-weight:400}
+.kpi-change{font-size:0.65rem;margin-top:6px;font-weight:600}
+.up{color:var(--g)}.down{color:var(--r)}
+
+/* ── CARDS ── */
+.card{background:var(--s2);border:1px solid var(--br);border-radius:var(--r2);overflow:hidden}
+.card-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--br)}
+.card-head h3{font-weight:700;font-size:0.9rem}
+.card-body{padding:20px}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;padding:10px 16px;font-size:0.62rem;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid var(--br);background:rgba(255,255,255,0.01)}
+.tbl td{padding:13px 16px;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.03)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:0.65rem;font-weight:700}
+.bdg-g{background:var(--g3);color:var(--g)}
+.bdg-r{background:rgba(255,23,68,0.1);color:var(--r)}
+.bdg-b{background:rgba(41,121,255,0.1);color:var(--b)}
+.bdg-y{background:rgba(255,215,64,0.1);color:var(--y)}
+
+/* ── CHART ── */
+.bar-wrap{display:flex;align-items:flex-end;gap:6px;height:90px}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bb{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--g2),var(--g3));transition:height 0.8s cubic-bezier(.34,1.56,.64,1);position:relative;cursor:pointer}
+.bb:hover::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:var(--g);color:#000;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.bb.today{background:linear-gradient(180deg,var(--g),var(--g2));box-shadow:0 0 12px rgba(0,230,118,0.25)}
+.bl{font-size:0.58rem;color:var(--m);text-transform:uppercase}
+
+/* ── MRR LIST ── */
+.mrr-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--br)}
+.mrr-row:last-child{border-bottom:none}
+.mrr-biz{display:flex;align-items:center;gap:10px}
+.mrr-ico{width:32px;height:32px;border-radius:9px;background:var(--g3);border:1px solid rgba(0,230,118,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0}
+.mrr-name{font-size:0.82rem;font-weight:600}
+.mrr-type{font-size:0.65rem;color:var(--m);margin-top:1px}
+.mrr-amt{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:0.82rem;color:var(--g)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px}
+.empty-icon{font-size:3rem;margin-bottom:16px;opacity:0.4}
+.empty h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:8px;opacity:0.6}
+.empty p{font-size:0.82rem;color:var(--m2);line-height:1.6;max-width:340px;margin:0 auto 20px;font-weight:300}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--s2);border:1px solid var(--br);border-radius:20px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:scale(0.96);transition:transform 0.25s;position:relative}
+.modal-ov.open .modal{transform:scale(1)}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:4px}
+.modal p{font-size:0.78rem;color:var(--m2);margin-bottom:24px;font-weight:300}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--m);font-size:1.2rem;cursor:pointer;padding:4px}
+.field{margin-bottom:14px}
+.field label{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--m2);display:block;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;background:var(--s1);border:1px solid var(--br);border-radius:9px;padding:11px 14px;color:var(--t);font-family:'Outfit',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--g)}
+.field select option{background:var(--s2)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:20px;right:20px;background:var(--s2);border:1px solid var(--br);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:9999;transform:translateX(120%);transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--sh);max-width:320px}
+.toast.show{transform:translateX(0)}
+.toast-icon{font-size:1.1rem;flex-shrink:0}
+.toast-text{font-size:0.82rem;font-weight:600}
+.toast-sub{font-size:0.72rem;color:var(--m2);margin-top:1px;font-weight:300}
+.toast.t-g{border-color:rgba(0,230,118,0.3)}
+.toast.t-r{border-color:rgba(255,23,68,0.3)}
+
+/* ── SETUP GUIDE ── */
+.setup-steps{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.ss{display:flex;align-items:flex-start;gap:14px;background:var(--s3);border:1px solid var(--br);border-radius:12px;padding:16px}
+.ss-num{width:28px;height:28px;border-radius:8px;background:var(--g3);border:1px solid rgba(0,230,118,0.2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--g);flex-shrink:0}
+.ss.done .ss-num{background:var(--g);color:#000}
+.ss-body h4{font-size:0.85rem;font-weight:700;margin-bottom:3px}
+.ss-body p{font-size:0.75rem;color:var(--m2);line-height:1.5;font-weight:300}
+.ss-body a{color:var(--g);font-size:0.72rem;font-weight:600;text-decoration:none}
+
+/* ── CLIENT CARD ── */
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.cl-card{background:var(--s2);border:1px solid var(--br);border-radius:16px;padding:20px;transition:all 0.2s;cursor:pointer}
+.cl-card:hover{border-color:rgba(0,230,118,0.2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.3)}
+.cl-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.cl-av{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:var(--g3);border:1px solid rgba(0,230,118,0.15)}
+.cl-name{font-weight:700;font-size:0.92rem}
+.cl-type{font-size:0.68rem;color:var(--m2);margin-top:2px}
+.cl-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.cs{background:var(--s3);border-radius:8px;padding:9px;text-align:center}
+.cs-val{font-family:'JetBrains Mono',monospace;font-size:0.82rem;font-weight:500;color:var(--t)}
+.cs-lbl{font-size:0.58rem;color:var(--m);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px}
+.cl-actions{display:flex;gap:8px}
+.cl-btn{flex:1;padding:8px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;border:1px solid var(--br);background:var(--s3);color:var(--m2);transition:all 0.2s}
+.cl-btn:hover{border-color:var(--g);color:var(--g)}
+.cl-btn.danger:hover{border-color:var(--r);color:var(--r)}
+
+/* ── GRID LAYOUTS ── */
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ── REVENUE PAGE ── */
+.rev-hero{background:linear-gradient(135deg,rgba(0,230,118,0.06),var(--s2));border:1px solid rgba(0,230,118,0.15);border-radius:20px;padding:28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+.rev-big{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:var(--g);letter-spacing:1px;line-height:1;text-shadow:0 0 40px rgba(0,230,118,0.2)}
+.rev-label{font-size:0.7rem;color:var(--m2);font-weight:300;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.rev-note{font-size:0.78rem;color:var(--m2);font-weight:300}
+.rev-note strong{color:var(--g);font-weight:700}
+
+/* ── MOBILE ── */
+.mob-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:8px 10px;font-size:1.1rem;cursor:pointer}
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .g2,.g3{grid-template-columns:1fr}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:20px 16px 80px}
+  .mob-toggle{display:block}
+  .topbar{margin-top:40px}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .cl-grid{grid-template-columns:1fr}
+  .field-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <div><div class="toast-text" id="toastText"></div><div class="toast-sub" id="toastSub"></div></div>
+</div>
+
+<!-- MOBILE TOGGLE -->
+<button class="mob-toggle" id="mobToggle" onclick="toggleSidebar()">☰</button>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-box">
+    <div class="lb-logo">Automate<em>KE</em></div>
+    <div class="lb-sub">Super Admin — Jackson's Control Centre</div>
+    <label class="lb-label">Password</label>
+    <input class="lb-input" type="password" id="loginPw" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lb-btn" onclick="doLogin()">Sign In →</button>
+    <div class="lb-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <h1>Automate<em>KE</em></h1>
+      <p>Super Admin Panel</p>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Main</div>
+      <button class="ni active" onclick="go('overview',this)"><span class="ico">📊</span> Overview</button>
+      <button class="ni" onclick="go('clients',this)"><span class="ico">🏢</span> Clients <span class="badge" id="clientBadge">0</span></button>
+      <button class="ni" onclick="go('transactions',this)"><span class="ico">💳</span> Transactions</button>
+      <div class="sb-section">Finance</div>
+      <button class="ni" onclick="go('revenue',this)"><span class="ico">💰</span> My Revenue</button>
+      <div class="sb-section">Settings</div>
+      <button class="ni" onclick="go('settings',this)"><span class="ico">⚙️</span> API Config</button>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-av">JL</div>
+        <div><div class="sb-uname">Jackson</div><div class="sb-urole">Super Admin</div></div>
+      </div>
+      <button class="sb-logout" onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="page active" id="page-overview">
+      <div class="topbar">
+        <div class="topbar-left"><h2>Platform Overview</h2><p id="overviewDate"></p></div>
+        <div class="topbar-right">
+          <button class="btn btn-g" onclick="go('clients',document.querySelectorAll('.ni')[1]);openAddClient()">+ Add Client</button>
+        </div>
+      </div>
+
+      <!-- Empty state when no clients -->
+      <div id="overviewEmpty" style="display:none">
+        <div style="background:linear-gradient(135deg,rgba(0,230,118,0.04),var(--s2));border:1px solid rgba(0,230,118,0.15);border-radius:20px;padding:40px;margin-bottom:20px">
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g);margin-bottom:12px">🚀 Getting Started</div>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;margin-bottom:8px">WELCOME TO AUTOMATEKE</h2>
+          <p style="font-size:0.85rem;color:var(--m2);font-weight:300;max-width:500px;line-height:1.7;margin-bottom:24px">Your platform is ready. Add your first client to start seeing real revenue data. Each client pays you a monthly fee and you automate their entire business.</p>
+          <button class="btn btn-g" onclick="go('clients',document.querySelectorAll('.ni')[1]);openAddClient()">+ Add Your First Client →</button>
+        </div>
+        <div class="setup-steps">
+          <div class="ss" id="step1">
+            <div class="ss-num">1</div>
+            <div class="ss-body"><h4>Add your first client</h4><p>Click "Add Client" above. Fill in their business details. They'll get a dashboard link immediately.</p></div>
+          </div>
+          <div class="ss" id="step2">
+            <div class="ss-num">2</div>
+            <div class="ss-body"><h4>Configure M-Pesa credentials</h4><p>Go to API Config and add your Safaricom Daraja keys. Get them free at <a href="https://developer.safaricom.co.ke" target="_blank">developer.safaricom.co.ke →</a></p></div>
+          </div>
+          <div class="ss" id="step3">
+            <div class="ss-num">3</div>
+            <div class="ss-body"><h4>Configure SMS (Africa's Talking)</h4><p>Sign up free at <a href="https://africastalking.com" target="_blank">africastalking.com →</a> then add your API key in settings.</p></div>
+          </div>
+          <div class="ss" id="step4">
+            <div class="ss-num">4</div>
+            <div class="ss-body"><h4>Deploy backend server</h4><p>Upload server files to Truehost VPS (Ksh 500/mo). Your system goes fully live and automated.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live overview when clients exist -->
+      <div id="overviewLive" style="display:none">
+        <div class="kpi-grid">
+          <div class="kpi green"><div class="kpi-icon">💰</div><div class="kpi-val" id="oMRR">0</div><div class="kpi-label">My Monthly Income</div><div class="kpi-change up" id="oMRRNote">Recurring revenue</div></div>
+          <div class="kpi blue"><div class="kpi-icon">🏢</div><div class="kpi-val" id="oClients">0</div><div class="kpi-label">Active Clients</div><div class="kpi-change up">Paying monthly</div></div>
+          <div class="kpi yellow"><div class="kpi-icon">💳</div><div class="kpi-val" id="oTxns">0</div><div class="kpi-label">Total Transactions</div><div class="kpi-change" id="oTxnNote">All clients</div></div>
+          <div class="kpi"><div class="kpi-icon">📈</div><div class="kpi-val" id="oVolume" style="color:var(--t)">0</div><div class="kpi-label">Volume Processed</div><div class="kpi-change up">Through platform</div></div>
+        </div>
+        <div class="g2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><h3>Revenue (Last 7 Days)</h3><span style="font-size:0.72rem;color:var(--m2)" id="chartNote">All clients</span></div>
+            <div class="card-body"><div class="bar-wrap" id="overviewChart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Monthly Income</h3></div>
+            <div class="card-body"><div id="mrrList"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Recent Transactions</h3><span class="bdg bdg-g" id="liveDot">● Live</span></div>
+          <table class="tbl"><thead><tr><th>Client</th><th>Customer</th><th>Bundle</th><th>Amount</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="recentTbl"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CLIENTS ══ -->
+    <div class="page" id="page-clients">
+      <div class="topbar">
+        <div class="topbar-left"><h2>Clients</h2><p id="clientCount">No clients yet</p></div>
+        <button class="btn btn-g" onclick="openAddClient()">+ Add New Client</button>
+      </div>
+      <div id="clientsEmpty" class="empty" style="display:none">
+        <div class="empty-icon">🏢</div>
+        <h3>No Clients Yet</h3>
+        <p>Add your first client to start managing their automation and earning monthly recurring revenue.</p>
+        <button class="btn btn-g" onclick="openAddClient()">+ Add First Client</button>
+      </div>
+      <div class="cl-grid" id="clientGrid"></div>
+    </div>
+
+    <!-- ══ TRANSACTIONS ══ -->
+    <div class="page" id="page-transactions">
+      <div class="topbar">
+        <div class="topbar-left"><h2>All Transactions</h2><p>Every M-Pesa payment across all clients</p></div>
+        <div class="topbar-right">
+          <select id="txnFilter" onchange="renderTransactions()" style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:8px 12px;color:var(--t);font-family:'Outfit',sans-serif;font-size:0.8rem;outline:none">
+            <option value="">All Clients</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr><th>Client</th><th>Customer</th><th>Bundle</th><th>Amount</th><th>M-Pesa Ref</th><th>Code / Ticket</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody id="txnTbl"></tbody>
+        </table>
+        <div id="txnEmpty" class="empty" style="display:none;border:none">
+          <div class="empty-icon">💳</div>
+          <h3>No Transactions Yet</h3>
+          <p>Transactions will appear here in real-time once clients start receiving M-Pesa payments.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REVENUE ══ -->
+    <div class="page" id="page-revenue">
+      <div class="topbar"><div class="topbar-left"><h2>My Revenue</h2><p>Setup fees + monthly recurring income</p></div></div>
+      <div class="rev-hero">
+        <div>
+          <div class="rev-label">Monthly Recurring Revenue</div>
+          <div class="rev-big" id="revMRR">Ksh 0</div>
+          <div class="rev-note">Projected annual: <strong id="revAnnual">Ksh 0</strong></div>
+        </div>
+        <div style="text-align:right">
+          <div class="rev-label">Setup Fees Collected</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--y);letter-spacing:1px" id="revSetup">Ksh 0</div>
+          <div class="rev-note">Total clients: <strong id="revClients">0</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Revenue by Client</h3></div>
+        <table class="tbl">
+          <thead><tr><th>Business</th><th>Type</th><th>Plan</th><th>Monthly Fee</th><th>Annual Value</th><th>Setup Fee</th><th>Status</th></tr></thead>
+          <tbody id="revTbl"></tbody>
+        </table>
+        <div id="revEmpty" class="empty" style="display:none;border:none">
+          <div class="empty-icon">💰</div>
+          <h3>No Revenue Yet</h3>
+          <p>Add clients to start earning. Each client pays you a monthly fee automatically.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="topbar"><div class="topbar-left"><h2>API Configuration</h2><p>Connect your automation services</p></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+        <div class="card">
+          <div class="card-head"><h3>🔐 Admin Password</h3></div>
+          <div class="card-body">
+            <div class="field"><label>Current Password</label><input type="password" id="oldPw" placeholder="Current password"></div>
+            <div class="field"><label>New Password</label><input type="password" id="newPw" placeholder="New password"></div>
+            <div class="field"><label>Confirm New Password</label><input type="password" id="newPw2" placeholder="Confirm new password"></div>
+            <button class="btn btn-g" onclick="changePassword()">Update Password</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>📲 Safaricom Daraja</h3><span class="bdg" id="mpesaStatus">Not configured</span></div>
+          <div class="card-body">
+            <div class="field"><label>Consumer Key</label><input type="text" id="mpesaKey" placeholder="From developer.safaricom.co.ke"></div>
+            <div class="field"><label>Consumer Secret</label><input type="password" id="mpesaSecret" placeholder="Your consumer secret"></div>
+            <div class="field"><label>Shortcode (Paybill/Till)</label><input type="text" id="mpesaShortcode" placeholder="e.g. 174379"></div>
+            <div class="field"><label>Passkey</label><input type="password" id="mpesaPasskey" placeholder="From Safaricom portal"></div>
+            <button class="btn btn-g" onclick="saveMpesa()">Save M-Pesa Config</button>
+            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Get credentials free at <a href="https://developer.safaricom.co.ke" target="_blank" style="color:var(--g)">developer.safaricom.co.ke →</a></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>💬 Africa's Talking SMS</h3><span class="bdg" id="smsStatus">Not configured</span></div>
+          <div class="card-body">
+            <div class="field"><label>API Key</label><input type="password" id="atKey" placeholder="Your AT API key"></div>
+            <div class="field"><label>Username</label><input type="text" id="atUser" placeholder="Your AT username"></div>
+            <div class="field"><label>Sender ID</label><input type="text" id="atSender" placeholder="e.g. AutomateKE"></div>
+            <button class="btn btn-g" onclick="saveSMS()">Save SMS Config</button>
+            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Sign up free at <a href="https://africastalking.com" target="_blank" style="color:var(--g)">africastalking.com →</a></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>🌐 Server Config</h3></div>
+          <div class="card-body">
+            <div class="field"><label>Server URL</label><input type="text" id="serverUrl" placeholder="https://api.automateke.co.ke"></div>
+            <div class="field"><label>MongoDB URI</label><input type="password" id="mongoUri" placeholder="mongodb+srv://..."></div>
+            <button class="btn btn-g" onclick="saveServer()">Save Server Config</button>
+            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Free MongoDB at <a href="https://mongodb.com/atlas" target="_blank" style="color:var(--g)">mongodb.com/atlas →</a> · VPS at <a href="https://truehost.co.ke" target="_blank" style="color:var(--g)">truehost.co.ke →</a></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD CLIENT MODAL -->
+<div class="modal-ov" id="addModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    <h3>Add New Client</h3>
+    <p>Set up a new business on the AutomateKE platform</p>
+    <div class="field-row">
+      <div class="field"><label>Business Name *</label><input type="text" id="f_name" placeholder="e.g. SwiftZone WiFi"></div>
+      <div class="field"><label>Business Type *</label>
+        <select id="f_type">
+          <option value="wifi">📶 WiFi Hotspot</option>
+          <option value="hotel">🏨 Hotel / Guesthouse</option>
+          <option value="parking">🚗 Parking Lot</option>
+          <option value="shop">🛒 Shop / E-commerce</option>
+          <option value="rental">🏠 Rental / Airbnb</option>
+          <option value="salon">💈 Salon / Barber</option>
+          <option value="gym">🏋 Gym</option>
+          <option value="custom">⚙️ Custom</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Owner Name *</label><input type="text" id="f_owner" placeholder="John Kamau"></div>
+      <div class="field"><label>Owner Phone *</label><input type="tel" id="f_phone" placeholder="0712345678"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Email (dashboard login) *</label><input type="email" id="f_email" placeholder="john@business.co.ke"></div>
+      <div class="field"><label>Dashboard Password *</label><input type="password" id="f_password" placeholder="Set their login password"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Plan</label>
+        <select id="f_plan" onchange="updatePlanPrice()">
+          <option value="starter">Starter</option>
+          <option value="growth" selected>Growth</option>
+          <option value="pro">Pro</option>
+        </select>
+      </div>
+      <div class="field"><label>Monthly Fee (Ksh)</label><input type="number" id="f_monthly" value="3000"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Setup Fee (Ksh)</label><input type="number" id="f_setup" value="25000"></div>
+      <div class="field"><label>Location</label><input type="text" id="f_location" placeholder="Nairobi, Kenya"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('addModal')">Cancel</button>
+      <button class="btn btn-g" onclick="addClient()">Create Client & Generate Link →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT DETAIL MODAL -->
+<div class="modal-ov" id="detailModal">
+  <div class="modal" style="max-width:580px">
+    <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    <h3 id="dm_title">Client Details</h3>
+    <p id="dm_sub">Business information and access links</p>
+    <div id="dm_body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STORAGE — persists across sessions
+// ═══════════════════════════════════════
+const DB = {
+  get(key, def=null){ try{const v=localStorage.getItem('ake_'+key);return v?JSON.parse(v):def}catch{return def}},
+  set(key,val){ localStorage.setItem('ake_'+key,JSON.stringify(val)) },
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let CLIENTS = DB.get('clients',[]);
+let TRANSACTIONS = DB.get('transactions',[]);
+let CONFIG = DB.get('config',{mpesa:{},sms:{},server:{}});
+let ADMIN_PW = DB.get('adminPw','Jackson@AutomateKE2025');
+
+const TYPE_MAP = {wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
+const PLAN_PRICES = {starter:2000,growth:3000,pro:5000};
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function doLogin(){
+  const pw = document.getElementById('loginPw').value;
+  if(pw === ADMIN_PW){
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('app').style.display='block';
+    init();
+  } else {
+    document.getElementById('loginErr').textContent='Wrong password. Try again.';
+    setTimeout(()=>document.getElementById('loginErr').textContent='',3000);
+  }
+}
+document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+function logout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginWrap').style.display='flex';
+  document.getElementById('loginPw').value='';
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+function init(){
+  document.getElementById('overviewDate').textContent =
+    new Date().toLocaleDateString('en-KE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  updateClientBadge();
+  renderOverview();
+  renderClients();
+  renderTransactions();
+  renderRevenue();
+  loadSettings();
+  checkSetupSteps();
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function go(page, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(btn) btn.classList.add('active');
+  // close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════
+// OVERVIEW
+// ═══════════════════════════════════════
+function renderOverview(){
+  const hasClients = CLIENTS.length > 0;
+  document.getElementById('overviewEmpty').style.display = hasClients ? 'none' : 'block';
+  document.getElementById('overviewLive').style.display = hasClients ? 'block' : 'none';
+  if(!hasClients) return;
+
+  const activeClients = CLIENTS.filter(c=>c.active);
+  const mrr = activeClients.reduce((a,c)=>a+c.monthlyFee,0);
+  const txns = TRANSACTIONS.filter(t=>t.status==='success');
+  const volume = txns.reduce((a,t)=>a+t.amount,0);
+
+  animCount(document.getElementById('oMRR'), mrr, 'Ksh ');
+  animCount(document.getElementById('oClients'), activeClients.length);
+  animCount(document.getElementById('oTxns'), txns.length);
+  animCount(document.getElementById('oVolume'), volume, 'Ksh ');
+  document.getElementById('oMRRNote').textContent = `Ksh ${mrr.toLocaleString()}/month guaranteed`;
+
+  // Chart — last 7 days
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals = days.map((_,i)=>{
+    const d = new Date(); d.setDate(d.getDate()-(6-i));
+    const ds = d.toDateString();
+    return txns.filter(t=>new Date(t.time).toDateString()===ds).reduce((a,t)=>a+t.amount,0);
+  });
+  const max = Math.max(...vals,1);
+  const chart = document.getElementById('overviewChart');
+  chart.innerHTML = vals.map((v,i)=>`
+    <div class="bw">
+      <div class="bb${i===6?' today':''}" style="height:${Math.max(4,Math.round(v/max*100))}%" data-v="Ksh ${v.toLocaleString()}"></div>
+      <div class="bl">${days[i]}</div>
+    </div>`).join('');
+
+  // MRR list
+  document.getElementById('mrrList').innerHTML = activeClients.length ? activeClients.map(c=>`
+    <div class="mrr-row">
+      <div class="mrr-biz">
+        <div class="mrr-ico">${TYPE_MAP[c.type]||'⚙️'}</div>
+        <div><div class="mrr-name">${c.name}</div><div class="mrr-type">${c.plan} plan</div></div>
+      </div>
+      <div class="mrr-amt">Ksh ${c.monthlyFee.toLocaleString()}/mo</div>
+    </div>`).join('')
+  : '<div style="text-align:center;padding:20px;color:var(--m2);font-size:0.8rem">No active clients</div>';
+
+  // Recent transactions
+  const recent = [...TRANSACTIONS].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,8);
+  document.getElementById('recentTbl').innerHTML = recent.length ? recent.map(t=>`
+    <tr>
+      <td><strong>${t.clientName}</strong></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem">${t.phone}</td>
+      <td>${t.bundle}</td>
+      <td style="font-weight:700;color:var(--g)">Ksh ${t.amount.toLocaleString()}</td>
+      <td style="color:var(--m2);font-size:0.75rem">${timeAgo(t.time)}</td>
+      <td><span class="bdg ${t.status==='success'?'bdg-g':'bdg-r'}">${t.status==='success'?'✓ Paid':'✗ Failed'}</span></td>
+    </tr>`).join('')
+  : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--m2)">No transactions yet</td></tr>';
+}
+
+// ═══════════════════════════════════════
+// CLIENTS
+// ═══════════════════════════════════════
+function renderClients(){
+  updateClientBadge();
+  const count = CLIENTS.length;
+  document.getElementById('clientCount').textContent = count===0 ? 'No clients yet' : `${count} client${count!==1?'s':''}`;
+  document.getElementById('clientsEmpty').style.display = count===0 ? 'block' : 'none';
+  document.getElementById('clientGrid').style.display = count===0 ? 'none' : 'grid';
+
+  // Populate txn filter
+  const sel = document.getElementById('txnFilter');
+  sel.innerHTML = '<option value="">All Clients</option>' + CLIENTS.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+
+  document.getElementById('clientGrid').innerHTML = CLIENTS.map(c=>{
+    const cTxns = TRANSACTIONS.filter(t=>t.clientId===c.id&&t.status==='success');
+    const rev = cTxns.reduce((a,t)=>a+t.amount,0);
+    return `
+    <div class="cl-card" onclick="showClientDetail('${c.id}')">
+      <div class="cl-top">
+        <div class="cl-av">${TYPE_MAP[c.type]||'⚙️'}</div>
+        <div>
+          <div class="cl-name">${c.name}</div>
+          <div class="cl-type">${c.ownerName} · ${c.location||'Kenya'}</div>
+        </div>
+        <span class="bdg ${c.active?'bdg-g':'bdg-r'}" style="margin-left:auto">${c.active?'● Active':'● Off'}</span>
+      </div>
+      <div class="cl-stats">
+        <div class="cs"><div class="cs-val">Ksh ${c.monthlyFee.toLocaleString()}</div><div class="cs-lbl">Monthly</div></div>
+        <div class="cs"><div class="cs-val">${cTxns.length}</div><div class="cs-lbl">Sales</div></div>
+        <div class="cs"><div class="cs-val">Ksh ${rev.toLocaleString()}</div><div class="cs-lbl">Volume</div></div>
+      </div>
+      <div class="cl-actions">
+        <button class="cl-btn" onclick="event.stopPropagation();copyPortalLink('${c.id}')">📋 Copy Link</button>
+        <button class="cl-btn" onclick="event.stopPropagation();copyDashLink('${c.id}')">📊 Dashboard</button>
+        <button class="cl-btn danger" onclick="event.stopPropagation();toggleClient('${c.id}')">${c.active?'Suspend':'Activate'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateClientBadge(){
+  document.getElementById('clientBadge').textContent = CLIENTS.length;
+  document.getElementById('clientBadge').style.display = CLIENTS.length>0?'inline':'none';
+}
+
+function openAddClient(){
+  document.getElementById('addModal').classList.add('open');
+  document.getElementById('f_name').focus();
+}
+
+function addClient(){
+  const name = document.getElementById('f_name').value.trim();
+  const type = document.getElementById('f_type').value;
+  const owner = document.getElementById('f_owner').value.trim();
+  const phone = document.getElementById('f_phone').value.trim();
+  const email = document.getElementById('f_email').value.trim();
+  const pw = document.getElementById('f_password').value.trim();
+  const plan = document.getElementById('f_plan').value;
+  const monthly = parseInt(document.getElementById('f_monthly').value)||PLAN_PRICES[plan];
+  const setup = parseInt(document.getElementById('f_setup').value)||15000;
+  const location = document.getElementById('f_location').value.trim();
+
+  if(!name||!owner||!phone||!email||!pw){showToast('⚠️','Please fill all required fields','All starred fields are required','t-r');return}
+
+  const id = 'cl_'+Date.now();
+  const apiKey = 'ake_'+Math.random().toString(36).substr(2,16);
+
+  const client = {
+    id, name, type, ownerName:owner, ownerPhone:phone,
+    email, passwordHash:btoa(pw), apiKey,
+    plan, monthlyFee:monthly, setupFee:setup,
+    location, active:true,
+    createdAt: new Date().toISOString(),
+    bundles: getDefaultBundles(type),
+  };
+
+  CLIENTS.push(client);
+  DB.set('clients',CLIENTS);
+
+  // Log setup fee as revenue
+  const revEntries = DB.get('revenues',[]);
+  revEntries.push({clientId:id,clientName:name,type:'setup',amount:setup,date:new Date().toISOString()});
+  DB.set('revenues',revEntries);
+
+  closeModal('addModal');
+  clearForm();
+  renderClients();
+  renderOverview();
+  renderRevenue();
+  checkSetupSteps();
+  showToast('🎉',`${name} added!`,`Dashboard: ${email} · Portal link copied`,'t-g');
+  copyPortalLink(id,true);
+}
+
+function getDefaultBundles(type){
+  const defaults = {
+    wifi:[{id:'1hr',label:'1 Hour',price:10,detail:'5 Mbps'},{id:'daily',label:'Daily',price:50,detail:'10 Mbps'},{id:'weekly',label:'Weekly',price:250,detail:'15 Mbps'},{id:'monthly',label:'Monthly',price:800,detail:'20 Mbps'}],
+    hotel:[{id:'single',label:'Single Room',price:2500,detail:'1 Guest'},{id:'double',label:'Double Room',price:3500,detail:'2 Guests'},{id:'suite',label:'Suite',price:6500,detail:'Luxury'},{id:'conf',label:'Conference',price:8000,detail:'20 pax'}],
+    parking:[{id:'1h',label:'1 Hour',price:50,detail:'1 slot'},{id:'4h',label:'4 Hours',price:100,detail:'1 slot'},{id:'12h',label:'12 Hours',price:200,detail:'1 slot'},{id:'24h',label:'Overnight',price:300,detail:'1 slot'}],
+    shop:[{id:'s',label:'Small Item',price:500,detail:''},{id:'m',label:'Medium Item',price:2000,detail:''},{id:'l',label:'Large Item',price:5000,detail:''},{id:'xl',label:'Premium',price:10000,detail:''}],
+    rental:[{id:'d',label:'Daily',price:1500,detail:''},{id:'w',label:'Weekly',price:8000,detail:''},{id:'mo',label:'Monthly',price:25000,detail:''},{id:'yr',label:'Yearly',price:250000,detail:''}],
+    salon:[{id:'h',label:'Haircut',price:300,detail:''},{id:'t',label:'Treatment',price:800,detail:''},{id:'f',label:'Full Package',price:1500,detail:''}],
+    gym:[{id:'d',label:'Day Pass',price:200,detail:''},{id:'w',label:'Weekly',price:700,detail:''},{id:'m',label:'Monthly',price:2500,detail:''}],
+    custom:[{id:'a',label:'Service A',price:500,detail:''},{id:'b',label:'Service B',price:1000,detail:''},{id:'c',label:'Service C',price:2000,detail:''}],
+  };
+  return defaults[type]||defaults.custom;
+}
+
+function toggleClient(id){
+  const c = CLIENTS.find(x=>x.id===id);
+  if(!c) return;
+  c.active = !c.active;
+  DB.set('clients',CLIENTS);
+  renderClients();
+  renderOverview();
+  showToast(c.active?'✅':'⚠️',`${c.name} ${c.active?'activated':'suspended'}`,c.active?'Client can now use the platform':'Client access disabled','t-g');
+}
+
+function showClientDetail(id){
+  const c = CLIENTS.find(x=>x.id===id);
+  if(!c) return;
+  const cTxns = TRANSACTIONS.filter(t=>t.clientId===id&&t.status==='success');
+  const rev = cTxns.reduce((a,t)=>a+t.amount,0);
+  const portalUrl = `${window.location.origin.replace('/admin.html','')}/portal.html?key=${c.apiKey}`;
+  const dashUrl = `${window.location.origin.replace('/admin.html','')}/dashboard.html?id=${c.id}`;
+
+  document.getElementById('dm_title').textContent = c.name;
+  document.getElementById('dm_sub').textContent = `${TYPE_MAP[c.type]} ${c.type} · ${c.location||'Kenya'}`;
+  document.getElementById('dm_body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="background:var(--s3);border-radius:10px;padding:14px">
+        <div style="font-size:0.6rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Owner</div>
+        <div style="font-weight:600;font-size:0.88rem">${c.ownerName}</div>
+        <div style="font-size:0.75rem;color:var(--m2)">${c.ownerPhone}</div>
+      </div>
+      <div style="background:var(--s3);border-radius:10px;padding:14px">
+        <div style="font-size:0.6rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Revenue</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--g)">${cTxns.length} sales · Ksh ${rev.toLocaleString()}</div>
+      </div>
+      <div style="background:var(--s3);border-radius:10px;padding:14px">
+        <div style="font-size:0.6rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Plan</div>
+        <div style="font-weight:600;font-size:0.88rem">${c.plan} · Ksh ${c.monthlyFee.toLocaleString()}/mo</div>
+      </div>
+      <div style="background:var(--s3);border-radius:10px;padding:14px">
+        <div style="font-size:0.6rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Login</div>
+        <div style="font-size:0.78rem;color:var(--m2)">${c.email}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.65rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Customer Payment Portal</div>
+      <div style="background:var(--s3);border-radius:9px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--g);word-break:break-all">${portalUrl}</span>
+        <button class="btn btn-g" style="padding:6px 14px;font-size:0.72rem;flex-shrink:0" onclick="navigator.clipboard.writeText('${portalUrl}');showToast('📋','Link copied!','Share this with customers','t-g')">Copy</button>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:0.65rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Client Dashboard Login</div>
+      <div style="background:var(--s3);border-radius:9px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <span style="font-size:0.78rem;color:var(--m2)">${dashUrl}<br>Email: ${c.email}</span>
+        <button class="btn btn-b" style="padding:6px 14px;font-size:0.72rem;flex-shrink:0" onclick="navigator.clipboard.writeText('${dashUrl}');showToast('📋','Dashboard link copied!','Send to ${c.ownerName}','t-g')">Copy</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-g" onclick="copyPortalLink('${c.id}')">📋 Copy Portal Link</button>
+      <button class="btn btn-b" onclick="window.open('${dashUrl}','_blank')">📊 Open Dashboard</button>
+      <button class="btn ${c.active?'btn-r':'btn-ghost'}" onclick="toggleClient('${c.id}');closeModal('detailModal')">${c.active?'Suspend Client':'Activate Client'}</button>
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function copyPortalLink(id, silent=false){
+  const c = CLIENTS.find(x=>x.id===id);
+  if(!c) return;
+  const url = `${window.location.href.replace('admin.html','').replace(/\/$/, '')}/portal.html?key=${c.apiKey}`;
+  navigator.clipboard.writeText(url).catch(()=>{});
+  if(!silent) showToast('📋','Portal link copied!',`Share with ${c.name} customers`,'t-g');
+}
+
+function copyDashLink(id){
+  const c = CLIENTS.find(x=>x.id===id);
+  if(!c) return;
+  const url = `${window.location.href.replace('admin.html','').replace(/\/$/, '')}/dashboard.html?id=${id}`;
+  navigator.clipboard.writeText(url).catch(()=>{});
+  showToast('📊','Dashboard link copied!',`Send to ${c.ownerName}`,'t-g');
+}
+
+function clearForm(){
+  ['f_name','f_owner','f_phone','f_email','f_password','f_location'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('f_type').value='wifi';
+  document.getElementById('f_plan').value='growth';
+  document.getElementById('f_monthly').value=3000;
+  document.getElementById('f_setup').value=25000;
+}
+
+function updatePlanPrice(){
+  const plan = document.getElementById('f_plan').value;
+  document.getElementById('f_monthly').value = PLAN_PRICES[plan];
+}
+
+// ═══════════════════════════════════════
+// TRANSACTIONS
+// ═══════════════════════════════════════
+function renderTransactions(){
+  const filter = document.getElementById('txnFilter')?.value||'';
+  const txns = [...TRANSACTIONS]
+    .filter(t=>!filter||t.clientId===filter)
+    .sort((a,b)=>new Date(b.time)-new Date(a.time));
+
+  document.getElementById('txnEmpty').style.display = txns.length===0?'block':'none';
+
+  document.getElementById('txnTbl').innerHTML = txns.map(t=>`
+    <tr>
+      <td><strong>${t.clientName}</strong></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">${t.phone}</td>
+      <td>${t.bundle}</td>
+      <td style="font-weight:700;color:${t.status==='success'?'var(--g)':'var(--r)'}">Ksh ${t.amount.toLocaleString()}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--m2)">${t.mpesaRef||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--b)">${t.code||'—'}</td>
+      <td><span class="bdg ${t.status==='success'?'bdg-g':'bdg-r'}">${t.status==='success'?'✓ Paid':'✗ Failed'}</span></td>
+      <td style="color:var(--m2);font-size:0.72rem">${timeAgo(t.time)}</td>
+    </tr>`).join('') || '';
+}
+
+// ═══════════════════════════════════════
+// REVENUE
+// ═══════════════════════════════════════
+function renderRevenue(){
+  const activeClients = CLIENTS.filter(c=>c.active);
+  const mrr = activeClients.reduce((a,c)=>a+c.monthlyFee,0);
+  const setup = CLIENTS.reduce((a,c)=>a+c.setupFee,0);
+
+  animCount(document.getElementById('revMRR'), mrr, 'Ksh ');
+  animCount(document.getElementById('revAnnual'), mrr*12, 'Ksh ');
+  animCount(document.getElementById('revSetup'), setup, 'Ksh ');
+  document.getElementById('revClients').textContent = CLIENTS.length;
+
+  const empty = CLIENTS.length===0;
+  document.getElementById('revEmpty').style.display = empty?'block':'none';
+
+  document.getElementById('revTbl').innerHTML = CLIENTS.map(c=>`
+    <tr>
+      <td><strong>${TYPE_MAP[c.type]||'⚙️'} ${c.name}</strong><br><span style="font-size:0.7rem;color:var(--m2)">${c.ownerName}</span></td>
+      <td>${c.type}</td>
+      <td><span class="bdg bdg-b">${c.plan}</span></td>
+      <td style="font-weight:700;color:var(--g)">Ksh ${c.monthlyFee.toLocaleString()}/mo</td>
+      <td style="font-weight:600">Ksh ${(c.monthlyFee*12).toLocaleString()}/yr</td>
+      <td style="color:var(--y)">Ksh ${c.setupFee.toLocaleString()}</td>
+      <td><span class="bdg ${c.active?'bdg-g':'bdg-r'}">${c.active?'● Active':'● Off'}</span></td>
+    </tr>`).join('');
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function loadSettings(){
+  const c = CONFIG;
+  if(c.mpesa?.key){ document.getElementById('mpesaKey').value=c.mpesa.key; document.getElementById('mpesaStatus').textContent='✓ Configured'; document.getElementById('mpesaStatus').className='bdg bdg-g'; }
+  if(c.sms?.key){ document.getElementById('atKey').value=c.sms.key; document.getElementById('smsStatus').textContent='✓ Configured'; document.getElementById('smsStatus').className='bdg bdg-g'; }
+  if(c.server?.url) document.getElementById('serverUrl').value=c.server.url;
+}
+
+function saveMpesa(){
+  CONFIG.mpesa={ key:document.getElementById('mpesaKey').value, secret:document.getElementById('mpesaSecret').value, shortcode:document.getElementById('mpesaShortcode').value, passkey:document.getElementById('mpesaPasskey').value };
+  DB.set('config',CONFIG);
+  document.getElementById('mpesaStatus').textContent='✓ Configured';
+  document.getElementById('mpesaStatus').className='bdg bdg-g';
+  checkSetupSteps();
+  showToast('💳','M-Pesa config saved!','Your Daraja credentials are stored','t-g');
+}
+
+function saveSMS(){
+  CONFIG.sms={ key:document.getElementById('atKey').value, username:document.getElementById('atUser').value, senderId:document.getElementById('atSender').value };
+  DB.set('config',CONFIG);
+  document.getElementById('smsStatus').textContent='✓ Configured';
+  document.getElementById('smsStatus').className='bdg bdg-g';
+  checkSetupSteps();
+  showToast('📲','SMS config saved!','Africa\'s Talking credentials stored','t-g');
+}
+
+function saveServer(){
+  CONFIG.server={ url:document.getElementById('serverUrl').value, mongo:document.getElementById('mongoUri').value };
+  DB.set('config',CONFIG);
+  checkSetupSteps();
+  showToast('🌐','Server config saved!','Your server URL is configured','t-g');
+}
+
+function changePassword(){
+  const old=document.getElementById('oldPw').value;
+  const n1=document.getElementById('newPw').value;
+  const n2=document.getElementById('newPw2').value;
+  if(old!==ADMIN_PW){showToast('❌','Wrong current password','','t-r');return}
+  if(n1!==n2){showToast('❌','Passwords don\'t match','','t-r');return}
+  if(n1.length<6){showToast('❌','Password too short','Min 6 characters','t-r');return}
+  ADMIN_PW=n1; DB.set('adminPw',ADMIN_PW);
+  document.getElementById('oldPw').value='';document.getElementById('newPw').value='';document.getElementById('newPw2').value='';
+  showToast('🔐','Password updated!','Use your new password next time','t-g');
+}
+
+function checkSetupSteps(){
+  if(CLIENTS.length>0) document.getElementById('step1')?.classList.add('done');
+  if(CONFIG.mpesa?.key) document.getElementById('step2')?.classList.add('done');
+  if(CONFIG.sms?.key) document.getElementById('step3')?.classList.add('done');
+  if(CONFIG.server?.url) document.getElementById('step4')?.classList.add('done');
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function closeModal(id){ document.getElementById(id).classList.remove('open') }
+
+function showToast(icon,text,sub,cls='t-g'){
+  const t=document.getElementById('toast');
+  document.getElementById('toastIcon').textContent=icon;
+  document.getElementById('toastText').textContent=text;
+  document.getElementById('toastSub').textContent=sub;
+  t.className='toast show '+cls;
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function animCount(el,target,prefix=''){
+  if(!el) return;
+  const start=0;const steps=40;const step=target/steps;let curr=0;
+  const interval=setInterval(()=>{curr=Math.min(curr+step,target);el.textContent=prefix+Math.round(curr).toLocaleString();if(curr>=target)clearInterval(interval)},16);
+}
+
+function timeAgo(dateStr){
+  const diff=(Date.now()-new Date(dateStr))/1000;
+  if(diff<60) return 'Just now';
+  if(diff<3600) return Math.floor(diff/60)+'m ago';
+  if(diff<86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-ov').forEach(ov=>{
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('open')});
+});
+
+// Expose addTransaction for portal to call
+window.AKE_addTransaction = function(txn){
+  TRANSACTIONS.push(txn);
+  DB.set('transactions',TRANSACTIONS);
+  renderOverview();
+  renderTransactions();
+};
+</script>
+</body>
+</html>
