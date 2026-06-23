@@ -137,6 +137,43 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 .bni .bni-i{font-size:1.1rem}
 .bni .bni-l{font-size:0.6rem;font-weight:600;color:var(--muted2)}
 .bni.active .bni-l{color:var(--a)}
+
+/* VIEWS */
+.view{display:none}
+.view.active{display:block}
+
+/* CRM */
+.crm-add{width:100%;padding:12px;border:1.5px dashed var(--border);border-radius:var(--r);background:var(--s1);color:var(--a);font-family:'Outfit',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;margin-bottom:14px}
+.ct-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.ct-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.ct-name{font-weight:700;font-size:0.88rem}
+.ct-phone{font-size:0.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:1px}
+.ct-status{font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;padding:3px 9px;border-radius:20px}
+.ct-status.lead{background:rgba(217,119,6,0.1);color:#d97706}
+.ct-status.customer{background:rgba(5,150,105,0.1);color:#059669}
+.ct-notes{font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.ct-actions{display:flex;gap:6px;flex-wrap:wrap}
+.ct-btn{flex:1;min-width:60px;padding:7px 6px;border-radius:8px;border:1px solid var(--border);background:var(--s1);font-size:0.68rem;font-weight:700;color:var(--ink);cursor:pointer;text-align:center;text-decoration:none}
+.ct-btn:hover{border-color:var(--a);color:var(--a)}
+.fu-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(0,0,0,0.04);font-size:0.76rem}
+.fu-row:last-child{border-bottom:none}
+.fu-tag{font-size:0.62rem;font-weight:800;text-transform:uppercase;background:var(--al);color:var(--a);padding:2px 8px;border-radius:20px}
+.fu-pending{color:#d97706}
+.fu-sent{color:#059669}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:380px;max-height:85vh;overflow-y:auto}
+.modal h3{font-weight:800;font-size:1.05rem;margin-bottom:14px}
+.modal .field{margin-bottom:10px}
+.modal .field label{font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px}
+.modal .field input,.modal .field textarea{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none}
+.modal .field input:focus,.modal .field textarea:focus{border-color:var(--a)}
+.modal-actions{display:flex;gap:8px;margin-top:14px}
+.modal-actions button{flex:1;padding:11px;border-radius:9px;border:none;font-weight:700;font-size:0.82rem;cursor:pointer}
+.modal-actions .cancel{background:var(--s2);color:var(--muted)}
+.modal-actions .save{background:var(--a);color:#fff}
 </style>
 </head>
 <body>
@@ -166,6 +203,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
   </nav>
 
   <div class="main">
+  <div class="view active" id="view-dashboard">
     <div class="ptabs">
       <button class="pt" onclick="setPeriod('today',this)">Today</button>
       <button class="pt active" onclick="setPeriod('week',this)">This Week</button>
@@ -210,17 +248,42 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     </div>
   </div>
 
+  <div class="view" id="view-crm">
+    <button class="crm-add" onclick="openContactModal()">+ Add Customer / Lead</button>
+    <div id="contactList"></div>
+
+    <div class="txn-card" style="margin-top:6px">
+      <div class="txh"><h3>Follow-Ups</h3><span id="fuCount" style="font-size:0.72rem;color:var(--muted)">0 scheduled</span></div>
+      <div id="followupList" style="padding:4px 16px 14px"></div>
+    </div>
+  </div>
+  </div>
+
   <nav class="bnav">
-    <button class="bni active"><span class="bni-i">📊</span><span class="bni-l">Dashboard</span></button>
+    <button class="bni active" id="navDash" onclick="switchView('dashboard',this)"><span class="bni-i">📊</span><span class="bni-l">Dashboard</span></button>
+    <button class="bni" id="navCrm" onclick="switchView('crm',this)"><span class="bni-i">👥</span><span class="bni-l">CRM</span></button>
     <button class="bni" onclick="copyPortalLink()"><span class="bni-i">🔗</span><span class="bni-l">Portal Link</span></button>
-    <button class="bni" onclick="showToast('📲 Coming soon!')"><span class="bni-i">📲</span><span class="bni-l">Send SMS</span></button>
     <button class="bni" onclick="doLogout()"><span class="bni-i">🚪</span><span class="bni-l">Sign Out</span></button>
   </nav>
 </div>
 
-<script>
-const DB={get(k,d=null){try{const v=localStorage.getItem('ake_'+k);return v?JSON.parse(v):d}catch{return d}},set(k,v){localStorage.setItem('ake_'+k,JSON.stringify(v))}};
+<!-- ADD CONTACT MODAL -->
+<div class="modal-ov" id="contactModal">
+  <div class="modal">
+    <h3>Add Customer / Lead</h3>
+    <div class="field"><label>Name *</label><input type="text" id="ctName" placeholder="Customer name"></div>
+    <div class="field"><label>Phone *</label><input type="tel" id="ctPhone" placeholder="0712 345 678"></div>
+    <div class="field"><label>Email</label><input type="email" id="ctEmail" placeholder="optional"></div>
+    <div class="field"><label>Notes</label><textarea id="ctNotes" rows="2" placeholder="What do they need?"></textarea></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeContactModal()">Cancel</button>
+      <button class="save" onclick="saveContact()">Save</button>
+    </div>
+  </div>
+</div>
 
+<script src="js/api.js"></script>
+<script>
 const TYPE_MAP={wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
 const TYPE_ACTIONS={
   wifi:[{i:'🎟',l:'Generate Voucher'},{i:'📡',l:'Router Status'},{i:'📲',l:'Send SMS'},{i:'💬',l:'WhatsApp'}],
@@ -235,35 +298,31 @@ const TYPE_ACTIONS={
 
 let CLIENT = null;
 let TRANSACTIONS = [];
+let CONTACTS = [];
+let FOLLOWUPS = [];
 let period = 'week';
 
-// ── Load client from URL param or stored session
-function getClientId(){
-  const p = new URLSearchParams(window.location.search);
-  return p.get('id') || DB.get('dashClientId');
-}
-
-function doLogin(){
+async function doLogin(){
   const email = document.getElementById('lEmail').value.trim();
   const pw = document.getElementById('lPw').value;
-  const clients = DB.get('clients',[]);
-  const match = clients.find(c=>c.email===email && atob(c.passwordHash)===pw);
-  if(!match){document.getElementById('lErr').textContent='Wrong email or password.';return}
-  if(!match.active){document.getElementById('lErr').textContent='Account suspended. Contact support.';return}
-  DB.set('dashClientId',match.id);
-  CLIENT = match;
-  initApp();
+  const errEl = document.getElementById('lErr');
+  errEl.textContent='';
+  try{
+    const {token} = await AKE.api('/auth/client-login',{method:'POST',body:{email,password:pw}});
+    AKE.setStoredToken('client',token);
+    await initApp();
+  }catch(e){
+    errEl.textContent = e.message || 'Wrong email or password.';
+  }
 }
 
-function initApp(){
-  if(!CLIENT){
-    const id = getClientId();
-    if(!id){return}
-    const clients = DB.get('clients',[]);
-    CLIENT = clients.find(c=>c.id===id);
-    if(!CLIENT){return}
+async function initApp(){
+  try{
+    CLIENT = await AKE.api('/clients/me',{role:'client'});
+  }catch{
+    AKE.setStoredToken('client',null);
+    return;
   }
-  TRANSACTIONS = DB.get('transactions',[]).filter(t=>t.clientId===CLIENT.id);
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('app').style.display='block';
   document.body.setAttribute('data-type',CLIENT.type);
@@ -273,7 +332,6 @@ function initApp(){
   document.getElementById('tnType').textContent = CLIENT.type+' · '+CLIENT.plan+' plan';
   document.getElementById('rcActiveL').textContent = CLIENT.type==='wifi'?'Connected':'Active';
 
-  // Actions
   const actions = TYPE_ACTIONS[CLIENT.type]||TYPE_ACTIONS.custom;
   document.getElementById('qaGrid').innerHTML = actions.map(a=>`
     <div class="qa-btn" onclick="showToast('${a.l}')">
@@ -281,15 +339,113 @@ function initApp(){
       <div class="qa-l">${a.l}</div>
     </div>`).join('');
 
-  loadData();
+  await refreshAll();
+  setInterval(refreshAll, 30000);
 }
 
-// Auto-init if URL has id param
-const urlId = new URLSearchParams(window.location.search).get('id');
-if(urlId){
-  const clients = DB.get('clients',[]);
-  CLIENT = clients.find(c=>c.id===urlId);
-  if(CLIENT){ TRANSACTIONS = DB.get('transactions',[]).filter(t=>t.clientId===CLIENT.id); document.getElementById('loginWrap').style.display='none'; document.getElementById('app').style.display='block'; document.body.setAttribute('data-type',CLIENT.type); document.getElementById('tnIco').textContent=TYPE_MAP[CLIENT.type]||'⚙️'; document.getElementById('tnName').textContent=CLIENT.name; document.getElementById('tnType').textContent=CLIENT.type+' · '+CLIENT.plan+' plan'; document.getElementById('rcActiveL').textContent=CLIENT.type==='wifi'?'Connected':'Active'; const actions=TYPE_ACTIONS[CLIENT.type]||TYPE_ACTIONS.custom; document.getElementById('qaGrid').innerHTML=actions.map(a=>`<div class="qa-btn" onclick="showToast('${a.l}')"><div class="qa-i">${a.i}</div><div class="qa-l">${a.l}</div></div>`).join(''); loadData(); }
+async function refreshAll(){
+  const [txns,contacts,followups] = await Promise.all([
+    AKE.api('/transactions/mine',{role:'client'}),
+    AKE.api('/contacts',{role:'client'}),
+    AKE.api('/followups',{role:'client'}),
+  ]);
+  TRANSACTIONS = txns;
+  CONTACTS = contacts;
+  FOLLOWUPS = followups;
+  loadData();
+  renderContacts();
+  renderFollowups();
+}
+
+// Resume session if a client token is already stored
+if(AKE.getStoredToken('client')) initApp();
+
+function switchView(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── CRM ──
+function openContactModal(){
+  document.getElementById('ctName').value='';
+  document.getElementById('ctPhone').value='';
+  document.getElementById('ctEmail').value='';
+  document.getElementById('ctNotes').value='';
+  document.getElementById('contactModal').classList.add('open');
+}
+function closeContactModal(){document.getElementById('contactModal').classList.remove('open')}
+
+async function saveContact(){
+  const name=document.getElementById('ctName').value.trim();
+  const phone=document.getElementById('ctPhone').value.trim();
+  const email=document.getElementById('ctEmail').value.trim();
+  const notes=document.getElementById('ctNotes').value.trim();
+  if(!name||!phone){showToast('⚠️ Name and phone required');return}
+  await AKE.api('/contacts',{method:'POST',role:'client',body:{name,phone,email,notes}});
+  closeContactModal();
+  showToast('✅ Customer added');
+  await refreshAll();
+}
+
+function renderContacts(){
+  const list=document.getElementById('contactList');
+  if(!CONTACTS.length){
+    list.innerHTML=`<div class="empty"><div class="ei">👥</div><h4>No customers yet</h4><p>Add leads and customers here, then schedule automatic follow-ups.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...CONTACTS].reverse().map(c=>{
+    const wa='https://wa.me/'+c.phone.replace(/^0/,'254').replace(/\D/g,'');
+    return `
+    <div class="ct-card">
+      <div class="ct-top">
+        <div><div class="ct-name">${c.name}</div><div class="ct-phone">${c.phone}</div></div>
+        <span class="ct-status ${c.status}">${c.status}</span>
+      </div>
+      ${c.notes?`<div class="ct-notes">${c.notes}</div>`:''}
+      <div class="ct-actions">
+        <a class="ct-btn" href="tel:${c.phone}">📞 Call</a>
+        <a class="ct-btn" href="${wa}" target="_blank">💬 WhatsApp</a>
+        <button class="ct-btn" onclick="quickSMS('${c.id}')">📲 SMS</button>
+        <button class="ct-btn" onclick="scheduleFollowups('${c.id}')">⏰ Follow-Up</button>
+        <button class="ct-btn" onclick="markCustomer('${c.id}')">✅ Mark Customer</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function quickSMS(id){
+  const c=CONTACTS.find(x=>x.id===id);
+  try{
+    await AKE.api('/contacts/'+id+'/sms',{method:'POST',role:'client',body:{message:`Hi ${c.name}, thanks for reaching out to ${CLIENT.name}. How can we help?`}});
+    showToast('📲 SMS sent to '+c.name);
+  }catch(e){ showToast('⚠️ '+e.message) }
+}
+
+async function scheduleFollowups(id){
+  await AKE.api('/followups/schedule',{method:'POST',role:'client',body:{contactId:id}});
+  showToast('⏰ Day 1 / 3 / 7 follow-ups scheduled');
+  await refreshAll();
+}
+
+async function markCustomer(id){
+  await AKE.api('/contacts/'+id,{method:'PATCH',role:'client',body:{status:'customer'}});
+  await refreshAll();
+}
+
+function renderFollowups(){
+  document.getElementById('fuCount').textContent=FOLLOWUPS.length+' scheduled';
+  const list=document.getElementById('followupList');
+  if(!FOLLOWUPS.length){
+    list.innerHTML=`<div class="empty"><div class="ei">⏰</div><h4>No follow-ups scheduled</h4><p>Use "Follow-Up" on a customer card to auto-message them on Day 1, 3 and 7.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...FOLLOWUPS].sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt)).map(f=>`
+    <div class="fu-row">
+      <div><span class="fu-tag">${f.type}</span> ${f.contactName} — ${new Date(f.dueAt).toLocaleDateString()}</div>
+      <span class="${f.status==='pending'?'fu-pending':'fu-sent'}">${f.status==='pending'?'Pending':'Sent'}</span>
+    </div>`).join('');
 }
 
 function setPeriod(p,btn){
@@ -374,22 +530,13 @@ function copyPortalLink(){
   showToast('📋 Portal link copied! Share with customers.');
 }
 
-function doLogout(){DB.set('dashClientId',null);location.reload()}
+function doLogout(){AKE.setStoredToken('client',null);location.reload()}
 
 function animCount(el,target,prefix=''){if(!el)return;const steps=30;const step=target/steps;let curr=0;const t=setInterval(()=>{curr=Math.min(curr+step,target);el.textContent=prefix+Math.round(curr).toLocaleString();if(curr>=target)clearInterval(t)},16)}
 
 function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return 'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
-
-// Listen for new transactions from portal
-window.addEventListener('storage',e=>{
-  if(e.key==='ake_transactions'&&CLIENT){
-    TRANSACTIONS=JSON.parse(e.newValue||'[]').filter(t=>t.clientId===CLIENT.id);
-    loadData();
-    showToast('💰 New payment received!');
-  }
-});
 </script>
 </body>
 </html>

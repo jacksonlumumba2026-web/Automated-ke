@@ -404,7 +404,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
 
     <!-- ══ REVENUE ══ -->
     <div class="page" id="page-revenue">
-      <div class="topbar"><div class="topbar-left"><h2>My Revenue</h2><p>Setup fees + monthly recurring income</p></div></div>
+      <div class="topbar"><div class="topbar-left"><h2>My Revenue</h2><p>Monthly recurring income from client subscriptions</p></div></div>
       <div class="rev-hero">
         <div>
           <div class="rev-label">Monthly Recurring Revenue</div>
@@ -412,15 +412,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
           <div class="rev-note">Projected annual: <strong id="revAnnual">Ksh 0</strong></div>
         </div>
         <div style="text-align:right">
-          <div class="rev-label">Setup Fees Collected</div>
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--y);letter-spacing:1px" id="revSetup">Ksh 0</div>
-          <div class="rev-note">Total clients: <strong id="revClients">0</strong></div>
+          <div class="rev-label">Total Clients</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--y);letter-spacing:1px" id="revClients">0</div>
+          <div class="rev-note">Starter Ksh 2,000 · Growth Ksh 5,000 · Pro Ksh 10,000 /mo</div>
         </div>
       </div>
       <div class="card">
         <div class="card-head"><h3>Revenue by Client</h3></div>
         <table class="tbl">
-          <thead><tr><th>Business</th><th>Type</th><th>Plan</th><th>Monthly Fee</th><th>Annual Value</th><th>Setup Fee</th><th>Status</th></tr></thead>
+          <thead><tr><th>Business</th><th>Type</th><th>Plan</th><th>Monthly Fee</th><th>Annual Value</th><th>Status</th></tr></thead>
           <tbody id="revTbl"></tbody>
         </table>
         <div id="revEmpty" class="empty" style="display:none;border:none">
@@ -449,33 +449,34 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
         <div class="card">
           <div class="card-head"><h3>📲 Safaricom Daraja</h3><span class="bdg" id="mpesaStatus">Not configured</span></div>
           <div class="card-body">
-            <div class="field"><label>Consumer Key</label><input type="text" id="mpesaKey" placeholder="From developer.safaricom.co.ke"></div>
-            <div class="field"><label>Consumer Secret</label><input type="password" id="mpesaSecret" placeholder="Your consumer secret"></div>
-            <div class="field"><label>Shortcode (Paybill/Till)</label><input type="text" id="mpesaShortcode" placeholder="e.g. 174379"></div>
-            <div class="field"><label>Passkey</label><input type="password" id="mpesaPasskey" placeholder="From Safaricom portal"></div>
-            <button class="btn btn-g" onclick="saveMpesa()">Save M-Pesa Config</button>
-            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Get credentials free at <a href="https://developer.safaricom.co.ke" target="_blank" style="color:var(--g)">developer.safaricom.co.ke →</a></p>
+            <p style="font-size:0.8rem;color:var(--m2);font-weight:300;line-height:1.7;margin-bottom:10px">For security, M-Pesa credentials are set as environment variables on the server — not stored in this dashboard. On Truehost, open <strong>cPanel → Setup Node.js App → your app → Environment Variables</strong> and add:</p>
+            <pre style="background:var(--s3);border-radius:9px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--g);overflow-x:auto;white-space:pre">MPESA_ENV=production
+MPESA_CONSUMER_KEY=...
+MPESA_CONSUMER_SECRET=...
+MPESA_SHORTCODE=...
+MPESA_PASSKEY=...
+MPESA_CALLBACK_URL=https://yourdomain.co.ke/api/transactions/mpesa/callback</pre>
+            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Then restart the Node app. Get free sandbox credentials at <a href="https://developer.safaricom.co.ke" target="_blank" style="color:var(--g)">developer.safaricom.co.ke →</a></p>
           </div>
         </div>
 
         <div class="card">
           <div class="card-head"><h3>💬 Africa's Talking SMS</h3><span class="bdg" id="smsStatus">Not configured</span></div>
           <div class="card-body">
-            <div class="field"><label>API Key</label><input type="password" id="atKey" placeholder="Your AT API key"></div>
-            <div class="field"><label>Username</label><input type="text" id="atUser" placeholder="Your AT username"></div>
-            <div class="field"><label>Sender ID</label><input type="text" id="atSender" placeholder="e.g. AutomateKE"></div>
-            <button class="btn btn-g" onclick="saveSMS()">Save SMS Config</button>
+            <p style="font-size:0.8rem;color:var(--m2);font-weight:300;line-height:1.7;margin-bottom:10px">Same as above — add these environment variables on the server:</p>
+            <pre style="background:var(--s3);border-radius:9px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--g);overflow-x:auto;white-space:pre">AT_ENV=production
+AT_API_KEY=...
+AT_USERNAME=...
+AT_SENDER_ID=AutomateKE</pre>
             <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Sign up free at <a href="https://africastalking.com" target="_blank" style="color:var(--g)">africastalking.com →</a></p>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-head"><h3>🌐 Server Config</h3></div>
+          <div class="card-head"><h3>🌐 Server</h3></div>
           <div class="card-body">
-            <div class="field"><label>Server URL</label><input type="text" id="serverUrl" placeholder="https://api.automateke.co.ke"></div>
-            <div class="field"><label>MongoDB URI</label><input type="password" id="mongoUri" placeholder="mongodb+srv://..."></div>
-            <button class="btn btn-g" onclick="saveServer()">Save Server Config</button>
-            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Free MongoDB at <a href="https://mongodb.com/atlas" target="_blank" style="color:var(--g)">mongodb.com/atlas →</a> · VPS at <a href="https://truehost.co.ke" target="_blank" style="color:var(--g)">truehost.co.ke →</a></p>
+            <div class="field"><label>App URL</label><input type="text" id="serverUrl" placeholder="https://yourdomain.co.ke" readonly></div>
+            <p style="font-size:0.72rem;color:var(--m2);margin-top:10px;font-weight:300">Set <code>APP_URL</code> in your server's environment variables. Data is stored in a JSON file on the server (<code>server/data/db.json</code>) — no separate database needed.</p>
           </div>
         </div>
 
@@ -517,15 +518,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
     <div class="field-row">
       <div class="field"><label>Plan</label>
         <select id="f_plan" onchange="updatePlanPrice()">
-          <option value="starter">Starter</option>
-          <option value="growth" selected>Growth</option>
-          <option value="pro">Pro</option>
+          <option value="starter">Starter — Ksh 2,000/mo</option>
+          <option value="growth" selected>Growth — Ksh 5,000/mo</option>
+          <option value="pro">Pro — Ksh 10,000/mo</option>
         </select>
       </div>
-      <div class="field"><label>Monthly Fee (Ksh)</label><input type="number" id="f_monthly" value="3000"></div>
+      <div class="field"><label>Monthly Fee (Ksh)</label><input type="number" id="f_monthly" value="5000"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label>Setup Fee (Ksh)</label><input type="number" id="f_setup" value="25000"></div>
       <div class="field"><label>Location</label><input type="text" id="f_location" placeholder="Nairobi, Kenya"></div>
     </div>
     <div class="modal-actions">
@@ -545,43 +545,36 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
   </div>
 </div>
 
+<script src="js/api.js"></script>
 <script>
-// ═══════════════════════════════════════
-// STORAGE — persists across sessions
-// ═══════════════════════════════════════
-const DB = {
-  get(key, def=null){ try{const v=localStorage.getItem('ake_'+key);return v?JSON.parse(v):def}catch{return def}},
-  set(key,val){ localStorage.setItem('ake_'+key,JSON.stringify(val)) },
-};
-
 // ═══════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════
-let CLIENTS = DB.get('clients',[]);
-let TRANSACTIONS = DB.get('transactions',[]);
-let CONFIG = DB.get('config',{mpesa:{},sms:{},server:{}});
-let ADMIN_PW = DB.get('adminPw','Jackson@AutomateKE2025');
+let CLIENTS = [];
+let TRANSACTIONS = [];
+let SETTINGS_STATUS = { mpesaConfigured:false, smsConfigured:false, appUrl:'' };
 
 const TYPE_MAP = {wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
-const PLAN_PRICES = {starter:2000,growth:3000,pro:5000};
+const PLAN_PRICES = {starter:2000,growth:5000,pro:10000};
 
 // ═══════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════
-function doLogin(){
+async function doLogin(){
   const pw = document.getElementById('loginPw').value;
-  if(pw === ADMIN_PW){
-    document.getElementById('loginWrap').style.display='none';
-    document.getElementById('app').style.display='block';
-    init();
-  } else {
-    document.getElementById('loginErr').textContent='Wrong password. Try again.';
+  try{
+    const {token} = await AKE.api('/auth/admin-login',{method:'POST',body:{password:pw}});
+    AKE.setStoredToken('admin',token);
+    await initApp();
+  }catch(e){
+    document.getElementById('loginErr').textContent = e.message || 'Wrong password. Try again.';
     setTimeout(()=>document.getElementById('loginErr').textContent='',3000);
   }
 }
 document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 
 function logout(){
+  AKE.setStoredToken('admin',null);
   document.getElementById('app').style.display='none';
   document.getElementById('loginWrap').style.display='flex';
   document.getElementById('loginPw').value='';
@@ -590,17 +583,39 @@ function logout(){
 // ═══════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════
-function init(){
+async function initApp(){
+  try{
+    await AKE.api('/clients',{role:'admin'});
+  }catch{
+    AKE.setStoredToken('admin',null);
+    return;
+  }
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('app').style.display='block';
   document.getElementById('overviewDate').textContent =
     new Date().toLocaleDateString('en-KE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  await refreshAll();
+  await loadSettings();
+  setInterval(refreshAll, 30000);
+}
+
+async function refreshAll(){
+  const [clients, txns] = await Promise.all([
+    AKE.api('/clients',{role:'admin'}),
+    AKE.api('/transactions',{role:'admin'}),
+  ]);
+  CLIENTS = clients;
+  TRANSACTIONS = txns;
   updateClientBadge();
   renderOverview();
   renderClients();
   renderTransactions();
   renderRevenue();
-  loadSettings();
   checkSetupSteps();
 }
+
+// Resume session if an admin token is already stored
+if(AKE.getStoredToken('admin')) initApp();
 
 // ═══════════════════════════════════════
 // NAVIGATION
@@ -729,7 +744,7 @@ function openAddClient(){
   document.getElementById('f_name').focus();
 }
 
-function addClient(){
+async function addClient(){
   const name = document.getElementById('f_name').value.trim();
   const type = document.getElementById('f_type').value;
   const owner = document.getElementById('f_owner').value.trim();
@@ -737,64 +752,38 @@ function addClient(){
   const email = document.getElementById('f_email').value.trim();
   const pw = document.getElementById('f_password').value.trim();
   const plan = document.getElementById('f_plan').value;
-  const monthly = parseInt(document.getElementById('f_monthly').value)||PLAN_PRICES[plan];
-  const setup = parseInt(document.getElementById('f_setup').value)||15000;
   const location = document.getElementById('f_location').value.trim();
 
   if(!name||!owner||!phone||!email||!pw){showToast('⚠️','Please fill all required fields','All starred fields are required','t-r');return}
 
-  const id = 'cl_'+Date.now();
-  const apiKey = 'ake_'+Math.random().toString(36).substr(2,16);
-
-  const client = {
-    id, name, type, ownerName:owner, ownerPhone:phone,
-    email, passwordHash:btoa(pw), apiKey,
-    plan, monthlyFee:monthly, setupFee:setup,
-    location, active:true,
-    createdAt: new Date().toISOString(),
-    bundles: getDefaultBundles(type),
-  };
-
-  CLIENTS.push(client);
-  DB.set('clients',CLIENTS);
-
-  // Log setup fee as revenue
-  const revEntries = DB.get('revenues',[]);
-  revEntries.push({clientId:id,clientName:name,type:'setup',amount:setup,date:new Date().toISOString()});
-  DB.set('revenues',revEntries);
+  let client;
+  try{
+    client = await AKE.api('/clients',{method:'POST',role:'admin',body:{
+      name, type, ownerName:owner, ownerPhone:phone, email, password:pw, plan, location,
+    }});
+  }catch(e){
+    showToast('❌','Could not add client',e.message||'','t-r');
+    return;
+  }
 
   closeModal('addModal');
   clearForm();
-  renderClients();
-  renderOverview();
-  renderRevenue();
-  checkSetupSteps();
+  await refreshAll();
   showToast('🎉',`${name} added!`,`Dashboard: ${email} · Portal link copied`,'t-g');
-  copyPortalLink(id,true);
+  copyPortalLink(client.id,true);
 }
 
-function getDefaultBundles(type){
-  const defaults = {
-    wifi:[{id:'1hr',label:'1 Hour',price:10,detail:'5 Mbps'},{id:'daily',label:'Daily',price:50,detail:'10 Mbps'},{id:'weekly',label:'Weekly',price:250,detail:'15 Mbps'},{id:'monthly',label:'Monthly',price:800,detail:'20 Mbps'}],
-    hotel:[{id:'single',label:'Single Room',price:2500,detail:'1 Guest'},{id:'double',label:'Double Room',price:3500,detail:'2 Guests'},{id:'suite',label:'Suite',price:6500,detail:'Luxury'},{id:'conf',label:'Conference',price:8000,detail:'20 pax'}],
-    parking:[{id:'1h',label:'1 Hour',price:50,detail:'1 slot'},{id:'4h',label:'4 Hours',price:100,detail:'1 slot'},{id:'12h',label:'12 Hours',price:200,detail:'1 slot'},{id:'24h',label:'Overnight',price:300,detail:'1 slot'}],
-    shop:[{id:'s',label:'Small Item',price:500,detail:''},{id:'m',label:'Medium Item',price:2000,detail:''},{id:'l',label:'Large Item',price:5000,detail:''},{id:'xl',label:'Premium',price:10000,detail:''}],
-    rental:[{id:'d',label:'Daily',price:1500,detail:''},{id:'w',label:'Weekly',price:8000,detail:''},{id:'mo',label:'Monthly',price:25000,detail:''},{id:'yr',label:'Yearly',price:250000,detail:''}],
-    salon:[{id:'h',label:'Haircut',price:300,detail:''},{id:'t',label:'Treatment',price:800,detail:''},{id:'f',label:'Full Package',price:1500,detail:''}],
-    gym:[{id:'d',label:'Day Pass',price:200,detail:''},{id:'w',label:'Weekly',price:700,detail:''},{id:'m',label:'Monthly',price:2500,detail:''}],
-    custom:[{id:'a',label:'Service A',price:500,detail:''},{id:'b',label:'Service B',price:1000,detail:''},{id:'c',label:'Service C',price:2000,detail:''}],
-  };
-  return defaults[type]||defaults.custom;
-}
-
-function toggleClient(id){
+async function toggleClient(id){
   const c = CLIENTS.find(x=>x.id===id);
   if(!c) return;
-  c.active = !c.active;
-  DB.set('clients',CLIENTS);
-  renderClients();
-  renderOverview();
-  showToast(c.active?'✅':'⚠️',`${c.name} ${c.active?'activated':'suspended'}`,c.active?'Client can now use the platform':'Client access disabled','t-g');
+  try{
+    await AKE.api('/clients/'+id,{method:'PATCH',role:'admin',body:{active:!c.active}});
+  }catch(e){
+    showToast('❌','Could not update client',e.message||'','t-r');
+    return;
+  }
+  await refreshAll();
+  showToast(!c.active?'✅':'⚠️',`${c.name} ${!c.active?'activated':'suspended'}`,!c.active?'Client can now use the platform':'Client access disabled','t-g');
 }
 
 function showClientDetail(id){
@@ -872,8 +861,7 @@ function clearForm(){
   });
   document.getElementById('f_type').value='wifi';
   document.getElementById('f_plan').value='growth';
-  document.getElementById('f_monthly').value=3000;
-  document.getElementById('f_setup').value=25000;
+  document.getElementById('f_monthly').value=PLAN_PRICES.growth;
 }
 
 function updatePlanPrice(){
@@ -911,11 +899,9 @@ function renderTransactions(){
 function renderRevenue(){
   const activeClients = CLIENTS.filter(c=>c.active);
   const mrr = activeClients.reduce((a,c)=>a+c.monthlyFee,0);
-  const setup = CLIENTS.reduce((a,c)=>a+c.setupFee,0);
 
   animCount(document.getElementById('revMRR'), mrr, 'Ksh ');
   animCount(document.getElementById('revAnnual'), mrr*12, 'Ksh ');
-  animCount(document.getElementById('revSetup'), setup, 'Ksh ');
   document.getElementById('revClients').textContent = CLIENTS.length;
 
   const empty = CLIENTS.length===0;
@@ -928,7 +914,6 @@ function renderRevenue(){
       <td><span class="bdg bdg-b">${c.plan}</span></td>
       <td style="font-weight:700;color:var(--g)">Ksh ${c.monthlyFee.toLocaleString()}/mo</td>
       <td style="font-weight:600">Ksh ${(c.monthlyFee*12).toLocaleString()}/yr</td>
-      <td style="color:var(--y)">Ksh ${c.setupFee.toLocaleString()}</td>
       <td><span class="bdg ${c.active?'bdg-g':'bdg-r'}">${c.active?'● Active':'● Off'}</span></td>
     </tr>`).join('');
 }
@@ -936,55 +921,43 @@ function renderRevenue(){
 // ═══════════════════════════════════════
 // SETTINGS
 // ═══════════════════════════════════════
-function loadSettings(){
-  const c = CONFIG;
-  if(c.mpesa?.key){ document.getElementById('mpesaKey').value=c.mpesa.key; document.getElementById('mpesaStatus').textContent='✓ Configured'; document.getElementById('mpesaStatus').className='bdg bdg-g'; }
-  if(c.sms?.key){ document.getElementById('atKey').value=c.sms.key; document.getElementById('smsStatus').textContent='✓ Configured'; document.getElementById('smsStatus').className='bdg bdg-g'; }
-  if(c.server?.url) document.getElementById('serverUrl').value=c.server.url;
-}
-
-function saveMpesa(){
-  CONFIG.mpesa={ key:document.getElementById('mpesaKey').value, secret:document.getElementById('mpesaSecret').value, shortcode:document.getElementById('mpesaShortcode').value, passkey:document.getElementById('mpesaPasskey').value };
-  DB.set('config',CONFIG);
-  document.getElementById('mpesaStatus').textContent='✓ Configured';
-  document.getElementById('mpesaStatus').className='bdg bdg-g';
+async function loadSettings(){
+  try{
+    SETTINGS_STATUS = await AKE.api('/settings',{role:'admin'});
+  }catch{
+    return;
+  }
+  const mpesaEl = document.getElementById('mpesaStatus');
+  mpesaEl.textContent = SETTINGS_STATUS.mpesaConfigured ? '✓ Configured' : 'Not configured';
+  mpesaEl.className = 'bdg ' + (SETTINGS_STATUS.mpesaConfigured ? 'bdg-g' : 'bdg-r');
+  const smsEl = document.getElementById('smsStatus');
+  smsEl.textContent = SETTINGS_STATUS.smsConfigured ? '✓ Configured' : 'Not configured';
+  smsEl.className = 'bdg ' + (SETTINGS_STATUS.smsConfigured ? 'bdg-g' : 'bdg-r');
+  document.getElementById('serverUrl').value = SETTINGS_STATUS.appUrl || window.location.origin;
   checkSetupSteps();
-  showToast('💳','M-Pesa config saved!','Your Daraja credentials are stored','t-g');
 }
 
-function saveSMS(){
-  CONFIG.sms={ key:document.getElementById('atKey').value, username:document.getElementById('atUser').value, senderId:document.getElementById('atSender').value };
-  DB.set('config',CONFIG);
-  document.getElementById('smsStatus').textContent='✓ Configured';
-  document.getElementById('smsStatus').className='bdg bdg-g';
-  checkSetupSteps();
-  showToast('📲','SMS config saved!','Africa\'s Talking credentials stored','t-g');
-}
-
-function saveServer(){
-  CONFIG.server={ url:document.getElementById('serverUrl').value, mongo:document.getElementById('mongoUri').value };
-  DB.set('config',CONFIG);
-  checkSetupSteps();
-  showToast('🌐','Server config saved!','Your server URL is configured','t-g');
-}
-
-function changePassword(){
+async function changePassword(){
   const old=document.getElementById('oldPw').value;
   const n1=document.getElementById('newPw').value;
   const n2=document.getElementById('newPw2').value;
-  if(old!==ADMIN_PW){showToast('❌','Wrong current password','','t-r');return}
   if(n1!==n2){showToast('❌','Passwords don\'t match','','t-r');return}
   if(n1.length<6){showToast('❌','Password too short','Min 6 characters','t-r');return}
-  ADMIN_PW=n1; DB.set('adminPw',ADMIN_PW);
+  try{
+    await AKE.api('/auth/admin-change-password',{method:'POST',role:'admin',body:{oldPassword:old,newPassword:n1}});
+  }catch(e){
+    showToast('❌',e.message||'Could not change password','','t-r');
+    return;
+  }
   document.getElementById('oldPw').value='';document.getElementById('newPw').value='';document.getElementById('newPw2').value='';
   showToast('🔐','Password updated!','Use your new password next time','t-g');
 }
 
 function checkSetupSteps(){
   if(CLIENTS.length>0) document.getElementById('step1')?.classList.add('done');
-  if(CONFIG.mpesa?.key) document.getElementById('step2')?.classList.add('done');
-  if(CONFIG.sms?.key) document.getElementById('step3')?.classList.add('done');
-  if(CONFIG.server?.url) document.getElementById('step4')?.classList.add('done');
+  if(SETTINGS_STATUS.mpesaConfigured) document.getElementById('step2')?.classList.add('done');
+  if(SETTINGS_STATUS.smsConfigured) document.getElementById('step3')?.classList.add('done');
+  if(SETTINGS_STATUS.appUrl) document.getElementById('step4')?.classList.add('done');
 }
 
 // ═══════════════════════════════════════
@@ -1020,13 +993,6 @@ document.querySelectorAll('.modal-ov').forEach(ov=>{
   ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('open')});
 });
 
-// Expose addTransaction for portal to call
-window.AKE_addTransaction = function(txn){
-  TRANSACTIONS.push(txn);
-  DB.set('transactions',TRANSACTIONS);
-  renderOverview();
-  renderTransactions();
-};
 </script>
 </body>
 </html>

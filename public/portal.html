@@ -177,8 +177,8 @@ body{background:var(--bg);display:flex;flex-direction:column;align-items:center;
   </div>
 </div>
 
+<script src="js/api.js"></script>
 <script>
-const DB={get(k,d=null){try{const v=localStorage.getItem('ake_'+k);return v?JSON.parse(v):d}catch{return d}},set(k,v){localStorage.setItem('ake_'+k,JSON.stringify(v))}};
 const TYPE_MAP={wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
 const THEME={wifi:'#0ea5e9',hotel:'#7c3aed',parking:'#ea580c',shop:'#059669',rental:'#db2777',salon:'#d97706',gym:'#dc2626',custom:'#4f46e5'};
 const COLORS_BG={wifi:'#f0f9ff',hotel:'#f5f3ff',parking:'#fff7ed',shop:'#f0fdf4',rental:'#fdf2f8',salon:'#fffbeb',gym:'#fef2f2',custom:'#eef2ff'};
@@ -186,15 +186,18 @@ const COLORS_BG={wifi:'#f0f9ff',hotel:'#f5f3ff',parking:'#fff7ed',shop:'#f0fdf4'
 let CLIENT=null;
 let SEL=null;
 let VALID_CODES={};
+let KEY=null;
 
 // Load client from API key in URL
-function init(){
+async function init(){
   const params=new URLSearchParams(window.location.search);
-  const key=params.get('key');
-  if(!key){showNotFound();return}
-  const clients=DB.get('clients',[]);
-  CLIENT=clients.find(c=>c.apiKey===key&&c.active);
-  if(!CLIENT){showNotFound();return}
+  KEY=params.get('key');
+  if(!KEY){showNotFound();return}
+  try{
+    CLIENT=await AKE.api('/clients/by-key/'+KEY);
+  }catch{
+    showNotFound();return;
+  }
 
   // Set theme
   const color=THEME[CLIENT.type]||'#059669';
@@ -261,7 +264,7 @@ function switchTab(name,btn){
   document.getElementById('panel-'+name).classList.add('active');
 }
 
-function pay(){
+async function pay(){
   const phone=document.getElementById('buyPhone').value.trim();
   const errEl=document.getElementById('buyErr');
   errEl.style.display='none';
@@ -271,41 +274,40 @@ function pay(){
   const btn=document.getElementById('payBtn');
   btn.classList.add('loading');
 
-  // ─ In production: POST to your server ─
-  // fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'},
-  //   body: JSON.stringify({apiKey: CLIENT.apiKey, phone, bundleId: SEL.id})
-  // }).then(r=>r.json()).then(d => { if(d.success) showPaymentPending(phone); else showErr(d.error) })
-
-  // ─ Current: simulate payment + log real transaction ─
-  setTimeout(()=>{
+  try{
+    const result=await AKE.api('/transactions/pay',{method:'POST',body:{apiKey:KEY,phone,bundleId:SEL.id}});
+    if(result.mode==='stk'){
+      document.getElementById('payBtnTxt').textContent='📲 Check your phone...';
+      const txn=await pollStkStatus(result.checkoutRequestId);
+      btn.classList.remove('loading');
+      if(!txn||txn.status!=='success'){
+        errEl.innerHTML='❌ Payment was not completed. Try again.';
+        errEl.style.display='flex';
+        updatePayBtn();
+        return;
+      }
+      if(CLIENT.type==='wifi') VALID_CODES[txn.code]=SEL.label;
+      showPaymentSuccess(txn);
+    } else {
+      btn.classList.remove('loading');
+      const txn=result.transaction;
+      if(CLIENT.type==='wifi') VALID_CODES[txn.code]=SEL.label;
+      showPaymentSuccess(txn);
+    }
+  }catch(e){
     btn.classList.remove('loading');
-    const code=generateCode();
-    const txn={
-      id:'tx_'+Date.now(),
-      clientId:CLIENT.id,
-      clientName:CLIENT.name,
-      businessType:CLIENT.type,
-      phone:maskPhone(phone),
-      amount:SEL.price,
-      bundleId:SEL.id,
-      bundle:SEL.label,
-      mpesaRef:'QJ'+Math.random().toString(36).substr(2,7).toUpperCase(),
-      code: CLIENT.type==='wifi'?code:getRefCode(),
-      status:'success',
-      time:new Date().toISOString(),
-    };
-    // Save transaction — visible in admin + dashboard immediately
-    const txns=DB.get('transactions',[]);
-    txns.push(txn);
-    DB.set('transactions',txns);
-    // Trigger dashboard refresh
-    localStorage.setItem('ake_transactions',JSON.stringify(txns));
+    errEl.innerHTML='❌ '+(e.message||'Something went wrong. Try again.');
+    errEl.style.display='flex';
+  }
+}
 
-    // Store valid voucher codes for WiFi
-    if(CLIENT.type==='wifi') VALID_CODES[code]=SEL.label;
-
-    showPaymentSuccess(txn);
-  },2200);
+async function pollStkStatus(checkoutRequestId){
+  for(let i=0;i<20;i++){
+    await new Promise(r=>setTimeout(r,3000));
+    const res=await AKE.api('/transactions/status/'+checkoutRequestId);
+    if(res.status!=='pending') return res.transaction;
+  }
+  return null;
 }
 
 function showPaymentSuccess(txn){
@@ -367,23 +369,6 @@ function redeemVoucher(){
       errEl.style.display='flex';
     }
   },1500);
-}
-
-function generateCode(){
-  const p=(CLIENT?.name?.slice(0,2)||'AK').toUpperCase();
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let c=p+'-';
-  for(let i=0;i<4;i++) c+=chars[Math.floor(Math.random()*chars.length)];
-  return c;
-}
-
-function getRefCode(){
-  return ['BK','PKT','ORD','RNT','SAL','GYM','REF'][['hotel','parking','shop','rental','salon','gym','custom'].indexOf(CLIENT.type)||0]+'-'+Date.now().toString(36).toUpperCase().slice(-5);
-}
-
-function maskPhone(p){
-  const clean=p.replace(/\s/g,'');
-  return clean.slice(0,4)+'***'+clean.slice(-3);
 }
 
 function whatsapp(){window.open('https://wa.me/'+CLIENT.ownerPhone.replace(/^0/,'254').replace(/\D/g,''),'_blank')}
