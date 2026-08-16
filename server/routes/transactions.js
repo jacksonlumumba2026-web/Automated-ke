@@ -52,6 +52,7 @@ router.post('/pay', async (req, res) => {
     clientName: client.name,
     businessType: client.type,
     phone: maskPhone(phone),
+    customerPhone: phone,
     amount: bundle.price,
     bundleId: bundle.id,
     bundle: bundle.label,
@@ -91,6 +92,13 @@ router.post('/pay', async (req, res) => {
     code: client.type === 'wifi' ? voucherFor(client.name) : refCodeFor(client.type),
   };
   await db.update((d) => d.transactions.push(txn));
+
+  // Receipt SMS to customer
+  sms.sendSMS(
+    phone,
+    `Payment of Ksh ${bundle.price} confirmed for ${bundle.label} at ${client.name}. Code: ${txn.code}. Thank you!`
+  ).catch(() => {});
+
   res.json({ mode: 'simulated', transaction: txn });
 });
 
@@ -130,6 +138,16 @@ router.post('/mpesa/callback', async (req, res) => {
   if (txn && txn.status === 'success') {
     const data = db.read();
     const client = data.clients.find((c) => c.id === txn.clientId);
+
+    // Receipt SMS to customer
+    if (txn.customerPhone) {
+      sms.sendSMS(
+        txn.customerPhone,
+        `Payment of Ksh ${txn.amount} confirmed for ${txn.bundle} at ${client?.name || 'our business'}. M-Pesa Ref: ${txn.mpesaRef}. Thank you!`
+      ).catch(() => {});
+    }
+
+    // Notification SMS to business owner
     if (client) {
       sms.sendSMS(
         client.ownerPhone,
