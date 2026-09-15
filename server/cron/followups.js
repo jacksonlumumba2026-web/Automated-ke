@@ -23,6 +23,22 @@ function start() {
     }
   });
 
+  // Every hour: alert clients when any item drops to or below its low-stock threshold.
+  cron.schedule('0 * * * *', async () => {
+    const data = db.read();
+    for (const client of data.clients.filter((c) => c.active && c.ownerPhone)) {
+      const low = data.inventory.filter(
+        (i) => i.clientId === client.id && i.quantity <= i.lowStockThreshold
+      );
+      if (!low.length) continue;
+      const lines = low.map((i) => `• ${i.name}: ${i.quantity} ${i.unit} left`).join('\n');
+      sms.sendSMS(
+        client.ownerPhone,
+        `⚠️ Low Stock Alert — ${client.name}:\n${lines}\nRestock soon to avoid running out.`
+      ).catch(() => {});
+    }
+  });
+
   // Every Monday at 8am EAT (5am UTC): send each active client a weekly summary.
   cron.schedule('0 5 * * 1', async () => {
     const data = db.read();

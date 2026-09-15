@@ -161,6 +161,53 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 .fu-pending{color:#d97706}
 .fu-sent{color:#059669}
 
+/* SECTION HEADER */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-header h3{font-weight:700;font-size:0.88rem}
+.add-btn{padding:9px 16px;background:var(--a);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:'Outfit',sans-serif}
+
+/* INVENTORY */
+.inv-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.inv-name{font-weight:700;font-size:0.9rem}
+.inv-cat{font-size:0.65rem;color:var(--muted);margin-top:2px}
+.inv-badge{font-size:0.6rem;font-weight:800;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.inv-badge.ok{background:rgba(5,150,105,0.1);color:#059669}
+.inv-badge.low{background:rgba(220,38,38,0.1);color:#dc2626}
+.inv-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:0.76rem}
+.inv-m{color:var(--muted)}.inv-m strong{color:var(--ink)}
+.inv-actions{display:flex;gap:6px}
+.inv-btn{flex:1;padding:7px 6px;border-radius:8px;border:1px solid var(--border);background:var(--s1);font-size:0.68rem;font-weight:700;color:var(--ink);cursor:pointer;text-align:center;font-family:'Outfit',sans-serif}
+.inv-btn:hover{border-color:var(--a);color:var(--a)}
+.inv-btn.danger:hover{border-color:#dc2626;color:#dc2626}
+
+/* EXPENSES */
+.exp-summary{background:linear-gradient(135deg,#1e3a5f,#0f172a);color:#fff;border-radius:16px;padding:20px;margin-bottom:16px}
+.es-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.es-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;line-height:1;margin-bottom:2px}
+.es-lbl{font-size:0.58rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.5px}
+.exp-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)}
+.exp-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.exp-info{flex:1;min-width:0}
+.exp-title{font-size:0.82rem;font-weight:600}
+.exp-sub{font-size:0.68rem;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-right{text-align:right;flex-shrink:0}
+.exp-amt{font-weight:800;font-size:0.9rem;color:#dc2626}
+.exp-date{font-size:0.62rem;color:var(--muted2);margin-top:1px}
+.del-btn{padding:5px 8px;border:none;background:none;cursor:pointer;color:var(--muted2);font-size:0.9rem;flex-shrink:0}
+.del-btn:hover{color:#dc2626}
+
+/* ACCOUNT VIEW */
+.acc-section{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
+.acc-section h4{font-weight:700;font-size:0.85rem;margin-bottom:14px}
+.acc-link{font-family:'JetBrains Mono',monospace;font-size:0.68rem;background:var(--s2);padding:10px 12px;border-radius:8px;word-break:break-all;margin-bottom:10px;color:var(--muted);line-height:1.5}
+.acc-copy-btn{width:100%;padding:11px;background:var(--a);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;margin-bottom:8px;font-family:'Outfit',sans-serif}
+.acc-logout-btn{width:100%;padding:11px;background:#fff;color:#dc2626;border:1.5px solid #fecaca;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif}
+.acc-info-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.8rem}
+.acc-info-row:last-child{border-bottom:none}
+.acc-info-lbl{color:var(--muted)}
+.acc-info-val{font-weight:600}
+
 /* MODAL */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .modal-ov.open{opacity:1;pointer-events:all}
@@ -168,12 +215,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 .modal h3{font-weight:800;font-size:1.05rem;margin-bottom:14px}
 .modal .field{margin-bottom:10px}
 .modal .field label{font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px}
-.modal .field input,.modal .field textarea{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none}
-.modal .field input:focus,.modal .field textarea:focus{border-color:var(--a)}
+.modal .field input,.modal .field textarea,.modal .field select{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none;color:var(--ink);background:#fff}
+.modal .field input:focus,.modal .field textarea:focus,.modal .field select:focus{border-color:var(--a)}
 .modal-actions{display:flex;gap:8px;margin-top:14px}
-.modal-actions button{flex:1;padding:11px;border-radius:9px;border:none;font-weight:700;font-size:0.82rem;cursor:pointer}
+.modal-actions button{flex:1;padding:11px;border-radius:9px;border:none;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif}
 .modal-actions .cancel{background:var(--s2);color:var(--muted)}
 .modal-actions .save{background:var(--a);color:#fff}
+.modal-hint{font-size:0.76rem;color:var(--muted);margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -203,6 +251,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
   </nav>
 
   <div class="main">
+
+  <!-- DASHBOARD VIEW -->
   <div class="view active" id="view-dashboard">
     <div class="ptabs">
       <button class="pt" onclick="setPeriod('today',this)">Today</button>
@@ -248,6 +298,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     </div>
   </div>
 
+  <!-- CRM VIEW -->
   <div class="view" id="view-crm">
     <button class="crm-add" onclick="openContactModal()">+ Add Customer / Lead</button>
     <div id="contactList"></div>
@@ -257,13 +308,51 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <div id="followupList" style="padding:4px 16px 14px"></div>
     </div>
   </div>
+
+  <!-- INVENTORY VIEW -->
+  <div class="view" id="view-inventory">
+    <div class="section-header">
+      <h3>Stock &amp; Inventory</h3>
+      <button class="add-btn" onclick="openAddItemModal()">+ Add Item</button>
+    </div>
+    <div id="invSummary"></div>
+    <div id="inventoryList"></div>
   </div>
+
+  <!-- EXPENSES VIEW -->
+  <div class="view" id="view-expenses">
+    <div class="section-header">
+      <h3>Expenses</h3>
+      <button class="add-btn" onclick="openAddExpenseModal()">+ Add Expense</button>
+    </div>
+    <div id="expSummary"></div>
+    <div id="expenseList"></div>
+  </div>
+
+  <!-- ACCOUNT VIEW -->
+  <div class="view" id="view-account">
+    <div class="acc-section">
+      <h4>Your Customer Portal Link</h4>
+      <div class="acc-link" id="accPortalUrl">—</div>
+      <button class="acc-copy-btn" onclick="copyPortalLink()">📋 Copy &amp; Share Link</button>
+    </div>
+    <div class="acc-section">
+      <h4>Account Info</h4>
+      <div class="acc-info-row"><span class="acc-info-lbl">Business Name</span><span class="acc-info-val" id="accName">—</span></div>
+      <div class="acc-info-row"><span class="acc-info-lbl">Plan</span><span class="acc-info-val" id="accPlan">—</span></div>
+      <div class="acc-info-row"><span class="acc-info-lbl">Business Type</span><span class="acc-info-val" id="accType">—</span></div>
+    </div>
+    <button class="acc-logout-btn" onclick="doLogout()">🚪 Sign Out</button>
+  </div>
+
+  </div><!-- /.main -->
 
   <nav class="bnav">
     <button class="bni active" id="navDash" onclick="switchView('dashboard',this)"><span class="bni-i">📊</span><span class="bni-l">Dashboard</span></button>
     <button class="bni" id="navCrm" onclick="switchView('crm',this)"><span class="bni-i">👥</span><span class="bni-l">CRM</span></button>
-    <button class="bni" onclick="copyPortalLink()"><span class="bni-i">🔗</span><span class="bni-l">Portal Link</span></button>
-    <button class="bni" onclick="doLogout()"><span class="bni-i">🚪</span><span class="bni-l">Sign Out</span></button>
+    <button class="bni" id="navInv" onclick="switchView('inventory',this)"><span class="bni-i">📦</span><span class="bni-l">Stock</span></button>
+    <button class="bni" id="navExp" onclick="switchView('expenses',this)"><span class="bni-i">💸</span><span class="bni-l">Expenses</span></button>
+    <button class="bni" id="navAcc" onclick="switchView('account',this)"><span class="bni-i">👤</span><span class="bni-l">Account</span></button>
   </nav>
 </div>
 
@@ -276,8 +365,81 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     <div class="field"><label>Email</label><input type="email" id="ctEmail" placeholder="optional"></div>
     <div class="field"><label>Notes</label><textarea id="ctNotes" rows="2" placeholder="What do they need?"></textarea></div>
     <div class="modal-actions">
-      <button class="cancel" onclick="closeContactModal()">Cancel</button>
+      <button class="cancel" onclick="closeModal('contactModal')">Cancel</button>
       <button class="save" onclick="saveContact()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD INVENTORY ITEM MODAL -->
+<div class="modal-ov" id="addItemModal">
+  <div class="modal">
+    <h3>Add Inventory Item</h3>
+    <div class="field"><label>Item Name *</label><input type="text" id="iName" placeholder="e.g. Daily WiFi Voucher"></div>
+    <div class="field"><label>Category</label><input type="text" id="iCat" placeholder="e.g. Vouchers, Food, Services"></div>
+    <div class="field"><label>Selling Price (Ksh) *</label><input type="number" id="iSell" placeholder="0" min="0"></div>
+    <div class="field"><label>Cost Price (Ksh)</label><input type="number" id="iCost" placeholder="0" min="0"></div>
+    <div class="field"><label>Quantity in Stock *</label><input type="number" id="iQty" placeholder="0" min="0"></div>
+    <div class="field"><label>Unit</label><input type="text" id="iUnit" placeholder="pcs, kg, litres, vouchers…"></div>
+    <div class="field"><label>Low Stock Alert At</label><input type="number" id="iThresh" placeholder="5" min="0"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('addItemModal')">Cancel</button>
+      <button class="save" onclick="saveItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESTOCK MODAL -->
+<div class="modal-ov" id="restockModal">
+  <div class="modal">
+    <h3>Restock Item</h3>
+    <div class="modal-hint" id="restockItemName"></div>
+    <div class="field"><label>Quantity to Add *</label><input type="number" id="restockQty" placeholder="0" min="1"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('restockModal')">Cancel</button>
+      <button class="save" onclick="confirmRestock()">Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECORD SALE MODAL -->
+<div class="modal-ov" id="sellModal">
+  <div class="modal">
+    <h3>Record Sale</h3>
+    <div class="modal-hint" id="sellItemName"></div>
+    <div class="field"><label>Quantity Sold *</label><input type="number" id="sellQty" placeholder="1" min="1"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('sellModal')">Cancel</button>
+      <button class="save" onclick="confirmSell()">Record Sale</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXPENSE MODAL -->
+<div class="modal-ov" id="addExpenseModal">
+  <div class="modal">
+    <h3>Log Expense</h3>
+    <div class="field"><label>Amount (Ksh) *</label><input type="number" id="eAmt" placeholder="0" min="0"></div>
+    <div class="field">
+      <label>Category *</label>
+      <select id="eCat">
+        <option value="">Select category…</option>
+        <option>Rent</option>
+        <option>Salaries</option>
+        <option>Utilities</option>
+        <option>Stock/Supplies</option>
+        <option>Transport</option>
+        <option>Marketing</option>
+        <option>Equipment</option>
+        <option>Maintenance</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="eDesc" placeholder="What was it for?"></div>
+    <div class="field"><label>Date</label><input type="date" id="eDate"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('addExpenseModal')">Cancel</button>
+      <button class="save" onclick="saveExpense()">Save</button>
     </div>
   </div>
 </div>
@@ -296,11 +458,17 @@ const TYPE_ACTIONS={
   custom:[{i:'📋',l:'Orders'},{i:'📲',l:'Send SMS'},{i:'💰',l:'Revenue'},{i:'⚙️',l:'Settings'}],
 };
 
+const EXP_COLORS={'Rent':'#7c3aed','Salaries':'#0ea5e9','Utilities':'#f59e0b','Stock/Supplies':'#059669','Transport':'#ea580c','Marketing':'#db2777','Equipment':'#4f46e5','Maintenance':'#dc2626','Other':'#64748b'};
+
 let CLIENT = null;
 let TRANSACTIONS = [];
 let CONTACTS = [];
 let FOLLOWUPS = [];
+let INVENTORY = [];
+let EXPENSES = [];
 let period = 'week';
+let _restockId = null;
+let _sellId = null;
 
 async function doLogin(){
   const email = document.getElementById('lEmail').value.trim();
@@ -339,25 +507,31 @@ async function initApp(){
       <div class="qa-l">${a.l}</div>
     </div>`).join('');
 
+  renderAccount();
   await refreshAll();
   setInterval(refreshAll, 30000);
 }
 
 async function refreshAll(){
-  const [txns,contacts,followups] = await Promise.all([
+  const [txns,contacts,followups,inv,exp] = await Promise.all([
     AKE.api('/transactions/mine',{role:'client'}),
     AKE.api('/contacts',{role:'client'}),
     AKE.api('/followups',{role:'client'}),
+    AKE.api('/inventory',{role:'client'}),
+    AKE.api('/expenses',{role:'client'}),
   ]);
   TRANSACTIONS = txns;
   CONTACTS = contacts;
   FOLLOWUPS = followups;
+  INVENTORY = inv;
+  EXPENSES = exp;
   loadData();
   renderContacts();
   renderFollowups();
+  renderInventory();
+  renderExpenses();
 }
 
-// Resume session if a client token is already stored
 if(AKE.getStoredToken('client')) initApp();
 
 function switchView(name,btn){
@@ -367,15 +541,13 @@ function switchView(name,btn){
   btn.classList.add('active');
 }
 
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
 // ── CRM ──
 function openContactModal(){
-  document.getElementById('ctName').value='';
-  document.getElementById('ctPhone').value='';
-  document.getElementById('ctEmail').value='';
-  document.getElementById('ctNotes').value='';
+  ['ctName','ctPhone','ctEmail','ctNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('contactModal').classList.add('open');
 }
-function closeContactModal(){document.getElementById('contactModal').classList.remove('open')}
 
 async function saveContact(){
   const name=document.getElementById('ctName').value.trim();
@@ -384,7 +556,7 @@ async function saveContact(){
   const notes=document.getElementById('ctNotes').value.trim();
   if(!name||!phone){showToast('⚠️ Name and phone required');return}
   await AKE.api('/contacts',{method:'POST',role:'client',body:{name,phone,email,notes}});
-  closeContactModal();
+  closeModal('contactModal');
   showToast('✅ Customer added');
   await refreshAll();
 }
@@ -425,7 +597,7 @@ async function quickSMS(id){
 
 async function scheduleFollowups(id){
   await AKE.api('/followups/schedule',{method:'POST',role:'client',body:{contactId:id}});
-  showToast('⏰ Day 1 / 3 / 7 follow-ups scheduled');
+  showToast('⏰ Day 1 / 3 / 7 / 14 / 30 follow-ups scheduled');
   await refreshAll();
 }
 
@@ -438,7 +610,7 @@ function renderFollowups(){
   document.getElementById('fuCount').textContent=FOLLOWUPS.length+' scheduled';
   const list=document.getElementById('followupList');
   if(!FOLLOWUPS.length){
-    list.innerHTML=`<div class="empty"><div class="ei">⏰</div><h4>No follow-ups scheduled</h4><p>Use "Follow-Up" on a customer card to auto-message them on Day 1, 3 and 7.</p></div>`;
+    list.innerHTML=`<div class="empty"><div class="ei">⏰</div><h4>No follow-ups scheduled</h4><p>Use "Follow-Up" on a customer card to auto-message them on Day 1, 3, 7, 14 &amp; 30.</p></div>`;
     return;
   }
   list.innerHTML=[...FOLLOWUPS].sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt)).map(f=>`
@@ -448,6 +620,208 @@ function renderFollowups(){
     </div>`).join('');
 }
 
+// ── INVENTORY ──
+function openAddItemModal(){
+  ['iName','iCat','iSell','iCost','iQty','iUnit','iThresh'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('addItemModal').classList.add('open');
+}
+
+async function saveItem(){
+  const name=document.getElementById('iName').value.trim();
+  const sellingPrice=document.getElementById('iSell').value;
+  const quantity=document.getElementById('iQty').value;
+  if(!name||sellingPrice===''||quantity===''){showToast('⚠️ Name, price and quantity required');return}
+  try{
+    await AKE.api('/inventory',{method:'POST',role:'client',body:{
+      name,
+      category:document.getElementById('iCat').value||'General',
+      sellingPrice:Number(sellingPrice),
+      costPrice:Number(document.getElementById('iCost').value)||0,
+      quantity:Number(quantity),
+      unit:document.getElementById('iUnit').value||'pcs',
+      lowStockThreshold:Number(document.getElementById('iThresh').value)||5,
+    }});
+    closeModal('addItemModal');
+    showToast('✅ Item added');
+    INVENTORY = await AKE.api('/inventory',{role:'client'});
+    renderInventory();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+function restockItem(id){
+  _restockId=id;
+  const item=INVENTORY.find(i=>i.id===id);
+  document.getElementById('restockItemName').textContent=(item?.name||'')+' — current stock: '+(item?.quantity||0)+' '+(item?.unit||'');
+  document.getElementById('restockQty').value='';
+  document.getElementById('restockModal').classList.add('open');
+}
+
+async function confirmRestock(){
+  const qty=Number(document.getElementById('restockQty').value);
+  if(!qty||qty<1){showToast('⚠️ Enter a valid quantity');return}
+  try{
+    await AKE.api('/inventory/'+_restockId+'/restock',{method:'POST',role:'client',body:{quantity:qty}});
+    closeModal('restockModal');
+    showToast('✅ Stock updated');
+    INVENTORY = await AKE.api('/inventory',{role:'client'});
+    renderInventory();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+function sellItem(id){
+  _sellId=id;
+  const item=INVENTORY.find(i=>i.id===id);
+  document.getElementById('sellItemName').textContent=(item?.name||'')+' — in stock: '+(item?.quantity||0)+' '+(item?.unit||'');
+  document.getElementById('sellQty').value='1';
+  document.getElementById('sellModal').classList.add('open');
+}
+
+async function confirmSell(){
+  const qty=Number(document.getElementById('sellQty').value);
+  if(!qty||qty<1){showToast('⚠️ Enter a valid quantity');return}
+  try{
+    await AKE.api('/inventory/'+_sellId+'/sell',{method:'POST',role:'client',body:{quantity:qty}});
+    closeModal('sellModal');
+    showToast('✅ Sale recorded');
+    INVENTORY = await AKE.api('/inventory',{role:'client'});
+    renderInventory();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+async function deleteItem(id){
+  if(!confirm('Delete this item from inventory?'))return;
+  await AKE.api('/inventory/'+id,{method:'DELETE',role:'client'});
+  showToast('🗑 Item removed');
+  INVENTORY = await AKE.api('/inventory',{role:'client'});
+  renderInventory();
+}
+
+function renderInventory(){
+  const totalValue=INVENTORY.reduce((s,i)=>s+(i.sellingPrice*i.quantity),0);
+  const totalCostValue=INVENTORY.reduce((s,i)=>s+(i.costPrice*i.quantity),0);
+  const lowItems=INVENTORY.filter(i=>i.quantity<=i.lowStockThreshold).length;
+  document.getElementById('invSummary').innerHTML=`
+    <div class="kpi-row">
+      <div class="kpi"><div class="ki">📦</div><div class="kv">${INVENTORY.length}</div><div class="kl">Stock Items</div><div class="kc" style="color:${lowItems?'#dc2626':'#059669'}">${lowItems?lowItems+' low stock':'All stocked'}</div></div>
+      <div class="kpi"><div class="ki">💰</div><div class="kv" style="font-size:1.1rem">Ksh ${totalValue.toLocaleString()}</div><div class="kl">Stock Value</div><div class="kc">At selling price</div></div>
+    </div>`;
+
+  const list=document.getElementById('inventoryList');
+  if(!INVENTORY.length){
+    list.innerHTML=`<div class="empty"><div class="ei">📦</div><h4>No items yet</h4><p>Add the products or services you sell to track stock levels and record sales.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...INVENTORY].sort((a,b)=>a.quantity-b.quantity).map(item=>{
+    const isLow=item.quantity<=item.lowStockThreshold;
+    const margin=item.costPrice?Math.round((item.sellingPrice-item.costPrice)/item.sellingPrice*100):null;
+    return `
+    <div class="inv-card">
+      <div class="inv-top">
+        <div><div class="inv-name">${item.name}</div><div class="inv-cat">${item.category}</div></div>
+        <span class="inv-badge ${isLow?'low':'ok'}">${isLow?'Low Stock':'In Stock'}</span>
+      </div>
+      <div class="inv-meta">
+        <div class="inv-m">Qty: <strong>${item.quantity} ${item.unit}</strong></div>
+        <div class="inv-m">Sell: <strong>Ksh ${item.sellingPrice.toLocaleString()}</strong></div>
+        ${item.costPrice?`<div class="inv-m">Cost: <strong>Ksh ${item.costPrice.toLocaleString()}</strong></div>`:''}
+        ${margin!==null?`<div class="inv-m">Margin: <strong>${margin}%</strong></div>`:''}
+      </div>
+      <div class="inv-actions">
+        <button class="inv-btn" onclick="restockItem('${item.id}')">➕ Restock</button>
+        <button class="inv-btn" onclick="sellItem('${item.id}')">💰 Sell</button>
+        <button class="inv-btn danger" onclick="deleteItem('${item.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EXPENSES ──
+function openAddExpenseModal(){
+  document.getElementById('eAmt').value='';
+  document.getElementById('eCat').value='';
+  document.getElementById('eDesc').value='';
+  document.getElementById('eDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('addExpenseModal').classList.add('open');
+}
+
+async function saveExpense(){
+  const amount=document.getElementById('eAmt').value;
+  const category=document.getElementById('eCat').value;
+  if(!amount||!category){showToast('⚠️ Amount and category required');return}
+  try{
+    await AKE.api('/expenses',{method:'POST',role:'client',body:{
+      amount:Number(amount),
+      category,
+      description:document.getElementById('eDesc').value.trim(),
+      date:document.getElementById('eDate').value||new Date().toISOString().split('T')[0],
+    }});
+    closeModal('addExpenseModal');
+    showToast('✅ Expense logged');
+    EXPENSES = await AKE.api('/expenses',{role:'client'});
+    renderExpenses();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+async function deleteExpense(id){
+  if(!confirm('Delete this expense?'))return;
+  await AKE.api('/expenses/'+id,{method:'DELETE',role:'client'});
+  showToast('🗑 Expense removed');
+  EXPENSES = await AKE.api('/expenses',{role:'client'});
+  renderExpenses();
+}
+
+function renderExpenses(){
+  const totalExp=EXPENSES.reduce((s,e)=>s+e.amount,0);
+  const totalRev=TRANSACTIONS.filter(t=>t.status==='success').reduce((s,t)=>s+t.amount,0);
+  const profit=totalRev-totalExp;
+  document.getElementById('expSummary').innerHTML=`
+    <div class="exp-summary">
+      <div class="es-row">
+        <div><div class="es-val">Ksh ${totalRev.toLocaleString()}</div><div class="es-lbl">Revenue</div></div>
+        <div><div class="es-val">${totalExp.toLocaleString()}</div><div class="es-lbl">Expenses</div></div>
+        <div><div class="es-val" style="color:${profit>=0?'#4ade80':'#f87171'}">${profit>=0?'+':''}${profit.toLocaleString()}</div><div class="es-lbl">Profit</div></div>
+      </div>
+    </div>`;
+
+  const list=document.getElementById('expenseList');
+  if(!EXPENSES.length){
+    list.innerHTML=`<div class="empty"><div class="ei">💸</div><h4>No expenses logged</h4><p>Track business expenses to see your real profit after costs.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...EXPENSES].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(e=>`
+    <div class="exp-card">
+      <div class="exp-cat-dot" style="background:${EXP_COLORS[e.category]||'#64748b'}"></div>
+      <div class="exp-info">
+        <div class="exp-title">${e.category}</div>
+        <div class="exp-sub">${e.description||'No description'} · ${e.date}</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-amt">−${Number(e.amount).toLocaleString()}</div>
+        <div class="exp-date">${timeAgo(e.createdAt)}</div>
+      </div>
+      <button class="del-btn" onclick="deleteExpense('${e.id}')">🗑</button>
+    </div>`).join('');
+}
+
+// ── ACCOUNT ──
+function renderAccount(){
+  if(!CLIENT)return;
+  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
+  document.getElementById('accPortalUrl').textContent=url;
+  document.getElementById('accName').textContent=CLIENT.name;
+  document.getElementById('accPlan').textContent=CLIENT.plan+' plan';
+  document.getElementById('accType').textContent=CLIENT.type;
+}
+
+function copyPortalLink(){
+  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
+  navigator.clipboard.writeText(url).catch(()=>{});
+  showToast('📋 Portal link copied! Share with customers.');
+}
+
+function doLogout(){AKE.setStoredToken('client',null);location.reload()}
+
+// ── DASHBOARD DATA ──
 function setPeriod(p,btn){
   period=p;
   document.querySelectorAll('.pt').forEach(b=>b.classList.remove('active'));
@@ -482,7 +856,6 @@ function loadData(){
   document.getElementById('kFailed').textContent=failed;
   document.getElementById('chartTotal').textContent='Ksh '+rev.toLocaleString();
 
-  // Chart
   const labels=period==='today'?['6A','8A','10A','12P','2P','4P','6P','8P']:period==='week'?['M','T','W','T','F','S','S']:period==='month'?['W1','W2','W3','W4']:['Jan','Feb','Mar','Apr','May','Jun'];
   const buckets=labels.map((_,i)=>{
     const d=new Date();
@@ -492,7 +865,6 @@ function loadData(){
   const max=Math.max(...buckets,1);
   document.getElementById('chart').innerHTML=buckets.map((v,i)=>`<div class="bw"><div class="bb${i===buckets.length-1?' now':''}" style="height:${Math.max(4,Math.round(v/max*100))}%"></div><div class="bl">${labels[i]}</div></div>`).join('');
 
-  // Breakdown by bundle
   const bundles=CLIENT?.bundles||[];
   const bColors=['#f59e0b','#059669','#3b82f6','#f97316','#8b5cf6','#ec4899'];
   const bCounts=bundles.map(b=>txns.filter(t=>t.bundleId===b.id).length);
@@ -506,7 +878,6 @@ function loadData(){
       <div class="bk-count">${bCounts[i]} sales</div>
     </div>`).join('');
 
-  // Transactions list
   const recent=[...TRANSACTIONS].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,15);
   document.getElementById('txCount').textContent=TRANSACTIONS.length+' total';
   document.getElementById('txList').innerHTML=recent.length?recent.map(t=>`
@@ -523,14 +894,6 @@ function loadData(){
     </div>`).join('')
   :`<div class="empty"><div class="ei">💳</div><h4>No transactions yet</h4><p>Share your payment portal link with customers to start receiving payments.</p></div>`;
 }
-
-function copyPortalLink(){
-  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
-  navigator.clipboard.writeText(url).catch(()=>{});
-  showToast('📋 Portal link copied! Share with customers.');
-}
-
-function doLogout(){AKE.setStoredToken('client',null);location.reload()}
 
 function animCount(el,target,prefix=''){if(!el)return;const steps=30;const step=target/steps;let curr=0;const t=setInterval(()=>{curr=Math.min(curr+step,target);el.textContent=prefix+Math.round(curr).toLocaleString();if(curr>=target)clearInterval(t)},16)}
 

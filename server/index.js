@@ -9,6 +9,8 @@ const transactionRoutes = require('./routes/transactions');
 const contactRoutes = require('./routes/contacts');
 const followupRoutes = require('./routes/followups');
 const settingsRoutes = require('./routes/settings');
+const expenseRoutes = require('./routes/expenses');
+const inventoryRoutes = require('./routes/inventory');
 const followupCron = require('./cron/followups');
 
 const app = express();
@@ -23,6 +25,8 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/followups', followupRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 // Static frontend
 app.use(express.static(path.join(__dirname, '..', 'public')));

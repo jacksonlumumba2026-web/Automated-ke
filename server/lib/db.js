@@ -10,6 +10,8 @@ const DEFAULTS = {
   transactions: [],
   contacts: [],
   followups: [],
+  inventory: [],
+  expenses: [],
   config: {},
 };
 
