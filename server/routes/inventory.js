@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../lib/db');
 const { requireClient } = require('../lib/auth');
+const { getPlan, withinLimit } = require('../lib/plans');
 
 const router = express.Router();
 
@@ -13,6 +14,17 @@ router.post('/', requireClient, async (req, res) => {
   const { name, category, sellingPrice, costPrice, quantity, unit, lowStockThreshold } = req.body || {};
   if (!name || sellingPrice == null || quantity == null) {
     return res.status(400).json({ error: 'Name, selling price and quantity required' });
+  }
+
+  // Enforce plan inventory limit
+  const checkData = db.read();
+  const owner = checkData.clients.find((c) => c.id === req.auth.clientId);
+  const plan = getPlan(owner?.plan);
+  const existingCount = checkData.inventory.filter((i) => i.clientId === req.auth.clientId).length;
+  if (!withinLimit(existingCount, plan.maxInventoryItems)) {
+    return res.status(403).json({
+      error: `Inventory limit reached for your ${plan.name} plan (${plan.maxInventoryItems} items max). Upgrade to add more.`,
+    });
   }
   const item = {
     id: 'inv_' + Date.now(),

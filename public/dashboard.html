@@ -277,6 +277,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <div class="kpi"><div class="ki">❌</div><div class="kv" id="kFailed" style="color:#dc2626">0</div><div class="kl">Failed Payments</div><div class="kc" style="color:#dc2626">Needs M-Pesa setup</div></div>
     </div>
 
+    <!-- Plan usage card -->
+    <div class="txn-card" id="planUsageCard" style="margin-bottom:14px;display:none">
+      <div class="txh"><h3>Plan Usage</h3><span id="planBadge" style="font-size:0.72rem;padding:2px 10px;border-radius:20px;background:rgba(0,0,0,0.15);font-weight:700"></span></div>
+      <div style="padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px" id="planUsageBody"></div>
+    </div>
+
     <div class="chart-card">
       <div class="cc-head"><div class="cc-title">Revenue Trend</div><div class="cc-total">Total: <span id="chartTotal">Ksh 0</span></div></div>
       <div class="bars" id="chart"></div>
@@ -530,6 +536,7 @@ async function refreshAll(){
   renderFollowups();
   renderInventory();
   renderExpenses();
+  renderPlanUsage();
 }
 
 if(AKE.getStoredToken('client')) initApp();
@@ -801,6 +808,39 @@ function renderExpenses(){
       </div>
       <button class="del-btn" onclick="deleteExpense('${e.id}')">🗑</button>
     </div>`).join('');
+}
+
+// ── PLAN USAGE ──
+const PLAN_LIMITS = {
+  trial:      {contacts:30,   inventory:5,   smsQuota:20,  name:'Trial'},
+  starter:    {contacts:100,  inventory:20,  smsQuota:50,  name:'Starter'},
+  business:   {contacts:500,  inventory:100, smsQuota:200, name:'Business'},
+  growth:     {contacts:500,  inventory:100, smsQuota:200, name:'Business'}, // legacy
+  pro:        {contacts:2000, inventory:-1,  smsQuota:500, name:'Pro'},
+  enterprise: {contacts:-1,   inventory:-1,  smsQuota:-1,  name:'Enterprise'},
+};
+function renderPlanUsage(){
+  if(!CLIENT) return;
+  const plan = PLAN_LIMITS[CLIENT.plan] || PLAN_LIMITS.business;
+  const contactCount = CONTACTS.length;
+  const invCount = INVENTORY ? INVENTORY.length : 0;
+
+  function usageBar(label, used, max){
+    if(max===-1) return `<div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem"><span>${label}</span><span style="color:#059669;font-weight:600">Unlimited ∞</span></div>`;
+    const pct=Math.min(100,Math.round(used/max*100));
+    const color=pct>=90?'#dc2626':pct>=70?'#f59e0b':'#059669';
+    return `<div>
+      <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px"><span>${label}</span><span style="color:${color};font-weight:600">${used}/${max}</span></div>
+      <div style="height:5px;background:rgba(0,0,0,0.1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width 0.6s"></div></div>
+    </div>`;
+  }
+
+  document.getElementById('planUsageCard').style.display='block';
+  document.getElementById('planBadge').textContent=plan.name+' Plan';
+  document.getElementById('planUsageBody').innerHTML=
+    usageBar('Contacts (CRM)', contactCount, plan.contacts)+
+    usageBar('Inventory Items', invCount, plan.inventory)+
+    (plan.smsQuota>0||plan.smsQuota===-1 ? usageBar('SMS Quota (est.)', 0, plan.smsQuota) : '');
 }
 
 // ── ACCOUNT ──

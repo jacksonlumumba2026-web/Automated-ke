@@ -6,7 +6,10 @@ const { requireAdmin, requireClient } = require('../lib/auth');
 
 const router = express.Router();
 
-const PLAN_PRICES = { starter: 2000, growth: 5000, pro: 10000 };
+const { PLANS, getPlan } = require('../lib/plans');
+const PLAN_PRICES = Object.fromEntries(
+  Object.entries(PLANS).map(([k, v]) => [k, v.monthlyFee])
+);
 
 const DEFAULT_BUNDLES = {
   wifi: [
@@ -77,6 +80,9 @@ router.post('/', requireAdmin, async (req, res) => {
   if (data.clients.some((c) => c.email === email)) {
     return res.status(409).json({ error: 'A client with this email already exists' });
   }
+  const resolvedPlan = plan || 'business';
+  const planConfig = getPlan(resolvedPlan);
+  const { billingCycle } = req.body || {};
   const client = {
     id: 'cl_' + Date.now(),
     name,
@@ -86,8 +92,10 @@ router.post('/', requireAdmin, async (req, res) => {
     email,
     passwordHash: bcrypt.hashSync(password, 10),
     apiKey: 'ake_' + crypto.randomBytes(12).toString('hex'),
-    plan: plan || 'growth',
-    monthlyFee: PLAN_PRICES[plan] || PLAN_PRICES.growth,
+    plan: resolvedPlan,
+    monthlyFee: planConfig.monthlyFee,
+    billingCycle: billingCycle || 'monthly',
+    setupFeePaid: false,
     location: location || '',
     active: true,
     createdAt: new Date().toISOString(),
@@ -99,7 +107,7 @@ router.post('/', requireAdmin, async (req, res) => {
 
 // ── ADMIN: update client (toggle active, edit plan/fee etc) ──
 router.patch('/:id', requireAdmin, async (req, res) => {
-  const allowed = ['name', 'type', 'ownerName', 'ownerPhone', 'plan', 'monthlyFee', 'location', 'active', 'bundles'];
+  const allowed = ['name', 'type', 'ownerName', 'ownerPhone', 'plan', 'monthlyFee', 'billingCycle', 'location', 'active', 'bundles', 'setupFeePaid'];
   const updated = await db.update((d) => {
     const c = d.clients.find((x) => x.id === req.params.id);
     if (!c) return null;

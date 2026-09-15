@@ -3,6 +3,7 @@ const db = require('../lib/db');
 const mpesa = require('../lib/mpesa');
 const sms = require('../lib/sms');
 const { requireAdmin, requireClient } = require('../lib/auth');
+const { getPlan } = require('../lib/plans');
 
 const router = express.Router();
 
@@ -84,12 +85,15 @@ router.post('/pay', async (req, res) => {
   // No real M-Pesa credentials yet — record a clearly-flagged simulated payment
   // so the rest of the platform (dashboard, CRM, follow-ups) keeps working
   // while the owner finishes Daraja setup in Settings.
+  const plan = getPlan(client.plan);
+  const platformFee = Math.round(bundle.price * plan.txnFeePercent / 100);
   const txn = {
     ...txnBase,
     status: 'success',
     simulated: true,
     mpesaRef: 'SIM' + Math.random().toString(36).slice(2, 9).toUpperCase(),
     code: client.type === 'wifi' ? voucherFor(client.name) : refCodeFor(client.type),
+    platformFee,
   };
   await db.update((d) => d.transactions.push(txn));
 
@@ -131,6 +135,8 @@ router.post('/mpesa/callback', async (req, res) => {
     if (success) {
       const client = d.clients.find((c) => c.id === t.clientId);
       t.code = client?.type === 'wifi' ? voucherFor(client.name) : refCodeFor(client?.type);
+      const plan = getPlan(client?.plan);
+      t.platformFee = Math.round((t.amount || 0) * plan.txnFeePercent / 100);
     }
     return t;
   });

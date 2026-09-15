@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../lib/db');
 const sms = require('../lib/sms');
 const { requireClient } = require('../lib/auth');
+const { getPlan, withinLimit } = require('../lib/plans');
 
 const FOLLOWUP_OFFSETS = { day1: 1, day3: 3, day7: 7, day14: 14, day30: 30 };
 
@@ -31,6 +32,18 @@ router.get('/', requireClient, (req, res) => {
 router.post('/', requireClient, async (req, res) => {
   const { name, phone, email, notes, source } = req.body || {};
   if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+
+  // Enforce plan contact limit
+  const checkData = db.read();
+  const owner = checkData.clients.find((c) => c.id === req.auth.clientId);
+  const plan = getPlan(owner?.plan);
+  const existingCount = checkData.contacts.filter((c) => c.clientId === req.auth.clientId).length;
+  if (!withinLimit(existingCount, plan.maxContacts)) {
+    return res.status(403).json({
+      error: `Contact limit reached for your ${plan.name} plan (${plan.maxContacts} max). Upgrade your plan to add more.`,
+    });
+  }
+
   const contact = {
     id: 'ct_' + Date.now(),
     clientId: req.auth.clientId,

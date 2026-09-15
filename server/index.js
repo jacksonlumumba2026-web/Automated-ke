@@ -12,6 +12,7 @@ const settingsRoutes = require('./routes/settings');
 const expenseRoutes = require('./routes/expenses');
 const inventoryRoutes = require('./routes/inventory');
 const followupCron = require('./cron/followups');
+const billingRoutes = require('./routes/billing');
 
 const app = express();
 app.use(cors());
@@ -27,6 +28,7 @@ app.use('/api/followups', followupRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/inventory', inventoryRoutes);
+app.use('/api/billing', billingRoutes);
 
 // Static frontend
 app.use(express.static(path.join(__dirname, '..', 'public')));
