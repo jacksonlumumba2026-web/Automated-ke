@@ -13,6 +13,7 @@ const expenseRoutes = require('./routes/expenses');
 const inventoryRoutes = require('./routes/inventory');
 const followupCron = require('./cron/followups');
 const billingRoutes = require('./routes/billing');
+const invoiceRoutes = require('./routes/invoices');
 
 const app = express();
 app.use(cors());
@@ -29,6 +30,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // Static frontend
 app.use(express.static(path.join(__dirname, '..', 'public')));

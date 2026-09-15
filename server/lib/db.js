@@ -12,6 +12,7 @@ const DEFAULTS = {
   followups: [],
   inventory: [],
   expenses: [],
+  invoices: [],
   config: {},
 };
 
