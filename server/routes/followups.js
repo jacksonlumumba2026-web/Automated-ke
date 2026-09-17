@@ -4,7 +4,7 @@ const { requireClient } = require('../lib/auth');
 
 const router = express.Router();
 
-const OFFSETS = { day1: 1, day3: 3, day7: 7 };
+const OFFSETS = { day1: 1, day3: 3, day7: 7, day14: 14, day30: 30 };
 
 router.get('/', requireClient, (req, res) => {
   const data = db.read();

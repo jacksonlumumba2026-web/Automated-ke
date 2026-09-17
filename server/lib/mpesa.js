@@ -63,13 +63,15 @@ async function stkPush({ phone, amount, accountRef, description }) {
   const token = await getAccessToken();
   const msisdn = normalizePhone(phone);
 
+  const isTill = (process.env.MPESA_TYPE || 'paybill') === 'till';
+
   const { data } = await axios.post(
     `${baseUrl()}/mpesa/stkpush/v1/processrequest`,
     {
       BusinessShortCode: shortcode,
       Password: password,
       Timestamp: ts,
-      TransactionType: 'CustomerPayBillOnline',
+      TransactionType: isTill ? 'CustomerBuyGoodsOnline' : 'CustomerPayBillOnline',
       Amount: Math.round(amount),
       PartyA: msisdn,
       PartyB: shortcode,

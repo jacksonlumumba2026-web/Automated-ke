@@ -286,6 +286,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
       <button class="ni" onclick="go('transactions',this)"><span class="ico">💳</span> Transactions</button>
       <div class="sb-section">Finance</div>
       <button class="ni" onclick="go('revenue',this)"><span class="ico">💰</span> My Revenue</button>
+      <button class="ni" onclick="go('billing',this)"><span class="ico">💹</span> Billing</button>
       <div class="sb-section">Settings</div>
       <button class="ni" onclick="go('settings',this)"><span class="ico">⚙️</span> API Config</button>
     </nav>
@@ -414,7 +415,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
         <div style="text-align:right">
           <div class="rev-label">Total Clients</div>
           <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--y);letter-spacing:1px" id="revClients">0</div>
-          <div class="rev-note">Starter Ksh 2,000 · Growth Ksh 5,000 · Pro Ksh 10,000 /mo</div>
+          <div class="rev-note">Starter Ksh 500 · Business Ksh 1,500 · Pro Ksh 3,000 · Enterprise Ksh 5,000 /mo</div>
         </div>
       </div>
       <div class="card">
@@ -427,6 +428,48 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-hei
           <div class="empty-icon">💰</div>
           <h3>No Revenue Yet</h3>
           <p>Add clients to start earning. Each client pays you a monthly fee automatically.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BILLING ══ -->
+    <div class="page" id="page-billing">
+      <div class="topbar">
+        <div class="topbar-left"><h2>Billing</h2><p id="billingMonth">Current month revenue breakdown</p></div>
+        <button class="btn btn-ghost" onclick="loadBilling()">↻ Refresh</button>
+      </div>
+
+      <!-- KPI row -->
+      <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px" id="billingKPIs">
+        <div class="kpi green"><div class="kpi-icon">📋</div><div class="kpi-val" id="bkSubs">—</div><div class="kpi-label">Subscriptions</div></div>
+        <div class="kpi blue"><div class="kpi-icon">💳</div><div class="kpi-val" id="bkTxn">—</div><div class="kpi-label">Txn Fees</div></div>
+        <div class="kpi yellow"><div class="kpi-icon">💬</div><div class="kpi-val" id="bkSMS">—</div><div class="kpi-label">SMS Overages</div></div>
+        <div class="kpi red"><div class="kpi-icon">🔑</div><div class="kpi-val" id="bkSetup">—</div><div class="kpi-label">Pending Setup Fees</div></div>
+        <div class="kpi green"><div class="kpi-icon">💰</div><div class="kpi-val" id="bkTotal">—</div><div class="kpi-label">Grand Total</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-head"><h3>Per-Client Breakdown</h3><span style="font-size:0.72rem;color:var(--m2)">Current month estimate</span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="billingTbl">
+            <thead>
+              <tr>
+                <th>Client</th><th>Plan</th><th>Billing</th><th>Sub Fee</th>
+                <th>Txn Vol.</th><th>Txn Fees</th><th>SMS Used</th><th>SMS Overage</th>
+                <th>Setup Fee</th><th>Total Owed</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="billingBody">
+              <tr><td colspan="11" style="text-align:center;padding:32px;color:var(--m2)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>All-Time Platform Fees</h3></div>
+        <div class="card-body" style="display:flex;gap:24px;flex-wrap:wrap">
+          <div><div style="font-size:0.65rem;color:var(--m2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">All-time Txn Fees</div><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--g)" id="bAllTime">Ksh 0</div></div>
         </div>
       </div>
     </div>
@@ -518,12 +561,23 @@ AT_SENDER_ID=AutomateKE</pre>
     <div class="field-row">
       <div class="field"><label>Plan</label>
         <select id="f_plan" onchange="updatePlanPrice()">
-          <option value="starter">Starter — Ksh 2,000/mo</option>
-          <option value="growth" selected>Growth — Ksh 5,000/mo</option>
-          <option value="pro">Pro — Ksh 10,000/mo</option>
+          <option value="trial">Trial — Free (30 contacts, 5 items)</option>
+          <option value="starter">Starter — Ksh 500/mo</option>
+          <option value="business" selected>Business — Ksh 1,500/mo</option>
+          <option value="pro">Pro — Ksh 3,000/mo</option>
+          <option value="enterprise">Enterprise — Ksh 5,000/mo</option>
         </select>
       </div>
-      <div class="field"><label>Monthly Fee (Ksh)</label><input type="number" id="f_monthly" value="5000"></div>
+      <div class="field"><label>Billing Cycle</label>
+        <select id="f_billing" onchange="updatePlanPrice()">
+          <option value="monthly">Monthly</option>
+          <option value="annual">Annual (save 2 months)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Fee (Ksh) — auto-filled</label><input type="number" id="f_monthly" value="1500"></div>
+      <div class="field"><label>Setup Fee (Ksh) — one-time</label><input type="number" id="f_setup" value="2500" readonly></div>
     </div>
     <div class="field-row">
       <div class="field"><label>Location</label><input type="text" id="f_location" placeholder="Nairobi, Kenya"></div>
@@ -555,7 +609,15 @@ let TRANSACTIONS = [];
 let SETTINGS_STATUS = { mpesaConfigured:false, smsConfigured:false, appUrl:'' };
 
 const TYPE_MAP = {wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
-const PLAN_PRICES = {starter:2000,growth:5000,pro:10000};
+const PLAN_DATA = {
+  trial:      {monthly:0,    annual:0,     setup:0},
+  starter:    {monthly:500,  annual:5000,  setup:1500},
+  business:   {monthly:1500, annual:15000, setup:2500},
+  growth:     {monthly:1500, annual:15000, setup:2500}, // legacy alias
+  pro:        {monthly:3000, annual:30000, setup:3500},
+  enterprise: {monthly:5000, annual:50000, setup:5000},
+};
+let BILLING = null;
 
 // ═══════════════════════════════════════
 // AUTH
@@ -612,6 +674,7 @@ async function refreshAll(){
   renderTransactions();
   renderRevenue();
   checkSetupSteps();
+  loadBilling();
 }
 
 // Resume session if an admin token is already stored
@@ -756,10 +819,11 @@ async function addClient(){
 
   if(!name||!owner||!phone||!email||!pw){showToast('⚠️','Please fill all required fields','All starred fields are required','t-r');return}
 
+  const billingCycle = document.getElementById('f_billing').value;
   let client;
   try{
     client = await AKE.api('/clients',{method:'POST',role:'admin',body:{
-      name, type, ownerName:owner, ownerPhone:phone, email, password:pw, plan, location,
+      name, type, ownerName:owner, ownerPhone:phone, email, password:pw, plan, location, billingCycle,
     }});
   }catch(e){
     showToast('❌','Could not add client',e.message||'','t-r');
@@ -860,13 +924,17 @@ function clearForm(){
     document.getElementById(id).value='';
   });
   document.getElementById('f_type').value='wifi';
-  document.getElementById('f_plan').value='growth';
-  document.getElementById('f_monthly').value=PLAN_PRICES.growth;
+  document.getElementById('f_plan').value='business';
+  document.getElementById('f_billing').value='monthly';
+  updatePlanPrice();
 }
 
 function updatePlanPrice(){
   const plan = document.getElementById('f_plan').value;
-  document.getElementById('f_monthly').value = PLAN_PRICES[plan];
+  const cycle = document.getElementById('f_billing').value;
+  const d = PLAN_DATA[plan] || PLAN_DATA.business;
+  document.getElementById('f_monthly').value = cycle==='annual' ? d.annual : d.monthly;
+  document.getElementById('f_setup').value = d.setup;
 }
 
 // ═══════════════════════════════════════
@@ -958,6 +1026,70 @@ function checkSetupSteps(){
   if(SETTINGS_STATUS.mpesaConfigured) document.getElementById('step2')?.classList.add('done');
   if(SETTINGS_STATUS.smsConfigured) document.getElementById('step3')?.classList.add('done');
   if(SETTINGS_STATUS.appUrl) document.getElementById('step4')?.classList.add('done');
+}
+
+// ═══════════════════════════════════════
+// BILLING
+// ═══════════════════════════════════════
+async function loadBilling(){
+  try{
+    BILLING = await AKE.api('/billing',{role:'admin'});
+  }catch{
+    return; // billing route may not be reachable yet
+  }
+  renderBilling();
+}
+
+function renderBilling(){
+  if(!BILLING) return;
+  const pr = BILLING.platformRevenue || {};
+  const fmt = v => 'Ksh '+(v||0).toLocaleString();
+
+  document.getElementById('billingMonth').textContent = 'Month: ' + (BILLING.month||'');
+  document.getElementById('bkSubs').textContent  = fmt(pr.subscriptions);
+  document.getElementById('bkTxn').textContent   = fmt(pr.txnFees);
+  document.getElementById('bkSMS').textContent   = fmt(pr.smsOverages);
+  document.getElementById('bkSetup').textContent = fmt(pr.pendingSetupFees);
+  document.getElementById('bkTotal').textContent = fmt(pr.total);
+  document.getElementById('bAllTime').textContent= fmt(BILLING.allTimeTxnFees);
+
+  const rows = (BILLING.clients||[]);
+  if(!rows.length){
+    document.getElementById('billingBody').innerHTML='<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--m2)">No clients yet</td></tr>';
+    return;
+  }
+  document.getElementById('billingBody').innerHTML = rows.map(r=>`
+    <tr>
+      <td><strong>${r.clientName||r.clientId}</strong><br><span style="font-size:0.68rem;color:var(--m2)">${r.ownerPhone||''}</span></td>
+      <td><span class="bdg bdg-b">${r.planName||r.plan}</span></td>
+      <td style="font-size:0.75rem;color:var(--m2)">${r.billingCycle||'monthly'}</td>
+      <td style="color:var(--g);font-weight:600">Ksh ${(r.monthlyFee||0).toLocaleString()}</td>
+      <td style="font-size:0.78rem">Ksh ${(r.txnVolume||0).toLocaleString()}</td>
+      <td style="color:var(--b);font-weight:600">Ksh ${(r.txnFees||0).toLocaleString()}</td>
+      <td style="font-size:0.78rem">${r.smsUsed||0} / ${r.smsQuota===-1?'∞':r.smsQuota}</td>
+      <td style="color:${(r.smsOverageFee||0)>0?'var(--y)':'var(--m2)'}">Ksh ${(r.smsOverageFee||0).toLocaleString()}</td>
+      <td>
+        ${r.setupFeePaid
+          ? '<span class="bdg bdg-g">✓ Paid</span>'
+          : `<span class="bdg bdg-r">Ksh ${(r.setupFee||0).toLocaleString()}</span>`}
+      </td>
+      <td style="font-weight:700;color:var(--g)">Ksh ${(r.totalOwed||0).toLocaleString()}</td>
+      <td>
+        ${!r.setupFeePaid && (r.setupFee||0)>0
+          ? `<button class="btn btn-b" style="padding:5px 12px;font-size:0.7rem" onclick="markSetupPaid('${r.clientId}')">Mark Paid</button>`
+          : '—'}
+      </td>
+    </tr>`).join('');
+}
+
+async function markSetupPaid(clientId){
+  try{
+    await AKE.api('/billing/'+clientId+'/setup-paid',{method:'PATCH',role:'admin'});
+    showToast('✅','Setup fee marked as collected','','t-g');
+    await loadBilling();
+  }catch(e){
+    showToast('❌','Could not update',e.message||'','t-r');
+  }
 }
 
 // ═══════════════════════════════════════

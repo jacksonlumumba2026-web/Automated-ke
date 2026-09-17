@@ -3,6 +3,7 @@ const db = require('../lib/db');
 const mpesa = require('../lib/mpesa');
 const sms = require('../lib/sms');
 const { requireAdmin, requireClient } = require('../lib/auth');
+const { getPlan } = require('../lib/plans');
 
 const router = express.Router();
 
@@ -52,6 +53,7 @@ router.post('/pay', async (req, res) => {
     clientName: client.name,
     businessType: client.type,
     phone: maskPhone(phone),
+    customerPhone: phone,
     amount: bundle.price,
     bundleId: bundle.id,
     bundle: bundle.label,
@@ -83,14 +85,24 @@ router.post('/pay', async (req, res) => {
   // No real M-Pesa credentials yet — record a clearly-flagged simulated payment
   // so the rest of the platform (dashboard, CRM, follow-ups) keeps working
   // while the owner finishes Daraja setup in Settings.
+  const plan = getPlan(client.plan);
+  const platformFee = Math.round(bundle.price * plan.txnFeePercent / 100);
   const txn = {
     ...txnBase,
     status: 'success',
     simulated: true,
     mpesaRef: 'SIM' + Math.random().toString(36).slice(2, 9).toUpperCase(),
     code: client.type === 'wifi' ? voucherFor(client.name) : refCodeFor(client.type),
+    platformFee,
   };
   await db.update((d) => d.transactions.push(txn));
+
+  // Receipt SMS to customer
+  sms.sendSMS(
+    phone,
+    `Payment of Ksh ${bundle.price} confirmed for ${bundle.label} at ${client.name}. Code: ${txn.code}. Thank you!`
+  ).catch(() => {});
+
   res.json({ mode: 'simulated', transaction: txn });
 });
 
@@ -123,6 +135,8 @@ router.post('/mpesa/callback', async (req, res) => {
     if (success) {
       const client = d.clients.find((c) => c.id === t.clientId);
       t.code = client?.type === 'wifi' ? voucherFor(client.name) : refCodeFor(client?.type);
+      const plan = getPlan(client?.plan);
+      t.platformFee = Math.round((t.amount || 0) * plan.txnFeePercent / 100);
     }
     return t;
   });
@@ -130,6 +144,16 @@ router.post('/mpesa/callback', async (req, res) => {
   if (txn && txn.status === 'success') {
     const data = db.read();
     const client = data.clients.find((c) => c.id === txn.clientId);
+
+    // Receipt SMS to customer
+    if (txn.customerPhone) {
+      sms.sendSMS(
+        txn.customerPhone,
+        `Payment of Ksh ${txn.amount} confirmed for ${txn.bundle} at ${client?.name || 'our business'}. M-Pesa Ref: ${txn.mpesaRef}. Thank you!`
+      ).catch(() => {});
+    }
+
+    // Notification SMS to business owner
     if (client) {
       sms.sendSMS(
         client.ownerPhone,

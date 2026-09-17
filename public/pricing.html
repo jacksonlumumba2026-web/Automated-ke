@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutomateKE — Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060a0f;--s1:#0b1018;--s2:#101720;--g:#00e676;--g2:#00c853;--b:#2979ff;--y:#ffd740;--t:#e8f4ff;--m:#4a6080;--m2:#7a90a8;--br:rgba(255,255,255,0.07);--r:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 5%;border-bottom:1px solid var(--br);position:sticky;top:0;background:rgba(6,10,15,0.9);backdrop-filter:blur(20px);z-index:100}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px}
+.nav-logo em{color:var(--g);font-style:normal}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{font-size:0.82rem;font-weight:600;color:var(--m2);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:var(--t)}
+.nav-cta{padding:9px 22px;background:var(--g);color:#000;border-radius:50px;font-weight:800;font-size:0.8rem;text-decoration:none;transition:all 0.2s}
+.nav-cta:hover{box-shadow:0 4px 20px rgba(0,230,118,0.35);transform:translateY(-1px)}
+
+/* HERO */
+.hero{text-align:center;padding:80px 5% 60px;background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,0.07),transparent 65%)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:var(--g);padding:6px 16px;border-radius:50px;font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:24px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);letter-spacing:2px;line-height:1;margin-bottom:16px}
+.hero h1 em{color:var(--g);font-style:normal}
+.hero p{font-size:1rem;color:var(--m2);font-weight:300;max-width:560px;margin:0 auto 32px;line-height:1.7}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:48px}
+.toggle-lbl{font-size:0.82rem;font-weight:600;color:var(--m2)}
+.toggle-lbl.active{color:var(--t)}
+.toggle{width:52px;height:28px;background:var(--s2);border:1px solid var(--br);border-radius:50px;cursor:pointer;position:relative;transition:background 0.2s}
+.toggle.on{background:var(--g)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#000;transition:left 0.2s}
+.toggle.on::after{left:27px}
+.annual-save{background:rgba(255,215,64,0.1);color:var(--y);border:1px solid rgba(255,215,64,0.2);font-size:0.65rem;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:0.5px}
+
+/* PLANS GRID */
+.plans{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:1200px;margin:0 auto;padding:0 5% 80px}
+.plan-card{background:var(--s1);border:1px solid var(--br);border-radius:20px;padding:28px 22px;display:flex;flex-direction:column;transition:all 0.25s;position:relative;overflow:hidden}
+.plan-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.15);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+.plan-card.popular{background:linear-gradient(170deg,rgba(0,230,118,0.05),var(--s1));border-color:rgba(0,230,118,0.35);box-shadow:0 0 0 1px rgba(0,230,118,0.2),0 20px 60px rgba(0,0,0,0.4)}
+.pop-badge{position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--g);color:#000;font-size:0.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 16px;border-radius:0 0 10px 10px}
+.plan-name{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1px;margin-bottom:8px;margin-top:6px}
+.plan-price{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.5px;line-height:1;margin-bottom:4px;color:var(--g)}
+.plan-price.free{color:var(--y)}
+.plan-per{font-size:0.72rem;color:var(--m2);margin-bottom:4px}
+.plan-save{font-size:0.65rem;font-weight:700;color:var(--y);min-height:18px;margin-bottom:16px}
+.plan-sep{border:none;border-top:1px solid var(--br);margin:16px 0}
+.feat-list{list-style:none;flex:1;margin-bottom:20px}
+.feat-list li{font-size:0.78rem;color:var(--m2);padding:5px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.feat-list li::before{content:'✓';color:var(--g);font-weight:800;flex-shrink:0;font-size:0.75rem;margin-top:1px}
+.feat-list li.extra::before{content:'★';color:var(--y)}
+.plan-limit{font-size:0.68rem;color:var(--m);background:rgba(255,255,255,0.03);border-radius:8px;padding:8px 10px;margin-bottom:16px;line-height:1.6}
+.plan-limit strong{color:var(--m2)}
+.plan-cta{display:block;width:100%;padding:12px;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.82rem;text-align:center;cursor:pointer;border:none;text-decoration:none;transition:all 0.2s}
+.plan-cta.outline{background:transparent;color:var(--t);border:1px solid var(--br)}
+.plan-cta.outline:hover{border-color:var(--g);color:var(--g)}
+.plan-cta.filled{background:var(--g);color:#000}
+.plan-cta.filled:hover{box-shadow:0 6px 24px rgba(0,230,118,0.35);transform:translateY(-1px)}
+.plan-cta.gold{background:var(--y);color:#000}
+.plan-cta.gold:hover{box-shadow:0 6px 24px rgba(255,215,64,0.35)}
+
+/* SETUP FEE NOTE */
+.setup-note{text-align:center;font-size:0.78rem;color:var(--m2);margin-bottom:20px;padding:0 5%}
+.setup-note strong{color:var(--t)}
+
+/* COMPARISON TABLE */
+.compare{max-width:900px;margin:0 auto;padding:0 5% 80px}
+.compare h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;text-align:center;margin-bottom:32px}
+.cmp-tbl{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--br);border-radius:16px;overflow:hidden}
+.cmp-tbl th{padding:14px 16px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--m);background:rgba(255,255,255,0.02);text-align:center}
+.cmp-tbl th:first-child{text-align:left}
+.cmp-tbl td{padding:12px 16px;font-size:0.8rem;border-top:1px solid var(--br);text-align:center;color:var(--m2)}
+.cmp-tbl td:first-child{font-weight:600;color:var(--t);text-align:left}
+.cmp-tbl tr:last-child td{border-bottom:none}
+.cmp-tbl td.g{color:var(--g);font-weight:700}
+.cmp-tbl td.y{color:var(--y)}
+.cmp-tbl .pop-col{background:rgba(0,230,118,0.03)}
+
+/* HOW IT WORKS */
+.how{max-width:900px;margin:0 auto;padding:0 5% 80px;text-align:center}
+.how h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;margin-bottom:40px}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.how-card{background:var(--s1);border:1px solid var(--br);border-radius:16px;padding:28px 20px}
+.how-num{width:36px;height:36px;background:var(--g);color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;margin:0 auto 14px}
+.how-card h4{font-weight:700;font-size:0.9rem;margin-bottom:8px}
+.how-card p{font-size:0.78rem;color:var(--m2);line-height:1.6;font-weight:300}
+
+/* FAQ */
+.faq{max-width:700px;margin:0 auto;padding:0 5% 80px}
+.faq h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;text-align:center;margin-bottom:32px}
+.faq-item{border-top:1px solid var(--br);padding:20px 0}
+.faq-item:last-child{border-bottom:1px solid var(--br)}
+.faq-q{font-weight:700;font-size:0.88rem;margin-bottom:8px}
+.faq-a{font-size:0.8rem;color:var(--m2);line-height:1.7;font-weight:300}
+.faq-a strong{color:var(--t)}
+
+/* CTA FOOTER */
+.cta-footer{background:linear-gradient(135deg,rgba(0,230,118,0.06),var(--s1));border-top:1px solid var(--br);border-bottom:1px solid var(--br);padding:60px 5%;text-align:center;margin-bottom:0}
+.cta-footer h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:1px;margin-bottom:12px}
+.cta-footer p{font-size:0.88rem;color:var(--m2);font-weight:300;max-width:480px;margin:0 auto 28px;line-height:1.7}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-btns a{padding:13px 28px;border-radius:50px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;text-decoration:none;transition:all 0.2s}
+.cta-btns .primary{background:var(--g);color:#000}
+.cta-btns .primary:hover{box-shadow:0 6px 24px rgba(0,230,118,0.35)}
+.cta-btns .secondary{border:1px solid var(--br);color:var(--t)}
+.cta-btns .secondary:hover{border-color:var(--g);color:var(--g)}
+
+footer{padding:20px 5%;text-align:center;font-size:0.72rem;color:var(--m)}
+
+@media(max-width:900px){
+  .plans{grid-template-columns:1fr 1fr;gap:12px}
+  .how-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .plans{grid-template-columns:1fr}
+  .nav-links a:not(.nav-cta){display:none}
+  .cmp-tbl{font-size:0.72rem}
+  .cmp-tbl th,.cmp-tbl td{padding:10px 10px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Automate<em>KE</em></div>
+  <div class="nav-links">
+    <a href="#plans">Plans</a>
+    <a href="#compare">Compare</a>
+    <a href="#faq">FAQ</a>
+    <a class="nav-cta" href="tel:+254700000000">📞 Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">💰 Simple, transparent pricing</div>
+  <h1>Automate Your Business.<br><em>Grow Your Profit.</em></h1>
+  <p>One platform to accept M-Pesa payments, manage customers, track stock, and automate follow-ups. Built for Kenyan SMEs.</p>
+
+  <div class="toggle-wrap">
+    <span class="toggle-lbl active" id="lblMonthly">Monthly</span>
+    <div class="toggle" id="billingToggle" onclick="toggleBilling()"></div>
+    <span class="toggle-lbl" id="lblAnnual">Annual</span>
+    <span class="annual-save">SAVE 2 MONTHS</span>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+<div class="plans">
+
+  <!-- TRIAL -->
+  <div class="plan-card">
+    <div class="plan-name">Trial</div>
+    <div class="plan-price free">FREE</div>
+    <div class="plan-per">14 days, no credit card</div>
+    <div class="plan-save">&nbsp;</div>
+    <hr class="plan-sep">
+    <div class="plan-limit">
+      <strong>20</strong> SMS · <strong>30</strong> contacts · <strong>5</strong> items
+    </div>
+    <ul class="feat-list">
+      <li>Dashboard &amp; analytics</li>
+      <li>CRM (30 contacts)</li>
+      <li>Portal payments</li>
+      <li>Day 1→30 follow-ups</li>
+      <li>Inventory &amp; expenses</li>
+    </ul>
+    <a class="plan-cta outline" href="tel:+254700000000">Start Free Trial</a>
+  </div>
+
+  <!-- STARTER -->
+  <div class="plan-card">
+    <div class="plan-name">Starter</div>
+    <div class="plan-price" id="priceStarter">500</div>
+    <div class="plan-per" id="perStarter">Ksh / month</div>
+    <div class="plan-save" id="saveStarter">&nbsp;</div>
+    <hr class="plan-sep">
+    <div class="plan-limit">
+      <strong>50</strong> SMS · <strong>100</strong> contacts · <strong>20</strong> items<br>
+      + Ksh 1,500 one-time setup fee
+    </div>
+    <ul class="feat-list">
+      <li>Dashboard &amp; analytics</li>
+      <li>CRM (100 contacts)</li>
+      <li>M-Pesa portal payments</li>
+      <li>50 SMS/month included</li>
+      <li>20 inventory items</li>
+      <li>Expense tracking</li>
+      <li>Day 1→30 follow-ups</li>
+    </ul>
+    <a class="plan-cta outline" href="tel:+254700000000">Get Starter</a>
+  </div>
+
+  <!-- BUSINESS — POPULAR -->
+  <div class="plan-card popular">
+    <div class="pop-badge">MOST POPULAR</div>
+    <div class="plan-name">Business</div>
+    <div class="plan-price" id="priceBusiness">1,500</div>
+    <div class="plan-per" id="perBusiness">Ksh / month</div>
+    <div class="plan-save" id="saveBusiness">&nbsp;</div>
+    <hr class="plan-sep">
+    <div class="plan-limit">
+      <strong>200</strong> SMS · <strong>500</strong> contacts · <strong>100</strong> items<br>
+      + Ksh 2,500 one-time setup fee
+    </div>
+    <ul class="feat-list">
+      <li>All Starter features</li>
+      <li>CRM (500 contacts)</li>
+      <li>200 SMS/month included</li>
+      <li>100 inventory items</li>
+      <li class="extra">Weekly business summary SMS</li>
+      <li class="extra">Hourly low-stock SMS alerts</li>
+    </ul>
+    <a class="plan-cta filled" href="tel:+254700000000">Get Business</a>
+  </div>
+
+  <!-- PRO -->
+  <div class="plan-card">
+    <div class="plan-name">Pro</div>
+    <div class="plan-price" id="pricePro">3,000</div>
+    <div class="plan-per" id="perPro">Ksh / month</div>
+    <div class="plan-save" id="savePro">&nbsp;</div>
+    <hr class="plan-sep">
+    <div class="plan-limit">
+      <strong>500</strong> SMS · <strong>2,000</strong> contacts · <strong>∞</strong> items<br>
+      + Ksh 3,500 one-time setup fee
+    </div>
+    <ul class="feat-list">
+      <li>All Business features</li>
+      <li>CRM (2,000 contacts)</li>
+      <li>500 SMS/month included</li>
+      <li>Unlimited inventory items</li>
+      <li class="extra">Priority support</li>
+    </ul>
+    <a class="plan-cta outline" href="tel:+254700000000">Get Pro</a>
+  </div>
+
+  <!-- ENTERPRISE -->
+  <div class="plan-card">
+    <div class="plan-name">Enterprise</div>
+    <div class="plan-price" id="priceEnterprise">5,000</div>
+    <div class="plan-per" id="perEnterprise">Ksh / month</div>
+    <div class="plan-save" id="saveEnterprise">&nbsp;</div>
+    <hr class="plan-sep">
+    <div class="plan-limit">
+      <strong>∞</strong> SMS · <strong>∞</strong> contacts · <strong>∞</strong> items<br>
+      + Ksh 5,000 one-time setup fee
+    </div>
+    <ul class="feat-list">
+      <li>All Pro features</li>
+      <li>Unlimited SMS</li>
+      <li>Unlimited contacts</li>
+      <li class="extra">Lowest transaction fee (0.25%)</li>
+      <li class="extra">Dedicated support line</li>
+      <li class="extra">Custom portal branding</li>
+    </ul>
+    <a class="plan-cta gold" href="tel:+254700000000">Get Enterprise</a>
+  </div>
+
+</div>
+</section>
+
+<p class="setup-note">💡 <strong>Transaction fee</strong> applies on all M-Pesa payments processed through your portal: Trial 0% · Starter 1% · Business 0.75% · Pro 0.5% · Enterprise 0.25%. You keep the rest.</p>
+
+<!-- COMPARISON TABLE -->
+<section id="compare" class="compare">
+  <h2>Plan Comparison</h2>
+  <table class="cmp-tbl">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Trial</th>
+        <th>Starter</th>
+        <th class="pop-col">Business</th>
+        <th>Pro</th>
+        <th>Enterprise</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Monthly fee</td><td class="y">Free</td><td>Ksh 500</td><td class="pop-col">Ksh 1,500</td><td>Ksh 3,000</td><td>Ksh 5,000</td></tr>
+      <tr><td>Annual fee</td><td class="y">Free</td><td>Ksh 5,000</td><td class="pop-col">Ksh 15,000</td><td>Ksh 30,000</td><td>Ksh 50,000</td></tr>
+      <tr><td>Transaction fee</td><td>0%</td><td>1%</td><td class="pop-col">0.75%</td><td>0.5%</td><td class="g">0.25%</td></tr>
+      <tr><td>SMS / month</td><td>20</td><td>50</td><td class="pop-col">200</td><td>500</td><td class="g">Unlimited</td></tr>
+      <tr><td>SMS overage rate</td><td>—</td><td>Ksh 3</td><td class="pop-col">Ksh 2.50</td><td>Ksh 2</td><td class="g">—</td></tr>
+      <tr><td>Max contacts</td><td>30</td><td>100</td><td class="pop-col">500</td><td>2,000</td><td class="g">Unlimited</td></tr>
+      <tr><td>Max inventory items</td><td>5</td><td>20</td><td class="pop-col">100</td><td class="g">Unlimited</td><td class="g">Unlimited</td></tr>
+      <tr><td>M-Pesa portal</td><td class="g">✓</td><td class="g">✓</td><td class="pop-col g">✓</td><td class="g">✓</td><td class="g">✓</td></tr>
+      <tr><td>CRM &amp; follow-ups</td><td class="g">✓</td><td class="g">✓</td><td class="pop-col g">✓</td><td class="g">✓</td><td class="g">✓</td></tr>
+      <tr><td>Expense tracking</td><td class="g">✓</td><td class="g">✓</td><td class="pop-col g">✓</td><td class="g">✓</td><td class="g">✓</td></tr>
+      <tr><td>Weekly summary SMS</td><td>—</td><td>—</td><td class="pop-col g">✓</td><td class="g">✓</td><td class="g">✓</td></tr>
+      <tr><td>Low-stock SMS alerts</td><td>—</td><td>—</td><td class="pop-col g">✓</td><td class="g">✓</td><td class="g">✓</td></tr>
+      <tr><td>Priority support</td><td>—</td><td>—</td><td class="pop-col">—</td><td class="g">✓</td><td class="g">✓</td></tr>
+      <tr><td>Dedicated support line</td><td>—</td><td>—</td><td class="pop-col">—</td><td>—</td><td class="g">✓</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <h2>How It Works</h2>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">1</div>
+      <h4>You sign up your business</h4>
+      <p>We set up your dashboard, payment portal, and automate your customer follow-up sequences — same day.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">2</div>
+      <h4>Your customers pay via M-Pesa</h4>
+      <p>Share your portal link. Customers tap, enter their number, and pay. They get instant confirmation SMS with their code or receipt.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">3</div>
+      <h4>We follow up automatically</h4>
+      <p>Every new customer gets follow-up SMS on Day 1, 3, 7, 14, and 30. You get a weekly summary of all revenue and new customers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="faq">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q">Do I need a Paybill number?</div>
+    <div class="faq-a">No. A <strong>Till Number</strong> works perfectly. We support both Paybill (CustomerPayBillOnline) and Buy Goods (CustomerBuyGoodsOnline). If you don't have either, we'll help you set one up.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What is the transaction fee?</div>
+    <div class="faq-a">A small percentage of each M-Pesa payment goes to the platform. It decreases as you upgrade: 1% on Starter, down to <strong>0.25% on Enterprise</strong>. There are no hidden fees — you keep everything else.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What happens when I exceed my SMS quota?</div>
+    <div class="faq-a">Additional SMS are billed per message at the overage rate for your plan (Ksh 2–3/SMS). You'll never be cut off mid-month — overages are billed at the next invoice.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I change my plan later?</div>
+    <div class="faq-a">Yes. You can upgrade at any time and we'll prorate the difference. Downgrades take effect at the next billing cycle.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What is the setup fee?</div>
+    <div class="faq-a">A <strong>one-time fee</strong> paid when we first set up your account. It covers initial configuration, M-Pesa integration, bundle setup, and onboarding. There's no setup fee for the Trial.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Is there a contract?</div>
+    <div class="faq-a">No contracts. Pay monthly and cancel anytime. Annual plans are paid upfront and are <strong>non-refundable</strong> but save you 2 months of fees.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What types of businesses does this work for?</div>
+    <div class="faq-a">WiFi hotspots, hotels &amp; guesthouses, parking lots, shops, rental properties, salons, gyms, and any business that accepts M-Pesa. If your customers pay with mobile money, <strong>AutomateKE works for you</strong>.</div>
+  </div>
+</section>
+
+<!-- CTA FOOTER -->
+<section class="cta-footer">
+  <h2>Ready to Automate Your Business?</h2>
+  <p>Join hundreds of Kenyan SMEs saving hours every week with automated payments, follow-ups, and reports.</p>
+  <div class="cta-btns">
+    <a class="primary" href="tel:+254700000000">📞 Call Us to Get Started</a>
+    <a class="secondary" href="https://wa.me/254700000000" target="_blank">💬 WhatsApp Us</a>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 AutomateKE &mdash; Built for Kenyan Businesses &mdash; Powered by M-Pesa &amp; Africa's Talking
+</footer>
+
+<script>
+let annual = false;
+
+const PRICES = {
+  starter:  { mo: 500,   yr: 5000  },
+  business: { mo: 1500,  yr: 15000 },
+  pro:      { mo: 3000,  yr: 30000 },
+  enterprise:{ mo: 5000, yr: 50000 },
+};
+
+function toggleBilling() {
+  annual = !annual;
+  document.getElementById('billingToggle').classList.toggle('on', annual);
+  document.getElementById('lblMonthly').classList.toggle('active', !annual);
+  document.getElementById('lblAnnual').classList.toggle('active', annual);
+  updatePrices();
+}
+
+function fmt(n) {
+  return n.toLocaleString();
+}
+
+function updatePrices() {
+  for (const [key, p] of Object.entries(PRICES)) {
+    const capKey = key.charAt(0).toUpperCase() + key.slice(1);
+    const priceEl = document.getElementById('price' + capKey);
+    const perEl   = document.getElementById('per'   + capKey);
+    const saveEl  = document.getElementById('save'  + capKey);
+    if (!priceEl) continue;
+    if (annual) {
+      priceEl.textContent = fmt(Math.round(p.yr / 12));
+      perEl.textContent   = `Ksh / month (billed Ksh ${fmt(p.yr)}/yr)`;
+      const saved = p.mo * 12 - p.yr;
+      saveEl.textContent  = saved > 0 ? `Save Ksh ${fmt(saved)}/year` : '';
+    } else {
+      priceEl.textContent = fmt(p.mo);
+      perEl.textContent   = 'Ksh / month';
+      saveEl.textContent  = '';
+    }
+  }
+}
+
+updatePrices();
+</script>
+</body>
+</html>

@@ -2,6 +2,25 @@ const express = require('express');
 const db = require('../lib/db');
 const sms = require('../lib/sms');
 const { requireClient } = require('../lib/auth');
+const { getPlan, withinLimit } = require('../lib/plans');
+
+const FOLLOWUP_OFFSETS = { day1: 1, day3: 3, day7: 7, day14: 14, day30: 30 };
+
+function scheduleFollowups(contact) {
+  const now = Date.now();
+  return Object.entries(FOLLOWUP_OFFSETS).map(([type, days]) => ({
+    id: `fu_${now}_${type}_${contact.id}`,
+    clientId: contact.clientId,
+    contactId: contact.id,
+    contactName: contact.name,
+    contactPhone: contact.phone,
+    type,
+    dueAt: new Date(now + days * 86400000).toISOString(),
+    message: `Hi ${contact.name}, just checking in — we would love to hear from you. Reply to this message or call us anytime.`,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+  }));
+}
 
 const router = express.Router();
 
@@ -13,6 +32,18 @@ router.get('/', requireClient, (req, res) => {
 router.post('/', requireClient, async (req, res) => {
   const { name, phone, email, notes, source } = req.body || {};
   if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+
+  // Enforce plan contact limit
+  const checkData = db.read();
+  const owner = checkData.clients.find((c) => c.id === req.auth.clientId);
+  const plan = getPlan(owner?.plan);
+  const existingCount = checkData.contacts.filter((c) => c.clientId === req.auth.clientId).length;
+  if (!withinLimit(existingCount, plan.maxContacts)) {
+    return res.status(403).json({
+      error: `Contact limit reached for your ${plan.name} plan (${plan.maxContacts} max). Upgrade your plan to add more.`,
+    });
+  }
+
   const contact = {
     id: 'ct_' + Date.now(),
     clientId: req.auth.clientId,
@@ -25,7 +56,18 @@ router.post('/', requireClient, async (req, res) => {
     createdAt: new Date().toISOString(),
     lastContactAt: null,
   };
-  await db.update((d) => d.contacts.push(contact));
+  const followups = scheduleFollowups(contact);
+  await db.update((d) => {
+    d.contacts.push(contact);
+    d.followups.push(...followups);
+  });
+
+  // Auto-send welcome SMS to the new contact
+  sms.sendSMS(
+    contact.phone,
+    `Hi ${contact.name}, thank you for connecting with us! We will be in touch soon. — AutomateKE`
+  ).catch(() => {});
+
   res.status(201).json(contact);
 });
 

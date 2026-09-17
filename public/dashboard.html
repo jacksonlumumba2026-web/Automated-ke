@@ -131,7 +131,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,0.06)}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,0.06);overflow-x:auto;scrollbar-width:none}
+.bnav::-webkit-scrollbar{display:none}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px;border:none;background:none;transition:transform 0.2s}
 .bni:active{transform:scale(0.9)}
 .bni .bni-i{font-size:1.1rem}
@@ -161,19 +162,107 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 .fu-pending{color:#d97706}
 .fu-sent{color:#059669}
 
+/* SECTION HEADER */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-header h3{font-weight:700;font-size:0.88rem}
+.add-btn{padding:9px 16px;background:var(--a);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;font-family:'Outfit',sans-serif}
+
+/* INVENTORY */
+.inv-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.inv-name{font-weight:700;font-size:0.9rem}
+.inv-cat{font-size:0.65rem;color:var(--muted);margin-top:2px}
+.inv-badge{font-size:0.6rem;font-weight:800;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.inv-badge.ok{background:rgba(5,150,105,0.1);color:#059669}
+.inv-badge.low{background:rgba(220,38,38,0.1);color:#dc2626}
+.inv-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;font-size:0.76rem}
+.inv-m{color:var(--muted)}.inv-m strong{color:var(--ink)}
+.inv-actions{display:flex;gap:6px}
+.inv-btn{flex:1;padding:7px 6px;border-radius:8px;border:1px solid var(--border);background:var(--s1);font-size:0.68rem;font-weight:700;color:var(--ink);cursor:pointer;text-align:center;font-family:'Outfit',sans-serif}
+.inv-btn:hover{border-color:var(--a);color:var(--a)}
+.inv-btn.danger:hover{border-color:#dc2626;color:#dc2626}
+
+/* EXPENSES */
+.exp-summary{background:linear-gradient(135deg,#1e3a5f,#0f172a);color:#fff;border-radius:16px;padding:20px;margin-bottom:16px}
+.es-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.es-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;line-height:1;margin-bottom:2px}
+.es-lbl{font-size:0.58rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.5px}
+.exp-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)}
+.exp-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.exp-info{flex:1;min-width:0}
+.exp-title{font-size:0.82rem;font-weight:600}
+.exp-sub{font-size:0.68rem;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-right{text-align:right;flex-shrink:0}
+.exp-amt{font-weight:800;font-size:0.9rem;color:#dc2626}
+.exp-date{font-size:0.62rem;color:var(--muted2);margin-top:1px}
+.del-btn{padding:5px 8px;border:none;background:none;cursor:pointer;color:var(--muted2);font-size:0.9rem;flex-shrink:0}
+.del-btn:hover{color:#dc2626}
+
+/* ACCOUNT VIEW */
+.acc-section{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
+.acc-section h4{font-weight:700;font-size:0.85rem;margin-bottom:14px}
+.acc-link{font-family:'JetBrains Mono',monospace;font-size:0.68rem;background:var(--s2);padding:10px 12px;border-radius:8px;word-break:break-all;margin-bottom:10px;color:var(--muted);line-height:1.5}
+.acc-copy-btn{width:100%;padding:11px;background:var(--a);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;margin-bottom:8px;font-family:'Outfit',sans-serif}
+.acc-logout-btn{width:100%;padding:11px;background:#fff;color:#dc2626;border:1.5px solid #fecaca;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif}
+.acc-info-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.8rem}
+.acc-info-row:last-child{border-bottom:none}
+.acc-info-lbl{color:var(--muted)}
+.acc-info-val{font-weight:600}
+
 /* MODAL */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
 .modal-ov.open{opacity:1;pointer-events:all}
-.modal{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:380px;max-height:85vh;overflow-y:auto}
+.modal{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto}
 .modal h3{font-weight:800;font-size:1.05rem;margin-bottom:14px}
 .modal .field{margin-bottom:10px}
 .modal .field label{font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px}
-.modal .field input,.modal .field textarea{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none}
-.modal .field input:focus,.modal .field textarea:focus{border-color:var(--a)}
+.modal .field input,.modal .field textarea,.modal .field select{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none;color:var(--ink);background:#fff}
+.modal .field input:focus,.modal .field textarea:focus,.modal .field select:focus{border-color:var(--a)}
 .modal-actions{display:flex;gap:8px;margin-top:14px}
-.modal-actions button{flex:1;padding:11px;border-radius:9px;border:none;font-weight:700;font-size:0.82rem;cursor:pointer}
+.modal-actions button{flex:1;padding:11px;border-radius:9px;border:none;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif}
 .modal-actions .cancel{background:var(--s2);color:var(--muted)}
 .modal-actions .save{background:var(--a);color:#fff}
+.modal-hint{font-size:0.76rem;color:var(--muted);margin-bottom:12px}
+
+/* INVOICE */
+.inv-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)}
+.inv-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.inv-num{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:2px}
+.inv-name{font-weight:700;font-size:0.88rem}
+.inv-amt{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--a);letter-spacing:0.5px}
+.inv-meta{font-size:0.72rem;color:var(--muted);margin-bottom:10px}
+.inv-actions{display:flex;gap:6px;flex-wrap:wrap}
+.inv-btn{flex:1;min-width:70px;padding:7px 8px;border-radius:7px;border:1.5px solid var(--border);background:var(--s1);font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:700;cursor:pointer;color:var(--ink);transition:all 0.15s}
+.inv-btn:hover{border-color:var(--a);color:var(--a)}
+.inv-btn.danger:hover{border-color:#dc2626;color:#dc2626}
+.inv-status{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:0.62rem;font-weight:700}
+.st-draft{background:#f1f5f9;color:#64748b}
+.st-sent{background:#dbeafe;color:#1d4ed8}
+.st-paid{background:#dcfce7;color:#15803d}
+
+/* INVOICE ITEMS TABLE */
+.inv-items{width:100%;border-collapse:collapse;margin:10px 0;font-size:0.78rem}
+.inv-items th{text-align:left;padding:5px 8px;color:var(--muted);font-weight:700;font-size:0.62rem;text-transform:uppercase;border-bottom:1.5px solid var(--border)}
+.inv-items td{padding:7px 8px;border-bottom:1px solid var(--border)}
+.inv-items tr:last-child td{border-bottom:none}
+
+/* REPORTS */
+.report-kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.rk{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.rk-icon{font-size:1.1rem;margin-bottom:8px}
+.rk-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.5px;line-height:1;margin-bottom:3px}
+.rk-label{font-size:0.68rem;color:var(--muted);font-weight:400}
+.strategy-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:10px;box-shadow:var(--sh);border-left:4px solid var(--a)}
+.sc-title{font-weight:800;font-size:0.88rem;margin-bottom:5px}
+.sc-desc{font-size:0.78rem;color:var(--muted);line-height:1.55;margin-bottom:8px}
+.sc-action{font-size:0.75rem;font-weight:700;color:var(--a)}
+.sc-priority{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:0.6rem;font-weight:800;margin-bottom:8px}
+.p-high{background:#fef2f2;color:#dc2626}
+.p-medium{background:#fffbeb;color:#d97706}
+.p-low{background:#f0fdf4;color:#15803d}
+.bar-label{font-size:0.7rem;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
+.bar-track{height:8px;background:var(--s2);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.bar-fill{height:100%;border-radius:4px;background:var(--a);transition:width 0.6s}
 </style>
 </head>
 <body>
@@ -203,6 +292,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
   </nav>
 
   <div class="main">
+
+  <!-- DASHBOARD VIEW -->
   <div class="view active" id="view-dashboard">
     <div class="ptabs">
       <button class="pt" onclick="setPeriod('today',this)">Today</button>
@@ -227,6 +318,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <div class="kpi"><div class="ki">❌</div><div class="kv" id="kFailed" style="color:#dc2626">0</div><div class="kl">Failed Payments</div><div class="kc" style="color:#dc2626">Needs M-Pesa setup</div></div>
     </div>
 
+    <!-- Plan usage card -->
+    <div class="txn-card" id="planUsageCard" style="margin-bottom:14px;display:none">
+      <div class="txh"><h3>Plan Usage</h3><span id="planBadge" style="font-size:0.72rem;padding:2px 10px;border-radius:20px;background:rgba(0,0,0,0.15);font-weight:700"></span></div>
+      <div style="padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px" id="planUsageBody"></div>
+    </div>
+
     <div class="chart-card">
       <div class="cc-head"><div class="cc-title">Revenue Trend</div><div class="cc-total">Total: <span id="chartTotal">Ksh 0</span></div></div>
       <div class="bars" id="chart"></div>
@@ -248,6 +345,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     </div>
   </div>
 
+  <!-- CRM VIEW -->
   <div class="view" id="view-crm">
     <button class="crm-add" onclick="openContactModal()">+ Add Customer / Lead</button>
     <div id="contactList"></div>
@@ -257,13 +355,89 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <div id="followupList" style="padding:4px 16px 14px"></div>
     </div>
   </div>
+
+  <!-- INVENTORY VIEW -->
+  <div class="view" id="view-inventory">
+    <div class="section-header">
+      <h3>Stock &amp; Inventory</h3>
+      <button class="add-btn" onclick="openAddItemModal()">+ Add Item</button>
+    </div>
+    <div id="invSummary"></div>
+    <div id="inventoryList"></div>
   </div>
 
-  <nav class="bnav">
-    <button class="bni active" id="navDash" onclick="switchView('dashboard',this)"><span class="bni-i">📊</span><span class="bni-l">Dashboard</span></button>
-    <button class="bni" id="navCrm" onclick="switchView('crm',this)"><span class="bni-i">👥</span><span class="bni-l">CRM</span></button>
-    <button class="bni" onclick="copyPortalLink()"><span class="bni-i">🔗</span><span class="bni-l">Portal Link</span></button>
-    <button class="bni" onclick="doLogout()"><span class="bni-i">🚪</span><span class="bni-l">Sign Out</span></button>
+  <!-- EXPENSES VIEW -->
+  <div class="view" id="view-expenses">
+    <div class="section-header">
+      <h3>Expenses</h3>
+      <button class="add-btn" onclick="openAddExpenseModal()">+ Add Expense</button>
+    </div>
+    <div id="expSummary"></div>
+    <div id="expenseList"></div>
+  </div>
+
+  <!-- INVOICE VIEW -->
+  <div class="view" id="view-invoice">
+    <div class="section-header">
+      <h3>Invoices</h3>
+      <button class="add-btn" onclick="openCreateInvoice()">+ New Invoice</button>
+    </div>
+    <div id="invoiceSummary" style="margin-bottom:14px"></div>
+    <div id="invoiceList"></div>
+  </div>
+
+  <!-- REPORTS VIEW -->
+  <div class="view" id="view-reports">
+    <div class="section-header" style="margin-bottom:16px">
+      <h3>Business Report</h3>
+      <select id="reportPeriod" onchange="renderReports()" style="border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'Outfit',sans-serif;font-size:0.78rem;color:var(--ink);background:#fff;outline:none">
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="180">Last 6 months</option>
+        <option value="0">All time</option>
+      </select>
+    </div>
+    <div class="report-kpi" id="reportKPIs"></div>
+    <div class="txn-card" style="margin-bottom:14px">
+      <div class="txh"><h3>Top Products / Bundles</h3></div>
+      <div id="reportTopProducts" style="padding:12px 16px 6px"></div>
+    </div>
+    <div class="txn-card" style="margin-bottom:14px">
+      <div class="txh"><h3>Expense Breakdown</h3></div>
+      <div id="reportExpenses" style="padding:12px 16px 6px"></div>
+    </div>
+    <div style="background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px">💡 Strategy Recommendations</div>
+      <div id="strategyList"></div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT VIEW -->
+  <div class="view" id="view-account">
+    <div class="acc-section">
+      <h4>Your Customer Portal Link</h4>
+      <div class="acc-link" id="accPortalUrl">—</div>
+      <button class="acc-copy-btn" onclick="copyPortalLink()">📋 Copy &amp; Share Link</button>
+    </div>
+    <div class="acc-section">
+      <h4>Account Info</h4>
+      <div class="acc-info-row"><span class="acc-info-lbl">Business Name</span><span class="acc-info-val" id="accName">—</span></div>
+      <div class="acc-info-row"><span class="acc-info-lbl">Plan</span><span class="acc-info-val" id="accPlan">—</span></div>
+      <div class="acc-info-row"><span class="acc-info-lbl">Business Type</span><span class="acc-info-val" id="accType">—</span></div>
+    </div>
+    <button class="acc-logout-btn" onclick="doLogout()">🚪 Sign Out</button>
+  </div>
+
+  </div><!-- /.main -->
+
+  <nav class="bnav" style="overflow-x:auto;justify-content:flex-start;gap:0;padding:0">
+    <button class="bni active" id="navDash" onclick="switchView('dashboard',this)" style="min-width:60px"><span class="bni-i">📊</span><span class="bni-l">Home</span></button>
+    <button class="bni" id="navCrm" onclick="switchView('crm',this)" style="min-width:60px"><span class="bni-i">👥</span><span class="bni-l">CRM</span></button>
+    <button class="bni" id="navInv" onclick="switchView('inventory',this)" style="min-width:60px"><span class="bni-i">📦</span><span class="bni-l">Stock</span></button>
+    <button class="bni" id="navExp" onclick="switchView('expenses',this)" style="min-width:60px"><span class="bni-i">💸</span><span class="bni-l">Expenses</span></button>
+    <button class="bni" id="navInvoice" onclick="switchView('invoice',this)" style="min-width:60px"><span class="bni-i">🧾</span><span class="bni-l">Invoice</span></button>
+    <button class="bni" id="navReports" onclick="switchView('reports',this)" style="min-width:60px"><span class="bni-i">📈</span><span class="bni-l">Reports</span></button>
+    <button class="bni" id="navAcc" onclick="switchView('account',this)" style="min-width:60px"><span class="bni-i">👤</span><span class="bni-l">Account</span></button>
   </nav>
 </div>
 
@@ -276,8 +450,103 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     <div class="field"><label>Email</label><input type="email" id="ctEmail" placeholder="optional"></div>
     <div class="field"><label>Notes</label><textarea id="ctNotes" rows="2" placeholder="What do they need?"></textarea></div>
     <div class="modal-actions">
-      <button class="cancel" onclick="closeContactModal()">Cancel</button>
+      <button class="cancel" onclick="closeModal('contactModal')">Cancel</button>
       <button class="save" onclick="saveContact()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD INVENTORY ITEM MODAL -->
+<div class="modal-ov" id="addItemModal">
+  <div class="modal">
+    <h3>Add Inventory Item</h3>
+    <div class="field"><label>Item Name *</label><input type="text" id="iName" placeholder="e.g. Daily WiFi Voucher"></div>
+    <div class="field"><label>Category</label><input type="text" id="iCat" placeholder="e.g. Vouchers, Food, Services"></div>
+    <div class="field"><label>Selling Price (Ksh) *</label><input type="number" id="iSell" placeholder="0" min="0"></div>
+    <div class="field"><label>Cost Price (Ksh)</label><input type="number" id="iCost" placeholder="0" min="0"></div>
+    <div class="field"><label>Quantity in Stock *</label><input type="number" id="iQty" placeholder="0" min="0"></div>
+    <div class="field"><label>Unit</label><input type="text" id="iUnit" placeholder="pcs, kg, litres, vouchers…"></div>
+    <div class="field"><label>Low Stock Alert At</label><input type="number" id="iThresh" placeholder="5" min="0"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('addItemModal')">Cancel</button>
+      <button class="save" onclick="saveItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESTOCK MODAL -->
+<div class="modal-ov" id="restockModal">
+  <div class="modal">
+    <h3>Restock Item</h3>
+    <div class="modal-hint" id="restockItemName"></div>
+    <div class="field"><label>Quantity to Add *</label><input type="number" id="restockQty" placeholder="0" min="1"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('restockModal')">Cancel</button>
+      <button class="save" onclick="confirmRestock()">Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECORD SALE MODAL -->
+<div class="modal-ov" id="sellModal">
+  <div class="modal">
+    <h3>Record Sale</h3>
+    <div class="modal-hint" id="sellItemName"></div>
+    <div class="field"><label>Quantity Sold *</label><input type="number" id="sellQty" placeholder="1" min="1"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('sellModal')">Cancel</button>
+      <button class="save" onclick="confirmSell()">Record Sale</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE INVOICE MODAL -->
+<div class="modal-ov" id="invoiceModal">
+  <div class="modal" style="max-width:480px">
+    <h3>🧾 New Invoice</h3>
+    <div class="field"><label>Customer Name *</label><input type="text" id="iv_customer" placeholder="John Kamau"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field"><label>Phone</label><input type="tel" id="iv_phone" placeholder="0712345678"></div>
+      <div class="field"><label>Tax Rate (%)</label><input type="number" id="iv_tax" placeholder="0" min="0" max="100" value="0"></div>
+    </div>
+    <div class="field"><label>Due Date</label><input type="date" id="iv_due"></div>
+    <div style="font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Items / Services</div>
+    <div id="ivItemsList"></div>
+    <button onclick="addInvoiceItem()" style="width:100%;padding:9px;border:1.5px dashed var(--border);border-radius:9px;background:transparent;font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:700;color:var(--muted);cursor:pointer;margin-bottom:12px">+ Add Line Item</button>
+    <div class="field"><label>Notes</label><textarea id="iv_notes" rows="2" placeholder="Payment instructions, thank you message…"></textarea></div>
+    <div id="iv_total_preview" style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--a);margin-bottom:10px">Total: Ksh 0</div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('invoiceModal')">Cancel</button>
+      <button class="save" onclick="saveInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXPENSE MODAL -->
+<div class="modal-ov" id="addExpenseModal">
+  <div class="modal">
+    <h3>Log Expense</h3>
+    <div class="field"><label>Amount (Ksh) *</label><input type="number" id="eAmt" placeholder="0" min="0"></div>
+    <div class="field">
+      <label>Category *</label>
+      <select id="eCat">
+        <option value="">Select category…</option>
+        <option>Rent</option>
+        <option>Salaries</option>
+        <option>Utilities</option>
+        <option>Stock/Supplies</option>
+        <option>Transport</option>
+        <option>Marketing</option>
+        <option>Equipment</option>
+        <option>Maintenance</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="eDesc" placeholder="What was it for?"></div>
+    <div class="field"><label>Date</label><input type="date" id="eDate"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('addExpenseModal')">Cancel</button>
+      <button class="save" onclick="saveExpense()">Save</button>
     </div>
   </div>
 </div>
@@ -296,11 +565,19 @@ const TYPE_ACTIONS={
   custom:[{i:'📋',l:'Orders'},{i:'📲',l:'Send SMS'},{i:'💰',l:'Revenue'},{i:'⚙️',l:'Settings'}],
 };
 
+const EXP_COLORS={'Rent':'#7c3aed','Salaries':'#0ea5e9','Utilities':'#f59e0b','Stock/Supplies':'#059669','Transport':'#ea580c','Marketing':'#db2777','Equipment':'#4f46e5','Maintenance':'#dc2626','Other':'#64748b'};
+
 let CLIENT = null;
 let TRANSACTIONS = [];
 let CONTACTS = [];
 let FOLLOWUPS = [];
+let INVENTORY = [];
+let EXPENSES = [];
+let INVOICES = [];
 let period = 'week';
+let _restockId = null;
+let _sellId = null;
+let _ivItems = [];
 
 async function doLogin(){
   const email = document.getElementById('lEmail').value.trim();
@@ -339,25 +616,35 @@ async function initApp(){
       <div class="qa-l">${a.l}</div>
     </div>`).join('');
 
+  renderAccount();
   await refreshAll();
   setInterval(refreshAll, 30000);
 }
 
 async function refreshAll(){
-  const [txns,contacts,followups] = await Promise.all([
+  const [txns,contacts,followups,inv,exp,invoices] = await Promise.all([
     AKE.api('/transactions/mine',{role:'client'}),
     AKE.api('/contacts',{role:'client'}),
     AKE.api('/followups',{role:'client'}),
+    AKE.api('/inventory',{role:'client'}),
+    AKE.api('/expenses',{role:'client'}),
+    AKE.api('/invoices',{role:'client'}),
   ]);
   TRANSACTIONS = txns;
   CONTACTS = contacts;
   FOLLOWUPS = followups;
+  INVENTORY = inv;
+  EXPENSES = exp;
+  INVOICES = invoices;
   loadData();
   renderContacts();
   renderFollowups();
+  renderInventory();
+  renderExpenses();
+  renderInvoices();
+  renderPlanUsage();
 }
 
-// Resume session if a client token is already stored
 if(AKE.getStoredToken('client')) initApp();
 
 function switchView(name,btn){
@@ -365,17 +652,16 @@ function switchView(name,btn){
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   btn.classList.add('active');
+  if(name==='reports') renderReports();
 }
+
+function closeModal(id){document.getElementById(id).classList.remove('open')}
 
 // ── CRM ──
 function openContactModal(){
-  document.getElementById('ctName').value='';
-  document.getElementById('ctPhone').value='';
-  document.getElementById('ctEmail').value='';
-  document.getElementById('ctNotes').value='';
+  ['ctName','ctPhone','ctEmail','ctNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('contactModal').classList.add('open');
 }
-function closeContactModal(){document.getElementById('contactModal').classList.remove('open')}
 
 async function saveContact(){
   const name=document.getElementById('ctName').value.trim();
@@ -384,7 +670,7 @@ async function saveContact(){
   const notes=document.getElementById('ctNotes').value.trim();
   if(!name||!phone){showToast('⚠️ Name and phone required');return}
   await AKE.api('/contacts',{method:'POST',role:'client',body:{name,phone,email,notes}});
-  closeContactModal();
+  closeModal('contactModal');
   showToast('✅ Customer added');
   await refreshAll();
 }
@@ -425,7 +711,7 @@ async function quickSMS(id){
 
 async function scheduleFollowups(id){
   await AKE.api('/followups/schedule',{method:'POST',role:'client',body:{contactId:id}});
-  showToast('⏰ Day 1 / 3 / 7 follow-ups scheduled');
+  showToast('⏰ Day 1 / 3 / 7 / 14 / 30 follow-ups scheduled');
   await refreshAll();
 }
 
@@ -438,7 +724,7 @@ function renderFollowups(){
   document.getElementById('fuCount').textContent=FOLLOWUPS.length+' scheduled';
   const list=document.getElementById('followupList');
   if(!FOLLOWUPS.length){
-    list.innerHTML=`<div class="empty"><div class="ei">⏰</div><h4>No follow-ups scheduled</h4><p>Use "Follow-Up" on a customer card to auto-message them on Day 1, 3 and 7.</p></div>`;
+    list.innerHTML=`<div class="empty"><div class="ei">⏰</div><h4>No follow-ups scheduled</h4><p>Use "Follow-Up" on a customer card to auto-message them on Day 1, 3, 7, 14 &amp; 30.</p></div>`;
     return;
   }
   list.innerHTML=[...FOLLOWUPS].sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt)).map(f=>`
@@ -448,6 +734,535 @@ function renderFollowups(){
     </div>`).join('');
 }
 
+// ── INVENTORY ──
+function openAddItemModal(){
+  ['iName','iCat','iSell','iCost','iQty','iUnit','iThresh'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('addItemModal').classList.add('open');
+}
+
+async function saveItem(){
+  const name=document.getElementById('iName').value.trim();
+  const sellingPrice=document.getElementById('iSell').value;
+  const quantity=document.getElementById('iQty').value;
+  if(!name||sellingPrice===''||quantity===''){showToast('⚠️ Name, price and quantity required');return}
+  try{
+    await AKE.api('/inventory',{method:'POST',role:'client',body:{
+      name,
+      category:document.getElementById('iCat').value||'General',
+      sellingPrice:Number(sellingPrice),
+      costPrice:Number(document.getElementById('iCost').value)||0,
+      quantity:Number(quantity),
+      unit:document.getElementById('iUnit').value||'pcs',
+      lowStockThreshold:Number(document.getElementById('iThresh').value)||5,
+    }});
+    closeModal('addItemModal');
+    showToast('✅ Item added');
+    INVENTORY = await AKE.api('/inventory',{role:'client'});
+    renderInventory();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+function restockItem(id){
+  _restockId=id;
+  const item=INVENTORY.find(i=>i.id===id);
+  document.getElementById('restockItemName').textContent=(item?.name||'')+' — current stock: '+(item?.quantity||0)+' '+(item?.unit||'');
+  document.getElementById('restockQty').value='';
+  document.getElementById('restockModal').classList.add('open');
+}
+
+async function confirmRestock(){
+  const qty=Number(document.getElementById('restockQty').value);
+  if(!qty||qty<1){showToast('⚠️ Enter a valid quantity');return}
+  try{
+    await AKE.api('/inventory/'+_restockId+'/restock',{method:'POST',role:'client',body:{quantity:qty}});
+    closeModal('restockModal');
+    showToast('✅ Stock updated');
+    INVENTORY = await AKE.api('/inventory',{role:'client'});
+    renderInventory();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+function sellItem(id){
+  _sellId=id;
+  const item=INVENTORY.find(i=>i.id===id);
+  document.getElementById('sellItemName').textContent=(item?.name||'')+' — in stock: '+(item?.quantity||0)+' '+(item?.unit||'');
+  document.getElementById('sellQty').value='1';
+  document.getElementById('sellModal').classList.add('open');
+}
+
+async function confirmSell(){
+  const qty=Number(document.getElementById('sellQty').value);
+  if(!qty||qty<1){showToast('⚠️ Enter a valid quantity');return}
+  try{
+    await AKE.api('/inventory/'+_sellId+'/sell',{method:'POST',role:'client',body:{quantity:qty}});
+    closeModal('sellModal');
+    showToast('✅ Sale recorded');
+    INVENTORY = await AKE.api('/inventory',{role:'client'});
+    renderInventory();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+async function deleteItem(id){
+  if(!confirm('Delete this item from inventory?'))return;
+  await AKE.api('/inventory/'+id,{method:'DELETE',role:'client'});
+  showToast('🗑 Item removed');
+  INVENTORY = await AKE.api('/inventory',{role:'client'});
+  renderInventory();
+}
+
+function renderInventory(){
+  const totalValue=INVENTORY.reduce((s,i)=>s+(i.sellingPrice*i.quantity),0);
+  const totalCostValue=INVENTORY.reduce((s,i)=>s+(i.costPrice*i.quantity),0);
+  const lowItems=INVENTORY.filter(i=>i.quantity<=i.lowStockThreshold).length;
+  document.getElementById('invSummary').innerHTML=`
+    <div class="kpi-row">
+      <div class="kpi"><div class="ki">📦</div><div class="kv">${INVENTORY.length}</div><div class="kl">Stock Items</div><div class="kc" style="color:${lowItems?'#dc2626':'#059669'}">${lowItems?lowItems+' low stock':'All stocked'}</div></div>
+      <div class="kpi"><div class="ki">💰</div><div class="kv" style="font-size:1.1rem">Ksh ${totalValue.toLocaleString()}</div><div class="kl">Stock Value</div><div class="kc">At selling price</div></div>
+    </div>`;
+
+  const list=document.getElementById('inventoryList');
+  if(!INVENTORY.length){
+    list.innerHTML=`<div class="empty"><div class="ei">📦</div><h4>No items yet</h4><p>Add the products or services you sell to track stock levels and record sales.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...INVENTORY].sort((a,b)=>a.quantity-b.quantity).map(item=>{
+    const isLow=item.quantity<=item.lowStockThreshold;
+    const margin=item.costPrice?Math.round((item.sellingPrice-item.costPrice)/item.sellingPrice*100):null;
+    return `
+    <div class="inv-card">
+      <div class="inv-top">
+        <div><div class="inv-name">${item.name}</div><div class="inv-cat">${item.category}</div></div>
+        <span class="inv-badge ${isLow?'low':'ok'}">${isLow?'Low Stock':'In Stock'}</span>
+      </div>
+      <div class="inv-meta">
+        <div class="inv-m">Qty: <strong>${item.quantity} ${item.unit}</strong></div>
+        <div class="inv-m">Sell: <strong>Ksh ${item.sellingPrice.toLocaleString()}</strong></div>
+        ${item.costPrice?`<div class="inv-m">Cost: <strong>Ksh ${item.costPrice.toLocaleString()}</strong></div>`:''}
+        ${margin!==null?`<div class="inv-m">Margin: <strong>${margin}%</strong></div>`:''}
+      </div>
+      <div class="inv-actions">
+        <button class="inv-btn" onclick="restockItem('${item.id}')">➕ Restock</button>
+        <button class="inv-btn" onclick="sellItem('${item.id}')">💰 Sell</button>
+        <button class="inv-btn danger" onclick="deleteItem('${item.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EXPENSES ──
+function openAddExpenseModal(){
+  document.getElementById('eAmt').value='';
+  document.getElementById('eCat').value='';
+  document.getElementById('eDesc').value='';
+  document.getElementById('eDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('addExpenseModal').classList.add('open');
+}
+
+async function saveExpense(){
+  const amount=document.getElementById('eAmt').value;
+  const category=document.getElementById('eCat').value;
+  if(!amount||!category){showToast('⚠️ Amount and category required');return}
+  try{
+    await AKE.api('/expenses',{method:'POST',role:'client',body:{
+      amount:Number(amount),
+      category,
+      description:document.getElementById('eDesc').value.trim(),
+      date:document.getElementById('eDate').value||new Date().toISOString().split('T')[0],
+    }});
+    closeModal('addExpenseModal');
+    showToast('✅ Expense logged');
+    EXPENSES = await AKE.api('/expenses',{role:'client'});
+    renderExpenses();
+  }catch(e){showToast('⚠️ '+e.message)}
+}
+
+async function deleteExpense(id){
+  if(!confirm('Delete this expense?'))return;
+  await AKE.api('/expenses/'+id,{method:'DELETE',role:'client'});
+  showToast('🗑 Expense removed');
+  EXPENSES = await AKE.api('/expenses',{role:'client'});
+  renderExpenses();
+}
+
+function renderExpenses(){
+  const totalExp=EXPENSES.reduce((s,e)=>s+e.amount,0);
+  const totalRev=TRANSACTIONS.filter(t=>t.status==='success').reduce((s,t)=>s+t.amount,0);
+  const profit=totalRev-totalExp;
+  document.getElementById('expSummary').innerHTML=`
+    <div class="exp-summary">
+      <div class="es-row">
+        <div><div class="es-val">Ksh ${totalRev.toLocaleString()}</div><div class="es-lbl">Revenue</div></div>
+        <div><div class="es-val">${totalExp.toLocaleString()}</div><div class="es-lbl">Expenses</div></div>
+        <div><div class="es-val" style="color:${profit>=0?'#4ade80':'#f87171'}">${profit>=0?'+':''}${profit.toLocaleString()}</div><div class="es-lbl">Profit</div></div>
+      </div>
+    </div>`;
+
+  const list=document.getElementById('expenseList');
+  if(!EXPENSES.length){
+    list.innerHTML=`<div class="empty"><div class="ei">💸</div><h4>No expenses logged</h4><p>Track business expenses to see your real profit after costs.</p></div>`;
+    return;
+  }
+  list.innerHTML=[...EXPENSES].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(e=>`
+    <div class="exp-card">
+      <div class="exp-cat-dot" style="background:${EXP_COLORS[e.category]||'#64748b'}"></div>
+      <div class="exp-info">
+        <div class="exp-title">${e.category}</div>
+        <div class="exp-sub">${e.description||'No description'} · ${e.date}</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-amt">−${Number(e.amount).toLocaleString()}</div>
+        <div class="exp-date">${timeAgo(e.createdAt)}</div>
+      </div>
+      <button class="del-btn" onclick="deleteExpense('${e.id}')">🗑</button>
+    </div>`).join('');
+}
+
+// ── INVOICES ──
+function renderInvoices(){
+  const unpaid = INVOICES.filter(i=>i.status!=='paid').length;
+  const totalUnpaid = INVOICES.filter(i=>i.status!=='paid').reduce((s,i)=>s+i.total,0);
+  const totalPaid = INVOICES.filter(i=>i.status==='paid').reduce((s,i)=>s+i.total,0);
+  document.getElementById('invoiceSummary').innerHTML = INVOICES.length ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="kpi"><div class="ki">🧾</div><div class="kv">${INVOICES.length}</div><div class="kl">Total Invoices</div></div>
+      <div class="kpi"><div class="ki">✅</div><div class="kv" style="font-size:1.1rem">Ksh ${totalPaid.toLocaleString()}</div><div class="kl">Collected</div></div>
+      <div class="kpi"><div class="ki">⏳</div><div class="kv">${unpaid}</div><div class="kl">Pending</div></div>
+      <div class="kpi"><div class="ki">💰</div><div class="kv" style="font-size:1.1rem">Ksh ${totalUnpaid.toLocaleString()}</div><div class="kl">Pending Amount</div></div>
+    </div>` : '';
+
+  const el = document.getElementById('invoiceList');
+  if(!INVOICES.length){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:12px">🧾</div><div style="font-weight:700;margin-bottom:6px">No invoices yet</div><div style="font-size:0.78rem">Create your first invoice to bill a customer</div></div>';
+    return;
+  }
+  el.innerHTML = INVOICES.map(inv=>`
+    <div class="inv-card">
+      <div class="inv-top">
+        <div>
+          <div class="inv-num">${inv.invoiceNumber} · ${new Date(inv.createdAt).toLocaleDateString('en-KE')}</div>
+          <div class="inv-name">${inv.customerName}</div>
+          ${inv.customerPhone?`<div style="font-size:0.72rem;color:var(--muted)">${inv.customerPhone}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          <div class="inv-amt">Ksh ${inv.total.toLocaleString()}</div>
+          <span class="inv-status st-${inv.status}">${inv.status==='draft'?'📝 Draft':inv.status==='sent'?'📤 Sent':'✅ Paid'}</span>
+        </div>
+      </div>
+      ${inv.dueDate?`<div class="inv-meta">Due: ${inv.dueDate}</div>`:''}
+      <div class="inv-actions">
+        <button class="inv-btn" onclick="viewInvoicePrint('${inv.id}')">🖨 Print</button>
+        ${inv.status!=='paid'?`<button class="inv-btn" onclick="markInvoicePaid('${inv.id}')">✅ Mark Paid</button>`:''}
+        ${inv.status==='draft'?`<button class="inv-btn" onclick="sendInvoiceSMS('${inv.id}')">📲 SMS</button>`:''}
+        <button class="inv-btn danger" onclick="deleteInvoice('${inv.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openCreateInvoice(){
+  _ivItems = [{description:'',qty:1,unitPrice:0}];
+  renderIvItems();
+  document.getElementById('iv_customer').value='';
+  document.getElementById('iv_phone').value='';
+  document.getElementById('iv_tax').value='0';
+  document.getElementById('iv_due').value='';
+  document.getElementById('iv_notes').value='';
+  updateIvTotal();
+  document.getElementById('invoiceModal').classList.add('open');
+}
+
+function renderIvItems(){
+  document.getElementById('ivItemsList').innerHTML = _ivItems.map((item,i)=>`
+    <div style="display:grid;grid-template-columns:3fr 1fr 1.5fr auto;gap:6px;margin-bottom:6px;align-items:center">
+      <input type="text" placeholder="Description" value="${item.description}" oninput="_ivItems[${i}].description=this.value" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:'Outfit',sans-serif;color:var(--ink);outline:none" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--border)'">
+      <input type="number" placeholder="Qty" value="${item.qty}" min="1" oninput="_ivItems[${i}].qty=Number(this.value);updateIvTotal()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:'Outfit',sans-serif;color:var(--ink);outline:none;text-align:center" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--border)'">
+      <input type="number" placeholder="Unit price" value="${item.unitPrice}" min="0" oninput="_ivItems[${i}].unitPrice=Number(this.value);updateIvTotal()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:'Outfit',sans-serif;color:var(--ink);outline:none" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--border)'">
+      <button onclick="removeIvItem(${i})" style="padding:8px;border:none;background:none;cursor:pointer;color:#dc2626;font-size:1rem;line-height:1">✕</button>
+    </div>`).join('');
+}
+
+function addInvoiceItem(){
+  _ivItems.push({description:'',qty:1,unitPrice:0});
+  renderIvItems();
+}
+
+function removeIvItem(i){
+  if(_ivItems.length<=1) return;
+  _ivItems.splice(i,1);
+  renderIvItems();
+  updateIvTotal();
+}
+
+function updateIvTotal(){
+  const tax = Number(document.getElementById('iv_tax')?.value||0);
+  const sub = _ivItems.reduce((s,i)=>s+(i.qty||0)*(i.unitPrice||0),0);
+  const total = sub + Math.round(sub*tax/100);
+  const el = document.getElementById('iv_total_preview');
+  if(el) el.textContent = 'Total: Ksh '+total.toLocaleString();
+}
+
+async function saveInvoice(){
+  const customerName = document.getElementById('iv_customer').value.trim();
+  if(!customerName){showToast('Customer name required');return;}
+  if(!_ivItems.some(i=>i.description&&i.unitPrice>0)){showToast('Add at least one item with a price');return;}
+  try{
+    const inv = await AKE.api('/invoices',{method:'POST',role:'client',body:{
+      customerName,
+      customerPhone: document.getElementById('iv_phone').value.trim(),
+      items: _ivItems,
+      taxRate: Number(document.getElementById('iv_tax').value)||0,
+      dueDate: document.getElementById('iv_due').value||null,
+      notes: document.getElementById('iv_notes').value.trim(),
+    }});
+    INVOICES.unshift(inv);
+    renderInvoices();
+    closeModal('invoiceModal');
+    showToast('Invoice '+inv.invoiceNumber+' created!');
+  }catch(e){showToast(e.message||'Error creating invoice');}
+}
+
+async function markInvoicePaid(id){
+  try{
+    const updated = await AKE.api('/invoices/'+id,{method:'PATCH',role:'client',body:{status:'paid'}});
+    const idx = INVOICES.findIndex(i=>i.id===id);
+    if(idx>-1) INVOICES[idx]=updated;
+    renderInvoices();
+    showToast('Invoice marked as paid ✅');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function sendInvoiceSMS(id){
+  try{
+    await AKE.api('/invoices/'+id+'/send',{method:'POST',role:'client',body:{viewUrl:''}});
+    const idx = INVOICES.findIndex(i=>i.id===id);
+    if(idx>-1) INVOICES[idx].status='sent';
+    renderInvoices();
+    showToast('Invoice SMS sent 📲');
+  }catch(e){showToast(e.message||'SMS not configured');}
+}
+
+async function deleteInvoice(id){
+  if(!confirm('Delete this invoice?')) return;
+  try{
+    await AKE.api('/invoices/'+id,{method:'DELETE',role:'client'});
+    INVOICES = INVOICES.filter(i=>i.id!==id);
+    renderInvoices();
+    showToast('Invoice deleted');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+function viewInvoicePrint(id){
+  const inv = INVOICES.find(i=>i.id===id);
+  if(!inv) return;
+  const w = window.open('','_blank','width=700,height=800');
+  const rows = inv.items.map(it=>`<tr><td>${it.description}</td><td style="text-align:center">${it.qty}</td><td style="text-align:right">Ksh ${it.unitPrice.toLocaleString()}</td><td style="text-align:right;font-weight:700">Ksh ${it.total.toLocaleString()}</td></tr>`).join('');
+  w.document.write(`<!DOCTYPE html><html><head><title>${inv.invoiceNumber}</title><style>
+    body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:0 auto;color:#0f172a}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #e2e8f0}
+    h1{font-size:2rem;letter-spacing:2px;color:#059669;margin:0}
+    .inv-num{font-size:0.9rem;color:#64748b;margin-top:4px}
+    .to{margin-bottom:24px}.to-lbl{font-size:0.7rem;color:#64748b;text-transform:uppercase;margin-bottom:4px}
+    .to-name{font-size:1.1rem;font-weight:700}
+    table{width:100%;border-collapse:collapse;margin-bottom:20px}
+    th{text-align:left;padding:10px;background:#f8fafc;font-size:0.75rem;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0}
+    td{padding:10px;border-bottom:1px solid #f1f5f9}
+    .totals{text-align:right;margin-bottom:20px}
+    .total-row{display:flex;justify-content:flex-end;gap:20px;padding:6px 0;font-size:0.9rem}
+    .grand-total{font-size:1.3rem;font-weight:800;color:#059669;border-top:2px solid #e2e8f0;padding-top:10px;margin-top:6px}
+    .footer{font-size:0.75rem;color:#94a3b8;margin-top:32px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center}
+    @media print{.no-print{display:none}}
+  </style></head><body>
+    <div class="header">
+      <div><h1>${CLIENT?.name||'AutomateKE'}</h1><div class="inv-num">Invoice ${inv.invoiceNumber}</div></div>
+      <div style="text-align:right"><div style="font-size:0.8rem;color:#64748b">Date: ${new Date(inv.createdAt).toLocaleDateString('en-KE')}</div>${inv.dueDate?`<div style="font-size:0.8rem;color:#dc2626;font-weight:700">Due: ${inv.dueDate}</div>`:''}</div>
+    </div>
+    <div class="to"><div class="to-lbl">Billed To</div><div class="to-name">${inv.customerName}</div>${inv.customerPhone?`<div style="color:#64748b;font-size:0.85rem">${inv.customerPhone}</div>`:''}</div>
+    <table><thead><tr><th>Description</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit Price</th><th style="text-align:right">Total</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="totals">
+      <div class="total-row"><span>Subtotal:</span><span>Ksh ${inv.subtotal.toLocaleString()}</span></div>
+      ${inv.taxAmount?`<div class="total-row"><span>Tax (${inv.taxRate}%):</span><span>Ksh ${inv.taxAmount.toLocaleString()}</span></div>`:''}
+      <div class="total-row grand-total"><span>TOTAL:</span><span>Ksh ${inv.total.toLocaleString()}</span></div>
+    </div>
+    ${inv.notes?`<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:0.82rem;color:#64748b"><strong>Notes:</strong> ${inv.notes}</div>`:''}
+    <div class="footer">Generated by AutomateKE · ${CLIENT?.name||''}</div>
+    <div class="no-print" style="text-align:center;margin-top:24px"><button onclick="window.print()" style="padding:12px 32px;background:#059669;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:700">🖨 Print / Save PDF</button></div>
+  </body></html>`);
+  w.document.close();
+}
+
+// ── REPORTS ──
+function renderReports(){
+  const days = Number(document.getElementById('reportPeriod')?.value||30);
+  const cutoff = days===0 ? 0 : Date.now() - days*86400000;
+  const txns = TRANSACTIONS.filter(t=>t.status==='success'&&(days===0||new Date(t.time).getTime()>=cutoff));
+  const exps = EXPENSES.filter(e=>days===0||new Date(e.date||e.createdAt).getTime()>=cutoff);
+
+  const totalRev = txns.reduce((s,t)=>s+t.amount,0);
+  const totalExp = exps.reduce((s,e)=>s+e.amount,0);
+  const profit = totalRev - totalExp;
+  const uniqueCustomers = new Set(txns.map(t=>t.customerPhone||t.phone)).size;
+  const failedCount = TRANSACTIONS.filter(t=>t.status==='failed'&&(days===0||new Date(t.time).getTime()>=cutoff)).length;
+  const allAttempts = txns.length + failedCount;
+  const successRate = allAttempts ? Math.round(txns.length/allAttempts*100) : 100;
+
+  document.getElementById('reportKPIs').innerHTML = `
+    <div class="rk"><div class="rk-icon">💰</div><div class="rk-val" style="color:var(--a)">Ksh ${totalRev.toLocaleString()}</div><div class="rk-label">Revenue</div></div>
+    <div class="rk"><div class="rk-icon">💸</div><div class="rk-val" style="color:#dc2626">Ksh ${totalExp.toLocaleString()}</div><div class="rk-label">Expenses</div></div>
+    <div class="rk"><div class="rk-icon">${profit>=0?'📈':'📉'}</div><div class="rk-val" style="color:${profit>=0?'#059669':'#dc2626'}">Ksh ${Math.abs(profit).toLocaleString()}</div><div class="rk-label">${profit>=0?'Net Profit':'Net Loss'}</div></div>
+    <div class="rk"><div class="rk-icon">👥</div><div class="rk-val">${uniqueCustomers}</div><div class="rk-label">Customers</div></div>
+    <div class="rk"><div class="rk-icon">✅</div><div class="rk-val">${successRate}%</div><div class="rk-label">Payment Success Rate</div></div>
+    <div class="rk"><div class="rk-icon">🧾</div><div class="rk-val">${txns.length}</div><div class="rk-label">Transactions</div></div>`;
+
+  // Top products
+  const byBundle = {};
+  txns.forEach(t=>{const k=t.bundle||'Unknown';if(!byBundle[k])byBundle[k]={count:0,revenue:0};byBundle[k].count++;byBundle[k].revenue+=t.amount;});
+  const sorted = Object.entries(byBundle).sort((a,b)=>b[1].revenue-a[1].revenue).slice(0,5);
+  const maxRev = sorted[0]?.[1]?.revenue||1;
+  document.getElementById('reportTopProducts').innerHTML = sorted.length ? sorted.map(([name,d])=>`
+    <div class="bar-label"><span>${name}</span><span style="font-weight:700">Ksh ${d.revenue.toLocaleString()} (${d.count})</span></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.round(d.revenue/maxRev*100)}%"></div></div>`).join('')
+  : '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">No sales data yet</div>';
+
+  // Expense breakdown
+  const byCat = {};
+  exps.forEach(e=>{const k=e.category||'Other';if(!byCat[k])byCat[k]=0;byCat[k]+=e.amount;});
+  const catSorted = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const maxExp = catSorted[0]?.[1]||1;
+  document.getElementById('reportExpenses').innerHTML = catSorted.length ? catSorted.map(([cat,amt])=>`
+    <div class="bar-label"><span>${cat}</span><span style="font-weight:700">Ksh ${amt.toLocaleString()}</span></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.round(amt/maxExp*100)}%;background:${EXP_COLORS[cat]||'#64748b'}"></div></div>`).join('')
+  : '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">No expenses logged yet</div>';
+
+  // Strategy recommendations
+  const tips = generateStrategies({txns,exps,failedCount,allAttempts,profit,totalRev,totalExp,uniqueCustomers,days});
+  document.getElementById('strategyList').innerHTML = tips.length ? tips.map(t=>`
+    <div class="strategy-card" style="border-left-color:${t.color||'var(--a)'}">
+      <span class="sc-priority p-${t.priority}">${t.priority.toUpperCase()}</span>
+      <div class="sc-title">${t.icon} ${t.title}</div>
+      <div class="sc-desc">${t.desc}</div>
+      <div class="sc-action">→ ${t.action}</div>
+    </div>`).join('')
+  : '<div style="color:var(--muted);font-size:0.8rem">Add more transactions and expenses to get personalised recommendations.</div>';
+}
+
+function generateStrategies({txns,exps,failedCount,allAttempts,profit,totalRev,totalExp,uniqueCustomers,days}){
+  const tips = [];
+  const failRate = allAttempts ? failedCount/allAttempts : 0;
+  const margin = totalRev ? profit/totalRev : 0;
+  const label = days===0?'all time':days+' days';
+
+  if(failRate > 0.15){
+    tips.push({icon:'📱',title:'Reduce Payment Failures',priority:'high',color:'#dc2626',
+      desc:`${Math.round(failRate*100)}% of payment attempts in the last ${label} failed. This is lost revenue.`,
+      action:'Send customers a reminder: ensure M-Pesa is active and has balance before paying. Add a retry link in your portal.'});
+  }
+
+  if(margin < 0.2 && totalRev > 0){
+    tips.push({icon:'📊',title:'Improve Profit Margin',priority:'high',color:'#dc2626',
+      desc:`Your profit margin is ${Math.round(margin*100)}%. Industry benchmark is 30%+. Either increase prices or reduce expenses.`,
+      action:`Review your top expense category and find one area to cut by 10%. Even small savings compound over months.`});
+  }
+
+  if(CONTACTS.length < 20){
+    tips.push({icon:'👥',title:'Grow Your Customer Database',priority:'high',color:'#f59e0b',
+      desc:`You only have ${CONTACTS.length} contacts in your CRM. A bigger list means more repeat sales and automated follow-ups working for you.`,
+      action:'Offer a small incentive (10% off, free bonus) for customers who register their number at point of sale.'});
+  }
+
+  if(txns.length > 5 && uniqueCustomers > 0){
+    const avgTxnPerCustomer = txns.length / uniqueCustomers;
+    if(avgTxnPerCustomer < 2){
+      tips.push({icon:'🔁',title:'Increase Repeat Purchases',priority:'medium',color:'#f59e0b',
+        desc:`Customers average ${avgTxnPerCustomer.toFixed(1)} purchases each. Getting them back a second time costs far less than acquiring new ones.`,
+        action:'Use CRM follow-ups to send a special "welcome back" deal 3 days after their last purchase.'});
+    }
+  }
+
+  const topBundle = (() => {
+    const byB = {};
+    txns.forEach(t=>{const k=t.bundle||'Unknown';if(!byB[k])byB[k]=0;byB[k]+=t.amount;});
+    return Object.entries(byB).sort((a,b)=>b[1]-a[1])[0];
+  })();
+  if(topBundle){
+    tips.push({icon:'🏆',title:`Double Down on "${topBundle[0]}"`,priority:'medium',color:'#0ea5e9',
+      desc:`"${topBundle[0]}" is your best-selling product with Ksh ${topBundle[1].toLocaleString()} in revenue.`,
+      action:'Promote this bundle more prominently in your portal. Consider a bundle upgrade (e.g. 2× duration for 1.7× price) to increase average order value.'});
+  }
+
+  if(INVOICES.filter(i=>i.status!=='paid').length > 0){
+    const pendingAmt = INVOICES.filter(i=>i.status!=='paid').reduce((s,i)=>s+i.total,0);
+    tips.push({icon:'🧾',title:'Follow Up on Unpaid Invoices',priority:'medium',color:'#7c3aed',
+      desc:`You have Ksh ${pendingAmt.toLocaleString()} in unpaid invoices. That money is already earned — just uncollected.`,
+      action:'Go to Invoices tab → Send SMS reminder to each unpaid customer. Consider adding a due date to future invoices.'});
+  }
+
+  const lowStockItems = INVENTORY.filter(i=>i.quantity<=i.lowStockThreshold);
+  if(lowStockItems.length > 0){
+    tips.push({icon:'📦',title:'Restock Before You Run Out',priority:lowStockItems.length>2?'high':'medium',color:'#ea580c',
+      desc:`${lowStockItems.length} item(s) are below their low-stock threshold: ${lowStockItems.slice(0,3).map(i=>i.name).join(', ')}.`,
+      action:'Restock these items now. Running out means lost sales and disappointed customers who may not return.'});
+  }
+
+  if(tips.length === 0 && totalRev > 0){
+    tips.push({icon:'🌟',title:'Business Looks Healthy!',priority:'low',color:'#059669',
+      desc:`Strong payment success rate, growing customer base, and positive cash flow. Keep the momentum.`,
+      action:'Consider expanding to a higher plan to unlock more contacts, SMS capacity, and lower transaction fees.'});
+  }
+
+  return tips.sort((a,b)=>({high:0,medium:1,low:2}[a.priority]-{high:0,medium:1,low:2}[b.priority]));
+}
+
+// ── PLAN USAGE ──
+const PLAN_LIMITS = {
+  trial:      {contacts:30,   inventory:5,   smsQuota:20,  name:'Trial'},
+  starter:    {contacts:100,  inventory:20,  smsQuota:50,  name:'Starter'},
+  business:   {contacts:500,  inventory:100, smsQuota:200, name:'Business'},
+  growth:     {contacts:500,  inventory:100, smsQuota:200, name:'Business'}, // legacy
+  pro:        {contacts:2000, inventory:-1,  smsQuota:500, name:'Pro'},
+  enterprise: {contacts:-1,   inventory:-1,  smsQuota:-1,  name:'Enterprise'},
+};
+function renderPlanUsage(){
+  if(!CLIENT) return;
+  const plan = PLAN_LIMITS[CLIENT.plan] || PLAN_LIMITS.business;
+  const contactCount = CONTACTS.length;
+  const invCount = INVENTORY ? INVENTORY.length : 0;
+
+  function usageBar(label, used, max){
+    if(max===-1) return `<div style="display:flex;align-items:center;justify-content:space-between;font-size:0.8rem"><span>${label}</span><span style="color:#059669;font-weight:600">Unlimited ∞</span></div>`;
+    const pct=Math.min(100,Math.round(used/max*100));
+    const color=pct>=90?'#dc2626':pct>=70?'#f59e0b':'#059669';
+    return `<div>
+      <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px"><span>${label}</span><span style="color:${color};font-weight:600">${used}/${max}</span></div>
+      <div style="height:5px;background:rgba(0,0,0,0.1);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width 0.6s"></div></div>
+    </div>`;
+  }
+
+  document.getElementById('planUsageCard').style.display='block';
+  document.getElementById('planBadge').textContent=plan.name+' Plan';
+  document.getElementById('planUsageBody').innerHTML=
+    usageBar('Contacts (CRM)', contactCount, plan.contacts)+
+    usageBar('Inventory Items', invCount, plan.inventory)+
+    (plan.smsQuota>0||plan.smsQuota===-1 ? usageBar('SMS Quota (est.)', 0, plan.smsQuota) : '');
+}
+
+// ── ACCOUNT ──
+function renderAccount(){
+  if(!CLIENT)return;
+  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
+  document.getElementById('accPortalUrl').textContent=url;
+  document.getElementById('accName').textContent=CLIENT.name;
+  document.getElementById('accPlan').textContent=CLIENT.plan+' plan';
+  document.getElementById('accType').textContent=CLIENT.type;
+}
+
+function copyPortalLink(){
+  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
+  navigator.clipboard.writeText(url).catch(()=>{});
+  showToast('📋 Portal link copied! Share with customers.');
+}
+
+function doLogout(){AKE.setStoredToken('client',null);location.reload()}
+
+// ── DASHBOARD DATA ──
 function setPeriod(p,btn){
   period=p;
   document.querySelectorAll('.pt').forEach(b=>b.classList.remove('active'));
@@ -482,7 +1297,6 @@ function loadData(){
   document.getElementById('kFailed').textContent=failed;
   document.getElementById('chartTotal').textContent='Ksh '+rev.toLocaleString();
 
-  // Chart
   const labels=period==='today'?['6A','8A','10A','12P','2P','4P','6P','8P']:period==='week'?['M','T','W','T','F','S','S']:period==='month'?['W1','W2','W3','W4']:['Jan','Feb','Mar','Apr','May','Jun'];
   const buckets=labels.map((_,i)=>{
     const d=new Date();
@@ -492,7 +1306,6 @@ function loadData(){
   const max=Math.max(...buckets,1);
   document.getElementById('chart').innerHTML=buckets.map((v,i)=>`<div class="bw"><div class="bb${i===buckets.length-1?' now':''}" style="height:${Math.max(4,Math.round(v/max*100))}%"></div><div class="bl">${labels[i]}</div></div>`).join('');
 
-  // Breakdown by bundle
   const bundles=CLIENT?.bundles||[];
   const bColors=['#f59e0b','#059669','#3b82f6','#f97316','#8b5cf6','#ec4899'];
   const bCounts=bundles.map(b=>txns.filter(t=>t.bundleId===b.id).length);
@@ -506,7 +1319,6 @@ function loadData(){
       <div class="bk-count">${bCounts[i]} sales</div>
     </div>`).join('');
 
-  // Transactions list
   const recent=[...TRANSACTIONS].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,15);
   document.getElementById('txCount').textContent=TRANSACTIONS.length+' total';
   document.getElementById('txList').innerHTML=recent.length?recent.map(t=>`
@@ -523,14 +1335,6 @@ function loadData(){
     </div>`).join('')
   :`<div class="empty"><div class="ei">💳</div><h4>No transactions yet</h4><p>Share your payment portal link with customers to start receiving payments.</p></div>`;
 }
-
-function copyPortalLink(){
-  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
-  navigator.clipboard.writeText(url).catch(()=>{});
-  showToast('📋 Portal link copied! Share with customers.');
-}
-
-function doLogout(){AKE.setStoredToken('client',null);location.reload()}
 
 function animCount(el,target,prefix=''){if(!el)return;const steps=30;const step=target/steps;let curr=0;const t=setInterval(()=>{curr=Math.min(curr+step,target);el.textContent=prefix+Math.round(curr).toLocaleString();if(curr>=target)clearInterval(t)},16)}
 
