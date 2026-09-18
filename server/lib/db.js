@@ -13,6 +13,9 @@ const DEFAULTS = {
   inventory: [],
   expenses: [],
   invoices: [],
+  quotations: [],
+  credits: [],
+  blasts: [],
   config: {},
 };
 

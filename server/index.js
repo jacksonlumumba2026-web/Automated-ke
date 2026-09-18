@@ -14,6 +14,10 @@ const inventoryRoutes = require('./routes/inventory');
 const followupCron = require('./cron/followups');
 const billingRoutes = require('./routes/billing');
 const invoiceRoutes = require('./routes/invoices');
+const creditRoutes = require('./routes/credits');
+const quotationRoutes = require('./routes/quotations');
+const blastRoutes = require('./routes/blast');
+const profileRoutes = require('./routes/profile');
 
 const app = express();
 app.use(cors());
@@ -31,6 +35,10 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/credits', creditRoutes);
+app.use('/api/quotations', quotationRoutes);
+app.use('/api/blast', blastRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Static frontend
 app.use(express.static(path.join(__dirname, '..', 'public')));

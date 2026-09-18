@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Profile — AutomateKE</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--a:#059669;--al:rgba(5,150,105,0.1);--bg:#f1f5f9;--w:#fff;--border:#e2e8f0;--ink:#0f172a;--muted:#64748b;--sh:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px}
+.hero{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:48px 20px 40px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+.hero-icon{width:72px;height:72px;border-radius:20px;background:var(--al);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;border:2px solid rgba(5,150,105,0.3)}
+.hero-name{font-size:1.7rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.hero-type{font-size:0.78rem;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px}
+.hero-bio{font-size:0.9rem;color:rgba(255,255,255,0.8);max-width:400px;margin:0 auto 24px;line-height:1.6;font-weight:300}
+.hero-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.ha-btn{display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:all 0.2s}
+.ha-call{background:#059669;color:#fff}
+.ha-wa{background:#25d366;color:#fff}
+.ha-call:hover{background:#047857}
+.ha-wa:hover{background:#20ba5a}
+.main{max-width:480px;margin:0 auto;padding:24px 16px}
+.info-card{background:var(--w);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
+.info-card h3{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:14px}
+.info-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none;padding-bottom:0}
+.info-icon{font-size:1.1rem;flex-shrink:0;width:24px;text-align:center}
+.info-label{font-size:0.72rem;color:var(--muted);margin-bottom:1px}
+.info-value{font-size:0.88rem;font-weight:500}
+.products-grid{display:flex;flex-direction:column;gap:8px}
+.prod-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg);border-radius:10px}
+.prod-name{font-weight:600;font-size:0.88rem}
+.prod-desc{font-size:0.72rem;color:var(--muted);margin-top:2px}
+.prod-price{font-weight:800;font-size:0.95rem;color:var(--a);white-space:nowrap;margin-left:12px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;background:var(--al);color:var(--a)}
+.footer-brand{text-align:center;padding:24px 20px 0;font-size:0.72rem;color:var(--muted)}
+.footer-brand a{color:var(--a);font-weight:700;text-decoration:none}
+.loading{text-align:center;padding:80px 20px;color:var(--muted)}
+.loading .spin{font-size:2rem;animation:spin 1s linear infinite;display:block;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.not-found{text-align:center;padding:80px 20px}
+.not-found .nf-icon{font-size:3rem;margin-bottom:16px;opacity:0.3}
+.not-found h2{margin-bottom:8px}
+.not-found p{color:var(--muted);font-size:0.85rem}
+</style>
+</head>
+<body>
+
+<div id="loadingState" class="loading">
+  <span class="spin">⏳</span>
+  Loading profile…
+</div>
+
+<div id="notFound" class="not-found" style="display:none">
+  <div class="nf-icon">🔍</div>
+  <h2>Profile Not Found</h2>
+  <p>This business profile doesn't exist or has been deactivated.</p>
+</div>
+
+<div id="profilePage" style="display:none">
+  <div class="hero">
+    <div class="hero-icon" id="heroIcon">🏪</div>
+    <div class="hero-name" id="heroName">Business Name</div>
+    <div class="hero-type" id="heroType">Business Type</div>
+    <div class="hero-bio" id="heroBio" style="display:none"></div>
+    <div class="hero-actions" id="heroActions"></div>
+  </div>
+
+  <div class="main">
+    <div class="info-card" id="infoCard" style="display:none">
+      <h3>Business Info</h3>
+      <div id="infoRows"></div>
+    </div>
+
+    <div class="info-card" id="productsCard" style="display:none">
+      <h3>Products &amp; Services</h3>
+      <div class="products-grid" id="productsList"></div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:16px">
+      <span class="badge">✅ Verified on AutomateKE</span>
+    </div>
+
+    <div class="footer-brand">
+      Powered by <a href="/" target="_blank">AutomateKE</a> — Business Management for Kenya
+    </div>
+  </div>
+</div>
+
+<script>
+const TYPE_LABEL = {wifi:'WiFi Hotspot',hotel:'Hotel & Hospitality',parking:'Parking Services',shop:'Retail Shop',rental:'Rentals',salon:'Salon & Beauty',gym:'Gym & Fitness',custom:'Business'};
+
+async function loadProfile(){
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if(!id){ showNotFound(); return; }
+
+  try{
+    const res = await fetch('/api/profile/'+id);
+    if(!res.ok){ showNotFound(); return; }
+    const p = await res.json();
+    renderProfile(p);
+  }catch{
+    showNotFound();
+  }
+}
+
+function showNotFound(){
+  document.getElementById('loadingState').style.display='none';
+  document.getElementById('notFound').style.display='block';
+}
+
+function renderProfile(p){
+  document.getElementById('loadingState').style.display='none';
+  document.getElementById('profilePage').style.display='block';
+  document.title = p.name + ' — AutomateKE';
+
+  document.getElementById('heroIcon').textContent = p.icon;
+  document.getElementById('heroName').textContent = p.name;
+  document.getElementById('heroType').textContent = TYPE_LABEL[p.type] || 'Business';
+
+  if(p.profileBio){
+    const bio = document.getElementById('heroBio');
+    bio.textContent = p.profileBio;
+    bio.style.display = 'block';
+  }
+
+  const actions = document.getElementById('heroActions');
+  if(p.ownerPhone){
+    const callBtn = document.createElement('a');
+    callBtn.href = 'tel:'+p.ownerPhone;
+    callBtn.className = 'ha-btn ha-call';
+    callBtn.innerHTML = '📞 Call Us';
+    actions.appendChild(callBtn);
+  }
+  const waPhone = (p.profileWhatsApp||p.ownerPhone).replace(/^0/,'254').replace(/\D/g,'');
+  if(waPhone){
+    const waBtn = document.createElement('a');
+    waBtn.href = 'https://wa.me/'+waPhone+'?text=Hi '+encodeURIComponent(p.name)+', I saw your profile on AutomateKE.';
+    waBtn.target='_blank';
+    waBtn.className = 'ha-btn ha-wa';
+    waBtn.innerHTML = '💬 WhatsApp';
+    actions.appendChild(waBtn);
+  }
+
+  const rows = [];
+  if(p.profileLocation) rows.push({icon:'📍',label:'Location',value:p.profileLocation});
+  if(p.profileHours) rows.push({icon:'🕐',label:'Hours',value:p.profileHours});
+  if(p.ownerPhone) rows.push({icon:'📞',label:'Phone',value:p.ownerPhone});
+  rows.push({icon:'📅',label:'Member Since',value:p.memberSince});
+
+  if(rows.length){
+    document.getElementById('infoCard').style.display='block';
+    document.getElementById('infoRows').innerHTML = rows.map(r=>`
+      <div class="info-row">
+        <span class="info-icon">${r.icon}</span>
+        <div><div class="info-label">${r.label}</div><div class="info-value">${r.value}</div></div>
+      </div>`).join('');
+  }
+
+  if(p.profileProducts && p.profileProducts.length){
+    document.getElementById('productsCard').style.display='block';
+    document.getElementById('productsList').innerHTML = p.profileProducts.map(prod=>`
+      <div class="prod-row">
+        <div>
+          <div class="prod-name">${prod.name}</div>
+          ${prod.description?`<div class="prod-desc">${prod.description}</div>`:''}
+        </div>
+        ${prod.price?`<div class="prod-price">Ksh ${Number(prod.price).toLocaleString()}</div>`:''}
+      </div>`).join('');
+  }
+}
+
+loadProfile();
+</script>
+</body>
+</html>
