@@ -13,6 +13,10 @@ const DEFAULTS = {
   inventory: [],
   expenses: [],
   invoices: [],
+  quotations: [],
+  credits: [],
+  blasts: [],
+  pendingSignups: [],
   config: {},
 };
 

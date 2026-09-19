@@ -39,6 +39,41 @@ function start() {
     }
   });
 
+  // Daily at 6pm EAT (15:00 UTC): send each active client a day's summary.
+  cron.schedule('0 15 * * *', async () => {
+    const data = db.read();
+    const now = Date.now();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    for (const client of data.clients.filter((c) => c.active && c.ownerPhone)) {
+      const todayTxns = data.transactions.filter(
+        (t) =>
+          t.clientId === client.id &&
+          t.status === 'success' &&
+          new Date(t.time).getTime() >= todayStart.getTime()
+      );
+      if (!todayTxns.length) continue;
+
+      const revenue = todayTxns.reduce((sum, t) => sum + (t.amount || 0), 0);
+      const unpaidInvoices = (data.invoices || []).filter(
+        (i) => i.clientId === client.id && i.status !== 'paid'
+      ).length;
+      const outstanding = (data.credits || [])
+        .filter((c) => c.clientId === client.id && c.balance > 0)
+        .reduce((sum, c) => sum + c.balance, 0);
+
+      const message =
+        `📊 Daily Summary — ${client.name}:\n` +
+        `Payments today: ${todayTxns.length} (Ksh ${revenue.toLocaleString()})\n` +
+        (unpaidInvoices ? `Unpaid invoices: ${unpaidInvoices}\n` : '') +
+        (outstanding ? `Mkopo outstanding: Ksh ${outstanding.toLocaleString()}\n` : '') +
+        `Good work today! — AutomateKE`;
+
+      sms.sendSMS(client.ownerPhone, message).catch(() => {});
+    }
+  });
+
   // Every Monday at 8am EAT (5am UTC): send each active client a weekly summary.
   cron.schedule('0 5 * * 1', async () => {
     const data = db.read();

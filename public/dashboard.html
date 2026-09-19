@@ -263,6 +263,33 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 .bar-label{font-size:0.7rem;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
 .bar-track{height:8px;background:var(--s2);border-radius:4px;overflow:hidden;margin-bottom:10px}
 .bar-fill{height:100%;border-radius:4px;background:var(--a);transition:width 0.6s}
+
+/* CREDIT TRACKER (MKOPO) */
+.cred-card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)}
+.cred-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.cred-name{font-weight:700;font-size:0.9rem}
+.cred-phone{font-size:0.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px}
+.cred-amt{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.5px}
+.cred-lbl{font-size:0.62rem;color:var(--muted);margin-top:1px;text-align:right}
+.cred-actions{display:flex;gap:6px;flex-wrap:wrap}
+.cred-btn{flex:1;min-width:60px;padding:7px 6px;border-radius:8px;border:1.5px solid var(--border);background:var(--s1);font-size:0.7rem;font-weight:700;color:var(--ink);cursor:pointer;text-align:center;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.cred-btn:hover{border-color:var(--a);color:var(--a)}
+.cred-btn.danger:hover{border-color:#dc2626;color:#dc2626}
+.cred-entries{margin:8px 0 10px;font-size:0.74rem;max-height:130px;overflow-y:auto;background:var(--s1);border-radius:8px;padding:6px 10px}
+.entry-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.05)}
+.entry-row:last-child{border-bottom:none}
+.entry-debit{color:#dc2626;font-weight:700}
+.entry-payment{color:#059669;font-weight:700}
+
+/* QUOTATIONS */
+.st-accepted{background:#dcfce7;color:#15803d}
+.st-declined{background:#fee2e2;color:#dc2626}
+.st-invoiced{background:#e0e7ff;color:#4338ca}
+
+/* SMS BLAST */
+.blast-history{background:var(--w);border:1px solid var(--border);border-radius:var(--r);margin-top:14px;overflow:hidden;box-shadow:var(--sh)}
+.blast-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.04);font-size:0.78rem}
+.blast-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -339,6 +366,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <div class="qa-grid" id="qaGrid"></div>
     </div>
 
+    <div class="txn-card" id="mpesaRequestsCard" style="margin-bottom:14px;display:none">
+      <div class="txh">
+        <h3>💳 M-Pesa Requests</h3>
+        <button onclick="openStkModal()" style="background:var(--a);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">+ Request Payment</button>
+      </div>
+      <div id="mpesaRequestsList" style="padding:4px 0 4px"></div>
+    </div>
+
     <div class="txn-card">
       <div class="txh"><h3>Recent Transactions</h3><span id="txCount" style="font-size:0.72rem;color:var(--muted)">0 total</span></div>
       <div id="txList"></div>
@@ -347,7 +382,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
 
   <!-- CRM VIEW -->
   <div class="view" id="view-crm">
-    <button class="crm-add" onclick="openContactModal()">+ Add Customer / Lead</button>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="crm-add" style="flex:2;margin-bottom:0" onclick="openContactModal()">+ Add Customer / Lead</button>
+      <button class="crm-add" style="flex:1;margin-bottom:0;border-style:solid;background:var(--al);color:var(--a)" onclick="openBlastModal()">📢 Blast SMS</button>
+    </div>
     <div id="contactList"></div>
 
     <div class="txn-card" style="margin-top:6px">
@@ -386,6 +424,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     <div id="invoiceList"></div>
   </div>
 
+  <!-- MKOPO (CREDIT TRACKER) VIEW -->
+  <div class="view" id="view-mkopo">
+    <div class="section-header">
+      <h3>Mkopo — Customer Credit</h3>
+      <button class="add-btn" onclick="openCreditModal()">+ New Account</button>
+    </div>
+    <div id="creditSummary" style="margin-bottom:14px"></div>
+    <div id="creditList"></div>
+  </div>
+
+  <!-- QUOTES VIEW -->
+  <div class="view" id="view-quotes">
+    <div class="section-header">
+      <h3>Quotations</h3>
+      <button class="add-btn" onclick="openCreateQuote()">+ New Quote</button>
+    </div>
+    <div id="quoteSummary" style="margin-bottom:14px"></div>
+    <div id="quoteList"></div>
+  </div>
+
   <!-- REPORTS VIEW -->
   <div class="view" id="view-reports">
     <div class="section-header" style="margin-bottom:16px">
@@ -415,6 +473,21 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
   <!-- ACCOUNT VIEW -->
   <div class="view" id="view-account">
     <div class="acc-section">
+      <h4>🌐 Digital Business Profile</h4>
+      <p style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5">Share this link so customers can find and contact you online — no website needed.</p>
+      <div class="acc-link" id="accProfileUrl">—</div>
+      <button class="acc-copy-btn" onclick="copyProfileLink()">🔗 Copy Profile Link</button>
+      <button onclick="openProfileSetup()" style="width:100%;padding:11px;background:var(--s2);color:var(--ink);border:1.5px solid var(--border);border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;margin-top:6px;font-family:'Outfit',sans-serif">✏️ Edit Profile Info</button>
+    </div>
+    <div class="acc-section" id="mpesaSetupSection">
+      <h4>💳 M-Pesa Integration</h4>
+      <p id="mpesaSetupStatus" style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5">Connect your Safaricom Daraja account to accept M-Pesa payments directly from your dashboard.</p>
+      <div id="mpesaShortcodeDisplay" style="display:none;font-size:0.78rem;font-weight:700;color:var(--a);margin-bottom:8px"></div>
+      <button onclick="openMpesaSetup()" style="width:100%;padding:11px;background:var(--a);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:6px" id="mpesaSetupBtn">⚙️ Set Up M-Pesa</button>
+      <button onclick="registerC2B()" id="mpesaC2bBtn" style="display:none;width:100%;padding:11px;background:var(--s2);color:var(--ink);border:1.5px solid var(--border);border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif">📡 Register Till/Paybill URLs</button>
+    </div>
+
+    <div class="acc-section">
       <h4>Your Customer Portal Link</h4>
       <div class="acc-link" id="accPortalUrl">—</div>
       <button class="acc-copy-btn" onclick="copyPortalLink()">📋 Copy &amp; Share Link</button>
@@ -436,6 +509,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
     <button class="bni" id="navInv" onclick="switchView('inventory',this)" style="min-width:60px"><span class="bni-i">📦</span><span class="bni-l">Stock</span></button>
     <button class="bni" id="navExp" onclick="switchView('expenses',this)" style="min-width:60px"><span class="bni-i">💸</span><span class="bni-l">Expenses</span></button>
     <button class="bni" id="navInvoice" onclick="switchView('invoice',this)" style="min-width:60px"><span class="bni-i">🧾</span><span class="bni-l">Invoice</span></button>
+    <button class="bni" id="navMkopo" onclick="switchView('mkopo',this)" style="min-width:60px"><span class="bni-i">💳</span><span class="bni-l">Mkopo</span></button>
+    <button class="bni" id="navQuotes" onclick="switchView('quotes',this)" style="min-width:60px"><span class="bni-i">📄</span><span class="bni-l">Quotes</span></button>
     <button class="bni" id="navReports" onclick="switchView('reports',this)" style="min-width:60px"><span class="bni-i">📈</span><span class="bni-l">Reports</span></button>
     <button class="bni" id="navAcc" onclick="switchView('account',this)" style="min-width:60px"><span class="bni-i">👤</span><span class="bni-l">Account</span></button>
   </nav>
@@ -551,6 +626,144 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
   </div>
 </div>
 
+<!-- SMS BLAST MODAL -->
+<div class="modal-ov" id="blastModal">
+  <div class="modal">
+    <h3>📢 Bulk SMS Blast</h3>
+    <p class="modal-hint">Send a promotion or update to all your contacts at once.</p>
+    <div class="field">
+      <label>Audience</label>
+      <select id="blastTag">
+        <option value="">All contacts</option>
+        <option value="lead">Leads only</option>
+        <option value="customer">Customers only</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Message *</label>
+      <textarea id="blastMsg" rows="4" placeholder="E.g. Hi! We have a special offer this weekend…" oninput="document.getElementById('blastCharCount').textContent=this.value.length+' chars'"></textarea>
+      <div id="blastCharCount" style="font-size:0.7rem;color:var(--muted);margin-top:4px">0 chars</div>
+    </div>
+    <div id="blastPreview" style="display:none;background:var(--s2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:0.78rem;line-height:1.5"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('blastModal')">Cancel</button>
+      <button class="save" style="background:#f59e0b" onclick="previewBlast()">👁 Preview</button>
+      <button class="save" id="blastSendBtn" style="display:none" onclick="sendBlast()">📢 Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CREDIT ACCOUNT MODAL -->
+<div class="modal-ov" id="creditModal">
+  <div class="modal">
+    <h3>💳 Open Credit Account</h3>
+    <p class="modal-hint">Track what a customer owes you (mkopo).</p>
+    <div class="field"><label>Customer Name *</label><input type="text" id="cred_name" placeholder="John Kamau"></div>
+    <div class="field"><label>Phone Number</label><input type="tel" id="cred_phone" placeholder="0712 345 678"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('creditModal')">Cancel</button>
+      <button class="save" onclick="saveCreditAccount()">Open Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREDIT ENTRY (DEBIT / PAYMENT) MODAL -->
+<div class="modal-ov" id="creditEntryModal">
+  <div class="modal">
+    <h3 id="creditEntryTitle">Record Entry</h3>
+    <p class="modal-hint" id="creditEntryHint"></p>
+    <div class="field"><label>Amount (Ksh) *</label><input type="number" id="cred_amount" placeholder="0" min="1"></div>
+    <div class="field"><label>Description</label><input type="text" id="cred_desc" placeholder="What for? (e.g. Groceries, Payment via M-Pesa)"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('creditEntryModal')">Cancel</button>
+      <button class="save" id="creditEntrySaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE QUOTE MODAL -->
+<div class="modal-ov" id="quoteModal">
+  <div class="modal" style="max-width:480px">
+    <h3>📄 New Quotation</h3>
+    <div class="field"><label>Customer Name *</label><input type="text" id="qt_customer" placeholder="John Kamau"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field"><label>Phone</label><input type="tel" id="qt_phone" placeholder="0712345678"></div>
+      <div class="field"><label>Tax Rate (%)</label><input type="number" id="qt_tax" placeholder="0" min="0" max="100" value="0" oninput="updateQtTotal()"></div>
+    </div>
+    <div class="field"><label>Valid Until</label><input type="date" id="qt_due"></div>
+    <div style="font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Items / Services</div>
+    <div id="qtItemsList"></div>
+    <button onclick="addQuoteItem()" style="width:100%;padding:9px;border:1.5px dashed var(--border);border-radius:9px;background:transparent;font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:700;color:var(--muted);cursor:pointer;margin-bottom:12px">+ Add Line Item</button>
+    <div class="field"><label>Notes</label><textarea id="qt_notes" rows="2" placeholder="Payment terms, conditions, expiry note…"></textarea></div>
+    <div id="qt_total_preview" style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--a);margin-bottom:10px">Total: Ksh 0</div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('quoteModal')">Cancel</button>
+      <button class="save" onclick="saveQuote()">Create Quote</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SETUP MODAL -->
+<div class="modal-ov" id="profileSetupModal">
+  <div class="modal">
+    <h3>✏️ Edit Business Profile</h3>
+    <p class="modal-hint">This info appears on your public profile page that customers can visit.</p>
+    <div class="field"><label>Business Bio</label><textarea id="prof_bio" rows="2" placeholder="We are a trusted WiFi hotspot provider in Nairobi CBD…"></textarea></div>
+    <div class="field"><label>Location</label><input type="text" id="prof_location" placeholder="e.g. Nairobi CBD, near GPO"></div>
+    <div class="field"><label>Business Hours</label><input type="text" id="prof_hours" placeholder="e.g. Mon–Sat 7AM–9PM"></div>
+    <div class="field"><label>WhatsApp Number</label><input type="tel" id="prof_whatsapp" placeholder="0712 345 678"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('profileSetupModal')">Cancel</button>
+      <button class="save" onclick="saveProfileSetup()">Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- STK PUSH MODAL -->
+<div class="modal-ov" id="stkModal">
+  <div class="modal">
+    <h3>💳 Request M-Pesa Payment</h3>
+    <p class="modal-hint">The customer will get an M-Pesa prompt on their phone to enter their PIN.</p>
+    <div class="field"><label>Customer Phone</label><input type="tel" id="stk_phone" placeholder="0712 345 678"></div>
+    <div class="field"><label>Amount (Ksh)</label><input type="number" id="stk_amount" placeholder="e.g. 500" min="1"></div>
+    <div class="field"><label>Description</label><input type="text" id="stk_desc" placeholder="e.g. Invoice #001, Room booking…"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('stkModal')">Cancel</button>
+      <button class="save" onclick="sendStkPush()">📲 Send Prompt</button>
+    </div>
+  </div>
+</div>
+
+<!-- MPESA SETUP MODAL -->
+<div class="modal-ov" id="mpesaSetupModal">
+  <div class="modal">
+    <h3>⚙️ M-Pesa / Daraja Setup</h3>
+    <p class="modal-hint">Get your credentials from <strong>developer.safaricom.co.ke</strong> → My Apps. Use Sandbox for testing, Production for live payments.</p>
+    <div class="field">
+      <label>Environment</label>
+      <select id="ms_env" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.88rem;background:var(--s2);color:var(--ink)">
+        <option value="sandbox">Sandbox (Testing)</option>
+        <option value="production">Production (Live)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Account Type</label>
+      <select id="ms_type" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.88rem;background:var(--s2);color:var(--ink)">
+        <option value="paybill">Paybill</option>
+        <option value="till">Till Number (Buy Goods)</option>
+      </select>
+    </div>
+    <div class="field"><label>Shortcode (Paybill / Till No.)</label><input type="text" id="ms_shortcode" placeholder="e.g. 174379"></div>
+    <div class="field"><label>Consumer Key</label><input type="text" id="ms_key" placeholder="Paste from Daraja dashboard"></div>
+    <div class="field"><label>Consumer Secret</label><input type="password" id="ms_secret" placeholder="Paste from Daraja dashboard"></div>
+    <div class="field"><label>Passkey</label><input type="password" id="ms_passkey" placeholder="Lipa na M-Pesa passkey"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('mpesaSetupModal')">Cancel</button>
+      <button class="save" onclick="saveMpesaSetup()">💾 Save Credentials</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/api.js"></script>
 <script>
 const TYPE_MAP={wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
@@ -574,10 +787,16 @@ let FOLLOWUPS = [];
 let INVENTORY = [];
 let EXPENSES = [];
 let INVOICES = [];
+let CREDITS = [];
+let QUOTES = [];
 let period = 'week';
 let _restockId = null;
 let _sellId = null;
 let _ivItems = [];
+let _qtItems = [];
+let _creditId = null;
+let _creditEntryType = null;
+let _blastPreviewed = false;
 
 async function doLogin(){
   const email = document.getElementById('lEmail').value.trim();
@@ -618,17 +837,20 @@ async function initApp(){
 
   renderAccount();
   await refreshAll();
+  await loadMpesaStatus();
   setInterval(refreshAll, 30000);
 }
 
 async function refreshAll(){
-  const [txns,contacts,followups,inv,exp,invoices] = await Promise.all([
+  const [txns,contacts,followups,inv,exp,invoices,credits,quotes] = await Promise.all([
     AKE.api('/transactions/mine',{role:'client'}),
     AKE.api('/contacts',{role:'client'}),
     AKE.api('/followups',{role:'client'}),
     AKE.api('/inventory',{role:'client'}),
     AKE.api('/expenses',{role:'client'}),
     AKE.api('/invoices',{role:'client'}),
+    AKE.api('/credits',{role:'client'}),
+    AKE.api('/quotations',{role:'client'}),
   ]);
   TRANSACTIONS = txns;
   CONTACTS = contacts;
@@ -636,12 +858,16 @@ async function refreshAll(){
   INVENTORY = inv;
   EXPENSES = exp;
   INVOICES = invoices;
+  CREDITS = credits;
+  QUOTES = quotes;
   loadData();
   renderContacts();
   renderFollowups();
   renderInventory();
   renderExpenses();
   renderInvoices();
+  renderCredits();
+  renderQuotes();
   renderPlanUsage();
 }
 
@@ -653,6 +879,8 @@ function switchView(name,btn){
   document.getElementById('view-'+name).classList.add('active');
   btn.classList.add('active');
   if(name==='reports') renderReports();
+  if(name==='mkopo') renderCredits();
+  if(name==='quotes') renderQuotes();
 }
 
 function closeModal(id){document.getElementById(id).classList.remove('open')}
@@ -1247,20 +1475,171 @@ function renderPlanUsage(){
 // ── ACCOUNT ──
 function renderAccount(){
   if(!CLIENT)return;
-  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
-  document.getElementById('accPortalUrl').textContent=url;
+  const base=window.location.href.split('/').slice(0,-1).join('/');
+  const portalUrl=base+'/portal.html?key='+(CLIENT?.apiKey||'');
+  const profileUrl=base+'/profile.html?id='+(CLIENT?.id||'');
+  document.getElementById('accPortalUrl').textContent=portalUrl;
+  document.getElementById('accProfileUrl').textContent=profileUrl;
   document.getElementById('accName').textContent=CLIENT.name;
   document.getElementById('accPlan').textContent=CLIENT.plan+' plan';
   document.getElementById('accType').textContent=CLIENT.type;
 }
 
 function copyPortalLink(){
-  const url=window.location.href.replace('dashboard.html','portal.html').split('?')[0]+'?key='+(CLIENT?.apiKey||'');
+  const base=window.location.href.split('/').slice(0,-1).join('/');
+  const url=base+'/portal.html?key='+(CLIENT?.apiKey||'');
   navigator.clipboard.writeText(url).catch(()=>{});
   showToast('📋 Portal link copied! Share with customers.');
 }
 
+function copyProfileLink(){
+  const base=window.location.href.split('/').slice(0,-1).join('/');
+  const url=base+'/profile.html?id='+(CLIENT?.id||'');
+  navigator.clipboard.writeText(url).catch(()=>{});
+  showToast('🔗 Profile link copied!');
+}
+
+function openProfileSetup(){
+  document.getElementById('prof_bio').value=CLIENT?.profileBio||'';
+  document.getElementById('prof_location').value=CLIENT?.profileLocation||'';
+  document.getElementById('prof_hours').value=CLIENT?.profileHours||'';
+  document.getElementById('prof_whatsapp').value=CLIENT?.profileWhatsApp||'';
+  document.getElementById('profileSetupModal').classList.add('open');
+}
+
+async function saveProfileSetup(){
+  try{
+    const updated=await AKE.api('/profile',{method:'PATCH',role:'client',body:{
+      profileBio:document.getElementById('prof_bio').value.trim(),
+      profileLocation:document.getElementById('prof_location').value.trim(),
+      profileHours:document.getElementById('prof_hours').value.trim(),
+      profileWhatsApp:document.getElementById('prof_whatsapp').value.trim(),
+    }});
+    CLIENT={...CLIENT,...updated};
+    closeModal('profileSetupModal');
+    showToast('✅ Profile updated!');
+  }catch(e){showToast(e.message||'Error saving profile');}
+}
+
 function doLogout(){AKE.setStoredToken('client',null);location.reload()}
+
+// ── M-PESA ────────────────────────────────────────────────────────────────
+let MPESA_STATUS = null;
+let _stkPollers = {};
+
+async function loadMpesaStatus(){
+  try{
+    MPESA_STATUS = await AKE.api('/mpesa/status',{role:'client'});
+    const card = document.getElementById('mpesaRequestsCard');
+    const statusEl = document.getElementById('mpesaSetupStatus');
+    const shortcodeEl = document.getElementById('mpesaShortcodeDisplay');
+    const setupBtn = document.getElementById('mpesaSetupBtn');
+    const c2bBtn = document.getElementById('mpesaC2bBtn');
+    if(MPESA_STATUS.configured){
+      card.style.display='block';
+      statusEl.textContent='✅ Connected — Shortcode '+MPESA_STATUS.shortcode+' ('+MPESA_STATUS.type+', '+MPESA_STATUS.env+')';
+      statusEl.style.color='var(--a)';
+      shortcodeEl.style.display='none';
+      setupBtn.textContent='✏️ Update M-Pesa';
+      c2bBtn.style.display='block';
+      renderMpesaRequests();
+    }
+  }catch{}
+}
+
+async function renderMpesaRequests(){
+  try{
+    const reqs = await AKE.api('/mpesa/requests',{role:'client'});
+    const list = document.getElementById('mpesaRequestsList');
+    if(!reqs.length){
+      list.innerHTML='<div style="padding:12px 16px;font-size:0.8rem;color:var(--muted)">No requests yet. Click "+ Request Payment" to send an M-Pesa prompt.</div>';
+      return;
+    }
+    list.innerHTML = reqs.map(r=>{
+      const st = r.status==='success'?'#059669':r.status==='failed'?'#dc2626':'#d97706';
+      const stl = r.status==='success'?'✅ Paid':r.status==='failed'?'❌ Failed':'⏳ Pending';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:0.85rem">${r.customerPhone}</div>
+          <div style="font-size:0.72rem;color:var(--muted)">${r.bundle||'Payment'} · ${new Date(r.time).toLocaleString('en-KE',{dateStyle:'short',timeStyle:'short'})}</div>
+          ${r.mpesaRef?`<div style="font-size:0.7rem;color:var(--muted)">Ref: ${r.mpesaRef}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800;color:var(--a)">Ksh ${(r.amount||0).toLocaleString()}</div>
+          <div style="font-size:0.7rem;font-weight:700;color:${st}">${stl}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch{}
+}
+
+function openStkModal(){
+  ['stk_phone','stk_amount','stk_desc'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('stkModal').classList.add('open');
+}
+
+async function sendStkPush(){
+  const phone=document.getElementById('stk_phone').value.trim();
+  const amount=document.getElementById('stk_amount').value.trim();
+  const desc=document.getElementById('stk_desc').value.trim();
+  if(!phone||!amount){showToast('⚠️ Phone and amount required');return;}
+  try{
+    const result=await AKE.api('/mpesa/request',{method:'POST',role:'client',body:{phone,amount:Number(amount),description:desc}});
+    closeModal('stkModal');
+    showToast('📲 M-Pesa prompt sent to '+phone+'! Waiting for payment…');
+    renderMpesaRequests();
+    // Poll until resolved (max 2 min, every 5s)
+    let tries=0;
+    const pollId=setInterval(async()=>{
+      tries++;
+      if(tries>24){clearInterval(pollId);return;}
+      try{
+        const s=await AKE.api('/mpesa/poll/'+result.checkoutRequestId,{role:'client'});
+        if(s.status!=='pending'){
+          clearInterval(pollId);
+          if(s.status==='success') showToast('✅ Payment confirmed! Ref: '+s.mpesaRef);
+          else showToast('❌ Payment was declined or timed out');
+          renderMpesaRequests();
+          await refreshAll();
+        }
+      }catch{}
+    },5000);
+  }catch(e){showToast('❌ '+(e.message||'Error sending prompt'));}
+}
+
+function openMpesaSetup(){
+  if(MPESA_STATUS){
+    document.getElementById('ms_env').value=MPESA_STATUS.env||'sandbox';
+    document.getElementById('ms_type').value=MPESA_STATUS.type||'paybill';
+    document.getElementById('ms_shortcode').value=MPESA_STATUS.shortcode||'';
+  }
+  ['ms_key','ms_secret','ms_passkey'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('mpesaSetupModal').classList.add('open');
+}
+
+async function saveMpesaSetup(){
+  const consumerKey=document.getElementById('ms_key').value.trim();
+  const consumerSecret=document.getElementById('ms_secret').value.trim();
+  const shortcode=document.getElementById('ms_shortcode').value.trim();
+  const passkey=document.getElementById('ms_passkey').value.trim();
+  const type=document.getElementById('ms_type').value;
+  const env=document.getElementById('ms_env').value;
+  if(!consumerKey||!consumerSecret||!shortcode||!passkey){showToast('⚠️ All fields required');return;}
+  try{
+    await AKE.api('/mpesa/setup',{method:'PATCH',role:'client',body:{consumerKey,consumerSecret,shortcode,passkey,type,env}});
+    closeModal('mpesaSetupModal');
+    showToast('✅ M-Pesa credentials saved!');
+    await loadMpesaStatus();
+  }catch(e){showToast('❌ '+(e.message||'Error saving'));}
+}
+
+async function registerC2B(){
+  try{
+    showToast('📡 Registering URLs with Safaricom…');
+    await AKE.api('/mpesa/c2b/register',{method:'POST',role:'client'});
+    showToast('✅ C2B URLs registered! Direct payments will now auto-record.');
+  }catch(e){showToast('❌ '+(e.message||'Registration failed'));}
+}
 
 // ── DASHBOARD DATA ──
 function setPeriod(p,btn){
@@ -1341,6 +1720,291 @@ function animCount(el,target,prefix=''){if(!el)return;const steps=30;const step=
 function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return 'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+// ── CREDIT TRACKER (MKOPO) ──
+function renderCredits(){
+  const totalOwed=CREDITS.reduce((s,c)=>s+Math.max(0,c.balance),0);
+  document.getElementById('creditSummary').innerHTML=CREDITS.length?`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="kpi"><div class="ki">💳</div><div class="kv">${CREDITS.length}</div><div class="kl">Credit Accounts</div></div>
+      <div class="kpi"><div class="ki">⚠️</div><div class="kv" style="color:#dc2626;font-size:1.1rem">Ksh ${totalOwed.toLocaleString()}</div><div class="kl">Total Outstanding</div></div>
+    </div>`:'';
+  const el=document.getElementById('creditList');
+  if(!CREDITS.length){
+    el.innerHTML='<div class="empty"><div class="ei">💳</div><h4>No credit accounts yet</h4><p>Track customers who buy on credit (mkopo). Open an account to start recording what they owe.</p></div>';
+    return;
+  }
+  el.innerHTML=[...CREDITS].sort((a,b)=>b.balance-a.balance).map(c=>`
+    <div class="cred-card">
+      <div class="cred-top">
+        <div><div class="cred-name">${c.customerName}</div>${c.customerPhone?`<div class="cred-phone">${c.customerPhone}</div>`:''}</div>
+        <div>
+          <div class="cred-amt" style="color:${c.balance>0?'#dc2626':c.balance<0?'#059669':'#64748b'}">${c.balance>0?'Owes':'Stored'} Ksh ${Math.abs(c.balance).toLocaleString()}</div>
+          <div class="cred-lbl">${c.balance===0?'✅ Settled':c.balance>0?'Outstanding':'Store credit'}</div>
+        </div>
+      </div>
+      ${c.entries.length?`<div class="cred-entries">${[...c.entries].reverse().slice(0,5).map(e=>`<div class="entry-row"><span>${e.description||e.type} · ${new Date(e.date).toLocaleDateString('en-KE',{day:'2-digit',month:'short'})}</span><span class="${e.type==='debit'?'entry-debit':'entry-payment'}">${e.type==='debit'?'+':'−'}Ksh ${e.amount.toLocaleString()}</span></div>`).join('')}</div>`:''}
+      <div class="cred-actions">
+        <button class="cred-btn" onclick="openCreditEntry('${c.id}','debit')">➕ Add Debt</button>
+        <button class="cred-btn" style="border-color:#059669;color:#059669" onclick="openCreditEntry('${c.id}','payment')">✅ Payment</button>
+        ${c.customerPhone?`<button class="cred-btn" onclick="sendCreditReminder('${c.id}')">📲 Remind</button>`:''}
+        <button class="cred-btn danger" onclick="deleteCredit('${c.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openCreditModal(){
+  document.getElementById('cred_name').value='';
+  document.getElementById('cred_phone').value='';
+  document.getElementById('creditModal').classList.add('open');
+}
+
+async function saveCreditAccount(){
+  const name=document.getElementById('cred_name').value.trim();
+  if(!name){showToast('Customer name required');return;}
+  try{
+    const acc=await AKE.api('/credits',{method:'POST',role:'client',body:{customerName:name,customerPhone:document.getElementById('cred_phone').value.trim()}});
+    CREDITS.unshift(acc);
+    renderCredits();
+    closeModal('creditModal');
+    showToast('Credit account opened for '+name);
+  }catch(e){showToast(e.message||'Error');}
+}
+
+function openCreditEntry(id,type){
+  _creditId=id;_creditEntryType=type;
+  const acc=CREDITS.find(c=>c.id===id);
+  document.getElementById('creditEntryTitle').textContent=type==='debit'?'➕ Add Debt / Credit Goods':'✅ Record Payment';
+  document.getElementById('creditEntryHint').textContent=acc?acc.customerName+' — current balance: Ksh '+acc.balance.toLocaleString():'';
+  document.getElementById('cred_amount').value='';
+  document.getElementById('cred_desc').value='';
+  document.getElementById('creditEntrySaveBtn').onclick=saveCreditEntry;
+  document.getElementById('creditEntryModal').classList.add('open');
+}
+
+async function saveCreditEntry(){
+  const amount=Number(document.getElementById('cred_amount').value);
+  if(!amount||amount<=0){showToast('Enter a valid amount');return;}
+  try{
+    const ep=_creditEntryType==='debit'?'debit':'payment';
+    const updated=await AKE.api('/credits/'+_creditId+'/'+ep,{method:'POST',role:'client',body:{amount,description:document.getElementById('cred_desc').value.trim()}});
+    const idx=CREDITS.findIndex(c=>c.id===_creditId);
+    if(idx>-1) CREDITS[idx]=updated;
+    renderCredits();
+    closeModal('creditEntryModal');
+    showToast(_creditEntryType==='debit'?'Debt recorded':'Payment recorded ✅');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function sendCreditReminder(id){
+  try{
+    await AKE.api('/credits/'+id+'/remind',{method:'POST',role:'client'});
+    showToast('Reminder SMS sent 📲');
+  }catch(e){showToast(e.message||'SMS not configured');}
+}
+
+async function deleteCredit(id){
+  if(!confirm('Delete this credit account and all its history?'))return;
+  try{
+    await AKE.api('/credits/'+id,{method:'DELETE',role:'client'});
+    CREDITS=CREDITS.filter(c=>c.id!==id);
+    renderCredits();
+    showToast('Account deleted');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+// ── QUOTATIONS ──
+function renderQuotes(){
+  const accepted=QUOTES.filter(q=>q.status==='accepted').length;
+  const pending=QUOTES.filter(q=>q.status==='draft'||q.status==='sent').length;
+  const totalValue=QUOTES.reduce((s,q)=>s+q.total,0);
+  document.getElementById('quoteSummary').innerHTML=QUOTES.length?`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="kpi"><div class="ki">📄</div><div class="kv">${QUOTES.length}</div><div class="kl">Total Quotes</div></div>
+      <div class="kpi"><div class="ki">✅</div><div class="kv">${accepted}</div><div class="kl">Accepted</div></div>
+      <div class="kpi"><div class="ki">⏳</div><div class="kv">${pending}</div><div class="kl">Pending</div></div>
+      <div class="kpi"><div class="ki">💰</div><div class="kv" style="font-size:1.1rem">Ksh ${totalValue.toLocaleString()}</div><div class="kl">Total Value</div></div>
+    </div>`:'';
+  const el=document.getElementById('quoteList');
+  if(!QUOTES.length){
+    el.innerHTML='<div class="empty"><div class="ei">📄</div><h4>No quotations yet</h4><p>Create a quote to give customers a price estimate before they commit. Accepted quotes convert to invoices in one tap.</p></div>';
+    return;
+  }
+  const statusLabel={draft:'📝 Draft',sent:'📤 Sent',accepted:'✅ Accepted',declined:'❌ Declined',invoiced:'🧾 Invoiced'};
+  const statusClass={draft:'st-draft',sent:'st-sent',accepted:'st-accepted',declined:'st-declined',invoiced:'st-invoiced'};
+  el.innerHTML=QUOTES.map(q=>`
+    <div class="inv-card">
+      <div class="inv-top">
+        <div>
+          <div class="inv-num">${q.quoteNumber} · ${new Date(q.createdAt).toLocaleDateString('en-KE')}</div>
+          <div class="inv-name">${q.customerName}</div>
+          ${q.customerPhone?`<div style="font-size:0.72rem;color:var(--muted)">${q.customerPhone}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          <div class="inv-amt">Ksh ${q.total.toLocaleString()}</div>
+          <span class="inv-status ${statusClass[q.status]||'st-draft'}">${statusLabel[q.status]||q.status}</span>
+        </div>
+      </div>
+      ${q.validUntil?`<div class="inv-meta">Valid until: ${q.validUntil}</div>`:''}
+      <div class="inv-actions">
+        <button class="inv-btn" onclick="viewQuotePrint('${q.id}')">🖨 Print</button>
+        ${(q.status==='draft'||q.status==='sent')?`<button class="inv-btn" onclick="acceptQuote('${q.id}')">✅ Accept</button>`:''}
+        ${q.status==='accepted'?`<button class="inv-btn" style="color:#4338ca;border-color:#4338ca" onclick="convertToInvoice('${q.id}')">🧾 → Invoice</button>`:''}
+        ${(q.status!=='declined'&&q.status!=='invoiced')?`<button class="inv-btn" onclick="sendQuoteSMS('${q.id}')">📲 SMS</button>`:''}
+        ${(q.status==='draft'||q.status==='sent')?`<button class="inv-btn danger" onclick="declineQuote('${q.id}')">❌ Decline</button>`:''}
+        <button class="inv-btn danger" onclick="deleteQuote('${q.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openCreateQuote(){
+  _qtItems=[{description:'',qty:1,unitPrice:0}];
+  renderQtItems();
+  ['qt_customer','qt_phone','qt_notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('qt_tax').value='0';
+  document.getElementById('qt_due').value='';
+  updateQtTotal();
+  document.getElementById('quoteModal').classList.add('open');
+}
+
+function renderQtItems(){
+  document.getElementById('qtItemsList').innerHTML=_qtItems.map((item,i)=>`
+    <div style="display:grid;grid-template-columns:3fr 1fr 1.5fr auto;gap:6px;margin-bottom:6px;align-items:center">
+      <input type="text" placeholder="Description" value="${item.description}" oninput="_qtItems[${i}].description=this.value" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:'Outfit',sans-serif;color:var(--ink);outline:none" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--border)'">
+      <input type="number" placeholder="Qty" value="${item.qty}" min="1" oninput="_qtItems[${i}].qty=Number(this.value);updateQtTotal()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:'Outfit',sans-serif;color:var(--ink);outline:none;text-align:center" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--border)'">
+      <input type="number" placeholder="Unit price" value="${item.unitPrice}" min="0" oninput="_qtItems[${i}].unitPrice=Number(this.value);updateQtTotal()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:'Outfit',sans-serif;color:var(--ink);outline:none" onfocus="this.style.borderColor='var(--a)'" onblur="this.style.borderColor='var(--border)'">
+      <button onclick="removeQtItem(${i})" style="padding:8px;border:none;background:none;cursor:pointer;color:#dc2626;font-size:1rem;line-height:1">✕</button>
+    </div>`).join('');
+}
+
+function addQuoteItem(){_qtItems.push({description:'',qty:1,unitPrice:0});renderQtItems();}
+function removeQtItem(i){if(_qtItems.length<=1)return;_qtItems.splice(i,1);renderQtItems();updateQtTotal();}
+function updateQtTotal(){
+  const tax=Number(document.getElementById('qt_tax')?.value||0);
+  const sub=_qtItems.reduce((s,i)=>s+(i.qty||0)*(i.unitPrice||0),0);
+  const el=document.getElementById('qt_total_preview');
+  if(el) el.textContent='Total: Ksh '+(sub+Math.round(sub*tax/100)).toLocaleString();
+}
+
+async function saveQuote(){
+  const customerName=document.getElementById('qt_customer').value.trim();
+  if(!customerName){showToast('Customer name required');return;}
+  if(!_qtItems.some(i=>i.description&&i.unitPrice>0)){showToast('Add at least one item with a price');return;}
+  try{
+    const q=await AKE.api('/quotations',{method:'POST',role:'client',body:{
+      customerName,
+      customerPhone:document.getElementById('qt_phone').value.trim(),
+      items:_qtItems,
+      taxRate:Number(document.getElementById('qt_tax').value)||0,
+      validUntil:document.getElementById('qt_due').value||null,
+      notes:document.getElementById('qt_notes').value.trim(),
+    }});
+    QUOTES.unshift(q);
+    renderQuotes();
+    closeModal('quoteModal');
+    showToast('Quote '+q.quoteNumber+' created!');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function acceptQuote(id){
+  try{
+    const u=await AKE.api('/quotations/'+id,{method:'PATCH',role:'client',body:{status:'accepted'}});
+    const idx=QUOTES.findIndex(q=>q.id===id);if(idx>-1)QUOTES[idx]=u;
+    renderQuotes();showToast('Quote accepted ✅');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function declineQuote(id){
+  try{
+    const u=await AKE.api('/quotations/'+id,{method:'PATCH',role:'client',body:{status:'declined'}});
+    const idx=QUOTES.findIndex(q=>q.id===id);if(idx>-1)QUOTES[idx]=u;
+    renderQuotes();showToast('Quote declined');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function convertToInvoice(id){
+  try{
+    const inv=await AKE.api('/quotations/'+id+'/convert',{method:'POST',role:'client'});
+    INVOICES.unshift(inv);
+    renderInvoices();
+    const u=await AKE.api('/quotations/'+id,{method:'PATCH',role:'client',body:{status:'invoiced'}});
+    const idx=QUOTES.findIndex(q=>q.id===id);if(idx>-1)QUOTES[idx]=u;
+    renderQuotes();
+    showToast('Converted to '+inv.invoiceNumber+' 🧾');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function sendQuoteSMS(id){
+  try{
+    await AKE.api('/quotations/'+id+'/send',{method:'POST',role:'client',body:{viewUrl:''}});
+    const idx=QUOTES.findIndex(q=>q.id===id);
+    if(idx>-1)QUOTES[idx].status='sent';
+    renderQuotes();showToast('Quote SMS sent 📲');
+  }catch(e){showToast(e.message||'SMS not configured');}
+}
+
+async function deleteQuote(id){
+  if(!confirm('Delete this quotation?'))return;
+  try{
+    await AKE.api('/quotations/'+id,{method:'DELETE',role:'client'});
+    QUOTES=QUOTES.filter(q=>q.id!==id);
+    renderQuotes();showToast('Quote deleted');
+  }catch(e){showToast(e.message||'Error');}
+}
+
+function viewQuotePrint(id){
+  const q=QUOTES.find(x=>x.id===id);if(!q)return;
+  const w=window.open('','_blank','width=700,height=800');
+  const rows=q.items.map(it=>`<tr><td>${it.description}</td><td style="text-align:center">${it.qty}</td><td style="text-align:right">Ksh ${it.unitPrice.toLocaleString()}</td><td style="text-align:right;font-weight:700">Ksh ${it.total.toLocaleString()}</td></tr>`).join('');
+  w.document.write(`<!DOCTYPE html><html><head><title>${q.quoteNumber}</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:0 auto;color:#0f172a}.header{display:flex;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #e2e8f0}h1{font-size:2rem;color:#4f46e5;margin:0}table{width:100%;border-collapse:collapse;margin-bottom:20px}th{text-align:left;padding:10px;background:#f8fafc;font-size:0.75rem;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0}td{padding:10px;border-bottom:1px solid #f1f5f9}.totals{text-align:right}.total-row{display:flex;justify-content:flex-end;gap:20px;padding:5px 0}.grand{font-size:1.3rem;font-weight:800;color:#4f46e5;border-top:2px solid #e2e8f0;padding-top:10px;margin-top:6px}.footer{font-size:0.75rem;color:#94a3b8;margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0;text-align:center}@media print{.noprint{display:none}}</style></head><body>
+    <div class="header"><div><h1>${CLIENT?.name||'AutomateKE'}</h1><div style="font-size:0.85rem;color:#64748b">Quotation ${q.quoteNumber}</div></div><div style="text-align:right"><div style="font-size:0.8rem;color:#64748b">Date: ${new Date(q.createdAt).toLocaleDateString('en-KE')}</div>${q.validUntil?`<div style="color:#4f46e5;font-weight:700">Valid until: ${q.validUntil}</div>`:''}</div></div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:0.82rem;color:#1d4ed8"><strong>Note:</strong> This is a quotation/estimate, not an invoice.</div>
+    <div style="margin-bottom:20px"><div style="font-size:0.7rem;color:#64748b;text-transform:uppercase;margin-bottom:4px">Quoted To</div><div style="font-size:1.05rem;font-weight:700">${q.customerName}</div>${q.customerPhone?`<div style="color:#64748b">${q.customerPhone}</div>`:''}</div>
+    <table><thead><tr><th>Description</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit Price</th><th style="text-align:right">Total</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="totals"><div class="total-row"><span>Subtotal:</span><span>Ksh ${q.subtotal.toLocaleString()}</span></div>${q.taxAmount?`<div class="total-row"><span>Tax (${q.taxRate}%):</span><span>Ksh ${q.taxAmount.toLocaleString()}</span></div>`:''}<div class="total-row grand"><span>TOTAL:</span><span>Ksh ${q.total.toLocaleString()}</span></div></div>
+    ${q.notes?`<div style="background:#f8fafc;padding:12px;border-radius:8px;margin-top:16px;font-size:0.82rem;color:#64748b"><strong>Notes:</strong> ${q.notes}</div>`:''}
+    <div class="footer">Generated by AutomateKE · ${CLIENT?.name||''}</div>
+    <div class="noprint" style="text-align:center;margin-top:20px"><button onclick="window.print()" style="padding:12px 28px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:700">🖨 Print / Save PDF</button></div>
+  </body></html>`);
+  w.document.close();
+}
+
+// ── BULK SMS BLAST ──
+function openBlastModal(){
+  document.getElementById('blastMsg').value='';
+  document.getElementById('blastCharCount').textContent='0 chars';
+  document.getElementById('blastTag').value='';
+  document.getElementById('blastPreview').style.display='none';
+  document.getElementById('blastSendBtn').style.display='none';
+  _blastPreviewed=false;
+  document.getElementById('blastModal').classList.add('open');
+}
+
+async function previewBlast(){
+  const msg=document.getElementById('blastMsg').value.trim();
+  if(!msg){showToast('Enter a message first');return;}
+  try{
+    const tag=document.getElementById('blastTag').value;
+    const result=await AKE.api('/blast',{method:'POST',role:'client',body:{message:msg,tag:tag||undefined,preview:true}});
+    const prev=document.getElementById('blastPreview');
+    prev.innerHTML=`<strong>Sending to ${result.count} contacts:</strong><br>${result.contacts.map(c=>c.name+' ('+c.phone+')').join(', ')}${result.count>5?` and ${result.count-5} more…`:''}`;
+    prev.style.display='block';
+    document.getElementById('blastSendBtn').style.display='block';
+    _blastPreviewed=true;
+    showToast(`Will send to ${result.count} contacts`);
+  }catch(e){showToast(e.message||'Error');}
+}
+
+async function sendBlast(){
+  if(!_blastPreviewed){showToast('Preview first');return;}
+  const msg=document.getElementById('blastMsg').value.trim();
+  const tag=document.getElementById('blastTag').value;
+  try{
+    const result=await AKE.api('/blast',{method:'POST',role:'client',body:{message:msg,tag:tag||undefined}});
+    closeModal('blastModal');
+    showToast(`📢 SMS blast sent to ${result.sent} contacts!`);
+  }catch(e){showToast(e.message||'Error');}
+}
 </script>
 </body>
 </html>
