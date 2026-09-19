@@ -16,6 +16,7 @@ const DEFAULTS = {
   quotations: [],
   credits: [],
   blasts: [],
+  pendingSignups: [],
   config: {},
 };
 

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Started — AutomateKE</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--a:#059669;--al:rgba(5,150,105,0.12);--bg:#f1f5f9;--w:#ffffff;--border:#e2e8f0;--ink:#0f172a;--muted:#64748b;--r:14px;--sh:0 1px 3px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.05)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:48px}
+a{color:var(--a);text-decoration:none}
+
+/* Header */
+.hdr{background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:20px;display:flex;align-items:center;justify-content:space-between}
+.hdr-logo{color:#fff;font-weight:800;font-size:1.1rem;letter-spacing:-0.3px}
+.hdr-logo span{color:#34d399}
+.hdr-login{color:rgba(255,255,255,0.7);font-size:0.82rem}
+.hdr-login a{color:#34d399;font-weight:600}
+
+.wrap{max-width:480px;margin:0 auto;padding:0 16px}
+
+/* Steps */
+.steps{display:flex;align-items:center;justify-content:center;gap:0;padding:24px 0 20px}
+.step{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px}
+.step.active{color:var(--a)}
+.step.done{color:#22c55e}
+.step-dot{width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:#fff}
+.step.active .step-dot{background:var(--a)}
+.step.done .step-dot{background:#22c55e}
+.step-line{width:28px;height:2px;background:var(--border);margin:0 4px}
+.step-line.done{background:#22c55e}
+
+/* Plan cards */
+.plan-scroll{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.plan-scroll::-webkit-scrollbar{display:none}
+.plan-card{flex-shrink:0;width:148px;background:var(--w);border:2px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all 0.18s}
+.plan-card.selected{border-color:var(--a);background:var(--al)}
+.plan-card:hover{border-color:var(--a)}
+.plan-name{font-size:0.8rem;font-weight:800;margin-bottom:3px}
+.plan-price{font-size:1.1rem;font-weight:800;color:var(--a);margin-bottom:6px}
+.plan-price span{font-size:0.65rem;color:var(--muted);font-weight:500}
+.plan-feat{font-size:0.65rem;color:var(--muted);line-height:1.5}
+.plan-badge{display:inline-block;padding:1px 7px;background:#f59e0b;color:#fff;border-radius:20px;font-size:0.6rem;font-weight:800;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Form */
+.card{background:var(--w);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh)}
+.card h3{font-size:0.85rem;font-weight:800;margin-bottom:14px;color:var(--ink)}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:0.72rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;color:var(--ink);background:var(--bg);outline:none;transition:border-color 0.15s}
+.field input:focus,.field select:focus{border-color:var(--a)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Buttons */
+.btn-main{display:block;width:100%;padding:15px;background:var(--a);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;text-align:center;transition:background 0.18s;letter-spacing:0.2px}
+.btn-main:hover{background:#047857}
+.btn-main:disabled{opacity:0.55;cursor:not-allowed}
+.btn-outline{display:block;width:100%;padding:12px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:12px;font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;text-align:center;margin-top:10px;transition:all 0.18s}
+.btn-outline:hover{border-color:var(--a);color:var(--a)}
+
+/* Payment waiting */
+.pay-wait{text-align:center;padding:32px 20px}
+.pay-phone-anim{font-size:3.5rem;margin-bottom:12px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.pay-title{font-size:1.1rem;font-weight:800;margin-bottom:8px}
+.pay-sub{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.pay-ref{font-size:0.78rem;color:var(--muted);margin-top:14px}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;animation:blink 1s linear infinite;margin-right:5px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* Success */
+.success{text-align:center;padding:40px 20px}
+.success-icon{font-size:4rem;margin-bottom:12px}
+.success-title{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+.success-sub{font-size:0.88rem;color:var(--muted);line-height:1.7;margin-bottom:28px}
+
+/* Plan summary pill */
+.plan-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;background:var(--al);border-radius:20px;font-size:0.78rem;font-weight:700;color:var(--a);margin-bottom:16px;cursor:pointer}
+.plan-pill:hover{background:var(--border)}
+
+/* Error */
+.error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:9px;padding:11px 13px;font-size:0.82rem;color:#dc2626;margin-bottom:12px;display:none}
+
+.sec-title{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">Automate<span>KE</span></div>
+  <div class="hdr-login">Already have an account? <a href="/dashboard.html">Login</a></div>
+</div>
+
+<div class="wrap">
+
+  <!-- STEP INDICATOR -->
+  <div class="steps" id="stepsBar">
+    <div class="step active" id="s1"><div class="step-dot">1</div><span>Plan</span></div>
+    <div class="step-line" id="l1"></div>
+    <div class="step" id="s2"><div class="step-dot">2</div><span>Details</span></div>
+    <div class="step-line" id="l2"></div>
+    <div class="step" id="s3"><div class="step-dot">3</div><span>Pay &amp; Go</span></div>
+  </div>
+
+  <!-- STEP 1: PLAN PICKER -->
+  <div id="step1">
+    <div class="sec-title" style="padding:0 2px 6px">Choose your plan</div>
+    <div class="plan-scroll" id="planScroll"></div>
+    <div class="card" style="padding:14px 16px;margin-top:4px">
+      <div style="font-size:0.8rem;color:var(--muted);line-height:1.6">
+        ✅ &nbsp;No setup fee · Cancel anytime<br>
+        ✅ &nbsp;Starts immediately after payment<br>
+        ✅ &nbsp;Login credentials sent via SMS
+      </div>
+    </div>
+    <button class="btn-main" id="planNextBtn" onclick="goToStep2()">Continue →</button>
+  </div>
+
+  <!-- STEP 2: DETAILS FORM -->
+  <div id="step2" style="display:none">
+    <div class="plan-pill" id="selectedPlanPill" onclick="goToStep1()">✏️ Change plan</div>
+    <div class="card">
+      <h3>Your Business Details</h3>
+      <div class="field"><label>Business Name</label><input type="text" id="f_name" placeholder="e.g. Mwangi's Salon, Quickpark CBD"></div>
+      <div class="field">
+        <label>Business Type</label>
+        <select id="f_type">
+          <option value="custom">General Business</option>
+          <option value="wifi">WiFi Hotspot</option>
+          <option value="hotel">Hotel / Hospitality</option>
+          <option value="parking">Parking</option>
+          <option value="shop">Retail Shop</option>
+          <option value="rental">Rentals</option>
+          <option value="salon">Salon &amp; Beauty</option>
+          <option value="gym">Gym &amp; Fitness</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Your Name</label><input type="text" id="f_ownerName" placeholder="Full name"></div>
+        <div class="field"><label>Phone (M-Pesa)</label><input type="tel" id="f_phone" placeholder="07XX XXX XXX"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Login Credentials</h3>
+      <div class="field"><label>Email</label><input type="email" id="f_email" placeholder="your@email.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="f_pass" placeholder="At least 6 characters"></div>
+    </div>
+    <div class="error-box" id="errBox"></div>
+    <button class="btn-main" id="detailsNextBtn" onclick="submitRegistration()">→ Pay &amp; Activate Account</button>
+    <button class="btn-outline" onclick="goToStep1()">← Back</button>
+  </div>
+
+  <!-- STEP 3: PAYMENT WAITING / INSTANT -->
+  <div id="step3" style="display:none">
+    <div class="card pay-wait" id="payWait">
+      <div class="pay-phone-anim">📲</div>
+      <div class="pay-title">Check your phone now</div>
+      <div class="pay-sub">An M-Pesa payment prompt has been sent to <strong id="payPhone">your phone</strong>. Enter your M-Pesa PIN to activate your account.</div>
+      <div><span class="status-dot"></span><span style="font-size:0.8rem;color:var(--muted)">Waiting for payment confirmation…</span></div>
+      <div class="pay-ref" id="payRef"></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="stepSuccess" style="display:none">
+    <div class="card success">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">You're all set!</div>
+      <div class="success-sub">Your AutomateKE account is ready. Login credentials have been sent to your phone via SMS.</div>
+      <button class="btn-main" onclick="goDashboard()">🚀 Open My Dashboard</button>
+    </div>
+  </div>
+
+</div><!-- /.wrap -->
+
+<script>
+const PLANS = {
+  trial:      { name:'Free Trial', monthlyFee:0,    color:'#64748b', badge:'14 days free', features:['Dashboard & analytics','30 contacts','Portal payments','20 SMS/month'] },
+  starter:    { name:'Starter',    monthlyFee:500,   color:'#0284c7', badge:null,           features:['100 contacts','50 SMS/month','Expense tracking','Follow-up SMS'] },
+  business:   { name:'Business',   monthlyFee:1500,  color:'#059669', badge:'Most Popular',  features:['500 contacts','200 SMS/month','Invoices & Quotes','Mkopo tracker'] },
+  pro:        { name:'Pro',        monthlyFee:3000,  color:'#7c3aed', badge:null,           features:['2,000 contacts','500 SMS/month','Bulk SMS blasts','Priority support'] },
+  enterprise: { name:'Enterprise', monthlyFee:5000,  color:'#d97706', badge:'Best Value',    features:['Unlimited contacts','Unlimited SMS','Lowest M-Pesa fee','Dedicated support'] },
+};
+
+let selectedPlan = 'trial';
+let _checkoutRequestId = null;
+let _pollInterval = null;
+let _authToken = null;
+
+// Read ?plan= from URL
+const urlPlan = new URLSearchParams(location.search).get('plan');
+if(urlPlan && PLANS[urlPlan]) selectedPlan = urlPlan;
+
+// ── Build plan cards ──
+function renderPlans(){
+  const el = document.getElementById('planScroll');
+  el.innerHTML = Object.entries(PLANS).map(([key, p]) => `
+    <div class="plan-card${key===selectedPlan?' selected':''}" onclick="selectPlan('${key}')" id="pc_${key}">
+      ${p.badge?`<div class="plan-badge">${p.badge}</div>`:''}
+      <div class="plan-name" style="color:${p.color}">${p.name}</div>
+      <div class="plan-price" style="color:${p.color}">${p.monthlyFee?'Ksh '+p.monthlyFee.toLocaleString()+'<span>/mo</span>':'<span style="font-size:1rem;font-weight:800;color:${p.color}">Free</span>'}</div>
+      <div class="plan-feat">${p.features.slice(0,3).join('<br>')}</div>
+    </div>`).join('');
+}
+
+function selectPlan(key){
+  selectedPlan = key;
+  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('pc_'+key).classList.add('selected');
+}
+
+function goToStep1(){
+  show('step1'); hide('step2'); hide('step3'); hide('stepSuccess');
+  setStep(1);
+}
+
+function goToStep2(){
+  show('step2'); hide('step1');
+  setStep(2);
+  const p = PLANS[selectedPlan];
+  document.getElementById('selectedPlanPill').innerHTML =
+    `<strong>${p.name}</strong>&nbsp;${p.monthlyFee?'· Ksh '+p.monthlyFee.toLocaleString()+'/mo':'· Free trial'}&nbsp; ✏️ Change`;
+  document.getElementById('detailsNextBtn').textContent =
+    p.monthlyFee ? `💳 Pay Ksh ${p.monthlyFee.toLocaleString()} via M-Pesa & Activate` : '🚀 Start Free Trial';
+}
+
+function setStep(n){
+  [1,2,3].forEach(i=>{
+    const s=document.getElementById('s'+i);
+    s.className='step'+(i<n?' done':i===n?' active':'');
+    s.querySelector('.step-dot').textContent=i<n?'✓':i;
+    if(i<3){const l=document.getElementById('l'+i);if(l)l.className='step-line'+(i<n?' done':'');}
+  });
+}
+
+async function submitRegistration(){
+  const name=v('f_name'), type=v('f_type'), ownerName=v('f_ownerName'),
+        ownerPhone=v('f_phone'), email=v('f_email'), password=v('f_pass');
+  if(!name||!ownerName||!ownerPhone||!email||!password){ showErr('All fields are required'); return; }
+  if(password.length<6){ showErr('Password must be at least 6 characters'); return; }
+  hideErr();
+
+  const btn=document.getElementById('detailsNextBtn');
+  btn.disabled=true; btn.textContent='Processing…';
+
+  try{
+    const res=await fetch('/api/auth/register',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,type,ownerName,ownerPhone,email,password,plan:selectedPlan})
+    });
+    const data=await res.json();
+    if(!res.ok){ showErr(data.error||'Something went wrong'); btn.disabled=false; btn.textContent='Try Again'; return; }
+
+    if(data.mode==='instant'){
+      _authToken=data.token;
+      localStorage.setItem('ake_client_token', data.token);
+      showSuccess();
+    } else if(data.mode==='mpesa'){
+      _checkoutRequestId=data.checkoutRequestId;
+      showPayWait(ownerPhone);
+      startPolling();
+    }
+  }catch(e){
+    showErr('Network error. Please check your connection and try again.');
+    btn.disabled=false; btn.textContent='Try Again';
+  }
+}
+
+function showPayWait(phone){
+  hide('step1'); hide('step2');
+  show('step3'); setStep(3);
+  document.getElementById('payPhone').textContent=phone;
+}
+
+function startPolling(){
+  let tries=0;
+  _pollInterval=setInterval(async()=>{
+    tries++;
+    if(tries>36){ clearInterval(_pollInterval); showErr('Payment timed out. Please try again.'); goToStep1(); return; }
+    try{
+      const r=await fetch('/api/auth/register/status/'+_checkoutRequestId);
+      const d=await r.json();
+      if(d.status==='ready'){
+        clearInterval(_pollInterval);
+        _authToken=d.token;
+        localStorage.setItem('ake_client_token', d.token);
+        showSuccess();
+      } else if(d.status==='failed'){
+        clearInterval(_pollInterval);
+        showErr('Payment was declined or cancelled. Please try again.');
+        goToStep1();
+      }
+    }catch{}
+  },5000);
+}
+
+function showSuccess(){
+  hide('step1'); hide('step2'); hide('step3'); show('stepSuccess');
+  document.getElementById('stepsBar').style.display='none';
+}
+
+function goDashboard(){
+  window.location.href='/dashboard.html';
+}
+
+function show(id){ document.getElementById(id).style.display='block'; }
+function hide(id){ document.getElementById(id).style.display='none'; }
+function v(id){ return document.getElementById(id).value.trim(); }
+function showErr(msg){ const e=document.getElementById('errBox'); e.textContent=msg; e.style.display='block'; }
+function hideErr(){ document.getElementById('errBox').style.display='none'; }
+
+renderPlans();
+// If a plan was in the URL, skip straight to step 2 only if it was explicitly chosen
+if(urlPlan && PLANS[urlPlan]){
+  // Show plan step first so user can see what they picked
+}
+</script>
+</body>
+</html>
