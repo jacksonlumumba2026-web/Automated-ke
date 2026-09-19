@@ -18,6 +18,7 @@ const creditRoutes = require('./routes/credits');
 const quotationRoutes = require('./routes/quotations');
 const blastRoutes = require('./routes/blast');
 const profileRoutes = require('./routes/profile');
+const mpesaRoutes = require('./routes/mpesa');
 
 const app = express();
 app.use(cors());
@@ -39,6 +40,7 @@ app.use('/api/credits', creditRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use('/api/blast', blastRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/mpesa', mpesaRoutes);
 
 // Static frontend
 app.use(express.static(path.join(__dirname, '..', 'public')));

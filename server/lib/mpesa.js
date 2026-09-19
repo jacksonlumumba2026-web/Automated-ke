@@ -85,4 +85,63 @@ async function stkPush({ phone, amount, accountRef, description }) {
   return data; // { MerchantRequestID, CheckoutRequestID, ResponseCode, ... }
 }
 
-module.exports = { stkPush, isConfigured, normalizePhone };
+// ── Per-client credential helpers ──────────────────────────────────────────
+
+function clientBaseUrl(env) {
+  return env === 'production'
+    ? 'https://api.safaricom.co.ke'
+    : 'https://sandbox.safaricom.co.ke';
+}
+
+async function getTokenWithCreds(creds) {
+  const auth = Buffer.from(`${creds.consumerKey}:${creds.consumerSecret}`).toString('base64');
+  const { data } = await axios.get(
+    `${clientBaseUrl(creds.env)}/oauth/v1/generate?grant_type=client_credentials`,
+    { headers: { Authorization: `Basic ${auth}` } }
+  );
+  return data.access_token;
+}
+
+async function stkPushWithCreds(creds, { phone, amount, accountRef, description, callbackUrl }) {
+  const { shortcode, passkey, type = 'paybill' } = creds;
+  const ts = timestamp();
+  const password = Buffer.from(shortcode + passkey + ts).toString('base64');
+  const token = await getTokenWithCreds(creds);
+  const msisdn = normalizePhone(phone);
+
+  const { data } = await axios.post(
+    `${clientBaseUrl(creds.env)}/mpesa/stkpush/v1/processrequest`,
+    {
+      BusinessShortCode: shortcode,
+      Password: password,
+      Timestamp: ts,
+      TransactionType: type === 'till' ? 'CustomerBuyGoodsOnline' : 'CustomerPayBillOnline',
+      Amount: Math.round(amount),
+      PartyA: msisdn,
+      PartyB: shortcode,
+      PhoneNumber: msisdn,
+      CallBackURL: callbackUrl,
+      AccountReference: String(accountRef).slice(0, 12),
+      TransactionDesc: String(description).slice(0, 13),
+    },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return data;
+}
+
+async function c2bRegisterWithCreds(creds, { confirmUrl, validationUrl }) {
+  const token = await getTokenWithCreds(creds);
+  const { data } = await axios.post(
+    `${clientBaseUrl(creds.env)}/mpesa/c2b/v1/registerurl`,
+    {
+      ShortCode: creds.shortcode,
+      ResponseType: 'Completed',
+      ConfirmationURL: confirmUrl,
+      ValidationURL: validationUrl,
+    },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return data;
+}
+
+module.exports = { stkPush, stkPushWithCreds, c2bRegisterWithCreds, isConfigured, normalizePhone };

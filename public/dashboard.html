@@ -366,6 +366,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <div class="qa-grid" id="qaGrid"></div>
     </div>
 
+    <div class="txn-card" id="mpesaRequestsCard" style="margin-bottom:14px;display:none">
+      <div class="txh">
+        <h3>💳 M-Pesa Requests</h3>
+        <button onclick="openStkModal()" style="background:var(--a);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif">+ Request Payment</button>
+      </div>
+      <div id="mpesaRequestsList" style="padding:4px 0 4px"></div>
+    </div>
+
     <div class="txn-card">
       <div class="txh"><h3>Recent Transactions</h3><span id="txCount" style="font-size:0.72rem;color:var(--muted)">0 total</span></div>
       <div id="txList"></div>
@@ -471,6 +479,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
       <button class="acc-copy-btn" onclick="copyProfileLink()">🔗 Copy Profile Link</button>
       <button onclick="openProfileSetup()" style="width:100%;padding:11px;background:var(--s2);color:var(--ink);border:1.5px solid var(--border);border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;margin-top:6px;font-family:'Outfit',sans-serif">✏️ Edit Profile Info</button>
     </div>
+    <div class="acc-section" id="mpesaSetupSection">
+      <h4>💳 M-Pesa Integration</h4>
+      <p id="mpesaSetupStatus" style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5">Connect your Safaricom Daraja account to accept M-Pesa payments directly from your dashboard.</p>
+      <div id="mpesaShortcodeDisplay" style="display:none;font-size:0.78rem;font-weight:700;color:var(--a);margin-bottom:8px"></div>
+      <button onclick="openMpesaSetup()" style="width:100%;padding:11px;background:var(--a);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif;margin-bottom:6px" id="mpesaSetupBtn">⚙️ Set Up M-Pesa</button>
+      <button onclick="registerC2B()" id="mpesaC2bBtn" style="display:none;width:100%;padding:11px;background:var(--s2);color:var(--ink);border:1.5px solid var(--border);border-radius:9px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Outfit',sans-serif">📡 Register Till/Paybill URLs</button>
+    </div>
+
     <div class="acc-section">
       <h4>Your Customer Portal Link</h4>
       <div class="acc-link" id="accPortalUrl">—</div>
@@ -703,6 +719,51 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-h
   </div>
 </div>
 
+<!-- STK PUSH MODAL -->
+<div class="modal-ov" id="stkModal">
+  <div class="modal">
+    <h3>💳 Request M-Pesa Payment</h3>
+    <p class="modal-hint">The customer will get an M-Pesa prompt on their phone to enter their PIN.</p>
+    <div class="field"><label>Customer Phone</label><input type="tel" id="stk_phone" placeholder="0712 345 678"></div>
+    <div class="field"><label>Amount (Ksh)</label><input type="number" id="stk_amount" placeholder="e.g. 500" min="1"></div>
+    <div class="field"><label>Description</label><input type="text" id="stk_desc" placeholder="e.g. Invoice #001, Room booking…"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('stkModal')">Cancel</button>
+      <button class="save" onclick="sendStkPush()">📲 Send Prompt</button>
+    </div>
+  </div>
+</div>
+
+<!-- MPESA SETUP MODAL -->
+<div class="modal-ov" id="mpesaSetupModal">
+  <div class="modal">
+    <h3>⚙️ M-Pesa / Daraja Setup</h3>
+    <p class="modal-hint">Get your credentials from <strong>developer.safaricom.co.ke</strong> → My Apps. Use Sandbox for testing, Production for live payments.</p>
+    <div class="field">
+      <label>Environment</label>
+      <select id="ms_env" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.88rem;background:var(--s2);color:var(--ink)">
+        <option value="sandbox">Sandbox (Testing)</option>
+        <option value="production">Production (Live)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Account Type</label>
+      <select id="ms_type" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.88rem;background:var(--s2);color:var(--ink)">
+        <option value="paybill">Paybill</option>
+        <option value="till">Till Number (Buy Goods)</option>
+      </select>
+    </div>
+    <div class="field"><label>Shortcode (Paybill / Till No.)</label><input type="text" id="ms_shortcode" placeholder="e.g. 174379"></div>
+    <div class="field"><label>Consumer Key</label><input type="text" id="ms_key" placeholder="Paste from Daraja dashboard"></div>
+    <div class="field"><label>Consumer Secret</label><input type="password" id="ms_secret" placeholder="Paste from Daraja dashboard"></div>
+    <div class="field"><label>Passkey</label><input type="password" id="ms_passkey" placeholder="Lipa na M-Pesa passkey"></div>
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal('mpesaSetupModal')">Cancel</button>
+      <button class="save" onclick="saveMpesaSetup()">💾 Save Credentials</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/api.js"></script>
 <script>
 const TYPE_MAP={wifi:'📶',hotel:'🏨',parking:'🚗',shop:'🛒',rental:'🏠',salon:'💈',gym:'🏋',custom:'⚙️'};
@@ -776,6 +837,7 @@ async function initApp(){
 
   renderAccount();
   await refreshAll();
+  await loadMpesaStatus();
   setInterval(refreshAll, 30000);
 }
 
@@ -1460,6 +1522,124 @@ async function saveProfileSetup(){
 }
 
 function doLogout(){AKE.setStoredToken('client',null);location.reload()}
+
+// ── M-PESA ────────────────────────────────────────────────────────────────
+let MPESA_STATUS = null;
+let _stkPollers = {};
+
+async function loadMpesaStatus(){
+  try{
+    MPESA_STATUS = await AKE.api('/mpesa/status',{role:'client'});
+    const card = document.getElementById('mpesaRequestsCard');
+    const statusEl = document.getElementById('mpesaSetupStatus');
+    const shortcodeEl = document.getElementById('mpesaShortcodeDisplay');
+    const setupBtn = document.getElementById('mpesaSetupBtn');
+    const c2bBtn = document.getElementById('mpesaC2bBtn');
+    if(MPESA_STATUS.configured){
+      card.style.display='block';
+      statusEl.textContent='✅ Connected — Shortcode '+MPESA_STATUS.shortcode+' ('+MPESA_STATUS.type+', '+MPESA_STATUS.env+')';
+      statusEl.style.color='var(--a)';
+      shortcodeEl.style.display='none';
+      setupBtn.textContent='✏️ Update M-Pesa';
+      c2bBtn.style.display='block';
+      renderMpesaRequests();
+    }
+  }catch{}
+}
+
+async function renderMpesaRequests(){
+  try{
+    const reqs = await AKE.api('/mpesa/requests',{role:'client'});
+    const list = document.getElementById('mpesaRequestsList');
+    if(!reqs.length){
+      list.innerHTML='<div style="padding:12px 16px;font-size:0.8rem;color:var(--muted)">No requests yet. Click "+ Request Payment" to send an M-Pesa prompt.</div>';
+      return;
+    }
+    list.innerHTML = reqs.map(r=>{
+      const st = r.status==='success'?'#059669':r.status==='failed'?'#dc2626':'#d97706';
+      const stl = r.status==='success'?'✅ Paid':r.status==='failed'?'❌ Failed':'⏳ Pending';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:0.85rem">${r.customerPhone}</div>
+          <div style="font-size:0.72rem;color:var(--muted)">${r.bundle||'Payment'} · ${new Date(r.time).toLocaleString('en-KE',{dateStyle:'short',timeStyle:'short'})}</div>
+          ${r.mpesaRef?`<div style="font-size:0.7rem;color:var(--muted)">Ref: ${r.mpesaRef}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800;color:var(--a)">Ksh ${(r.amount||0).toLocaleString()}</div>
+          <div style="font-size:0.7rem;font-weight:700;color:${st}">${stl}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch{}
+}
+
+function openStkModal(){
+  ['stk_phone','stk_amount','stk_desc'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('stkModal').classList.add('open');
+}
+
+async function sendStkPush(){
+  const phone=document.getElementById('stk_phone').value.trim();
+  const amount=document.getElementById('stk_amount').value.trim();
+  const desc=document.getElementById('stk_desc').value.trim();
+  if(!phone||!amount){showToast('⚠️ Phone and amount required');return;}
+  try{
+    const result=await AKE.api('/mpesa/request',{method:'POST',role:'client',body:{phone,amount:Number(amount),description:desc}});
+    closeModal('stkModal');
+    showToast('📲 M-Pesa prompt sent to '+phone+'! Waiting for payment…');
+    renderMpesaRequests();
+    // Poll until resolved (max 2 min, every 5s)
+    let tries=0;
+    const pollId=setInterval(async()=>{
+      tries++;
+      if(tries>24){clearInterval(pollId);return;}
+      try{
+        const s=await AKE.api('/mpesa/poll/'+result.checkoutRequestId,{role:'client'});
+        if(s.status!=='pending'){
+          clearInterval(pollId);
+          if(s.status==='success') showToast('✅ Payment confirmed! Ref: '+s.mpesaRef);
+          else showToast('❌ Payment was declined or timed out');
+          renderMpesaRequests();
+          await refreshAll();
+        }
+      }catch{}
+    },5000);
+  }catch(e){showToast('❌ '+(e.message||'Error sending prompt'));}
+}
+
+function openMpesaSetup(){
+  if(MPESA_STATUS){
+    document.getElementById('ms_env').value=MPESA_STATUS.env||'sandbox';
+    document.getElementById('ms_type').value=MPESA_STATUS.type||'paybill';
+    document.getElementById('ms_shortcode').value=MPESA_STATUS.shortcode||'';
+  }
+  ['ms_key','ms_secret','ms_passkey'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('mpesaSetupModal').classList.add('open');
+}
+
+async function saveMpesaSetup(){
+  const consumerKey=document.getElementById('ms_key').value.trim();
+  const consumerSecret=document.getElementById('ms_secret').value.trim();
+  const shortcode=document.getElementById('ms_shortcode').value.trim();
+  const passkey=document.getElementById('ms_passkey').value.trim();
+  const type=document.getElementById('ms_type').value;
+  const env=document.getElementById('ms_env').value;
+  if(!consumerKey||!consumerSecret||!shortcode||!passkey){showToast('⚠️ All fields required');return;}
+  try{
+    await AKE.api('/mpesa/setup',{method:'PATCH',role:'client',body:{consumerKey,consumerSecret,shortcode,passkey,type,env}});
+    closeModal('mpesaSetupModal');
+    showToast('✅ M-Pesa credentials saved!');
+    await loadMpesaStatus();
+  }catch(e){showToast('❌ '+(e.message||'Error saving'));}
+}
+
+async function registerC2B(){
+  try{
+    showToast('📡 Registering URLs with Safaricom…');
+    await AKE.api('/mpesa/c2b/register',{method:'POST',role:'client'});
+    showToast('✅ C2B URLs registered! Direct payments will now auto-record.');
+  }catch(e){showToast('❌ '+(e.message||'Registration failed'));}
+}
 
 // ── DASHBOARD DATA ──
 function setPeriod(p,btn){
